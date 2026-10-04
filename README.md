@@ -58,3 +58,12 @@ About 4.5 weeks in total. Norty's leave still needs to be factored in.
 
 - Final timeline once Norty's leave dates are confirmed
 - Name checks for Bargainu: domain, app stores and Japanese trademarks (J-PlatPat) are not checked yet
+
+## UI/UX prototypes
+
+Three prototypes of the finished v1 app, built from the same brief and data with three different design recipes:
+https://bargainu-prototypes.asakurayuta.workers.dev
+
+- Code: [prototypes/](prototypes/)
+- How each was built, and how to do it again: [docs/design/recipes/](docs/design/recipes/README.md)
+- Design system (pending the team's choice): [DESIGN.md](DESIGN.md)

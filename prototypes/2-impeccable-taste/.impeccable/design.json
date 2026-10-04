@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-04T15:40:00+09:00",
+  "title": "Design System: Bargainu",
+  "extensions": {
+    "colorMeta": {
+      "ground": { "role": "neutral", "displayName": "Paper", "canonical": "oklch(0.984 0.006 150)" },
+      "sunken": { "role": "neutral", "displayName": "Well", "canonical": "oklch(0.955 0.012 150)" },
+      "ink": { "role": "neutral", "displayName": "Green-black Ink", "canonical": "oklch(0.22 0.035 155)" },
+      "shell": { "role": "primary", "displayName": "Carrier-bag Green", "canonical": "oklch(0.33 0.072 155)" },
+      "accent": { "role": "secondary", "displayName": "Seal Yellow", "canonical": "oklch(0.875 0.168 95)" },
+      "danger": { "role": "tertiary", "displayName": "Error Red", "canonical": "oklch(0.48 0.17 27)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Home headline only." },
+      "title": { "displayName": "Title", "purpose": "Page and section titles." },
+      "body": { "displayName": "Body", "purpose": "Paragraphs, buttons, inputs." },
+      "label": { "displayName": "Label", "purpose": "Field labels, chips, links." },
+      "figure": { "displayName": "Figure", "purpose": "Prices and percentages, always tabular." }
+    },
+    "shadows": [
+      { "name": "seal", "value": "0 1px 0 oklch(0.2 0.03 155 / 0.18), 0 3px 8px -2px oklch(0.2 0.03 155 / 0.22)", "purpose": "The discount seal only." },
+      { "name": "float", "value": "0 2px 4px -1px oklch(0.2 0.03 155 / 0.1), 0 12px 28px -8px oklch(0.2 0.03 155 / 0.22)", "purpose": "The toast." },
+      { "name": "sheet", "value": "0 -8px 32px -8px oklch(0.2 0.03 155 / 0.28)", "purpose": "The phone filter sheet." }
+    ],
+    "motion": [
+      { "name": "dur-fast", "value": "120ms", "purpose": "Hover and colour changes." },
+      { "name": "dur-base", "value": "200ms", "purpose": "Seal straighten, toast, link arrows." },
+      { "name": "dur-slow", "value": "320ms", "purpose": "Filter sheet and seal stamp." },
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default easing." },
+      { "name": "ease-press", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Seal and press feedback." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "The one primary action per view.",
+      "html": "<button class=\"ds-btn-accent\">Go to store</button>",
+      "css": ".ds-btn-accent { min-height: var(--control-height); padding: var(--space-2) var(--space-5); border: 0; border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-on-accent); font: var(--weight-semibold) var(--text-base) var(--font-sans); transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); } .ds-btn-accent:hover { background: var(--color-accent-hover); } .ds-btn-accent:active { transform: scale(var(--press-scale)); } .ds-btn-accent:focus-visible { outline: var(--outline-width) solid var(--color-focus); outline-offset: var(--outline-offset); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions such as Save and Clear all.",
+      "html": "<button class=\"ds-btn-outline\">Save</button>",
+      "css": ".ds-btn-outline { min-height: var(--control-height); padding: var(--space-2) var(--space-5); border: var(--border-width-strong) solid var(--color-line-strong); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-ink); font: var(--weight-semibold) var(--text-base) var(--font-sans); } .ds-btn-outline:hover { border-color: var(--color-ink); } .ds-btn-outline:focus-visible { outline: var(--outline-width) solid var(--color-focus); outline-offset: var(--outline-offset); }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Toggle chip for categories; green when selected.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"true\">Audio</button> <button class=\"ds-chip\" aria-pressed=\"false\">Cameras</button>",
+      "css": ".ds-chip { min-height: var(--control-height-sm); padding: var(--space-1) var(--space-3); border: var(--border-width) solid var(--color-line-strong); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-ink); font: var(--weight-medium) var(--text-sm) var(--font-sans); } .ds-chip:hover { border-color: var(--color-ink); } .ds-chip[aria-pressed='true'] { border-color: var(--color-selected); background: var(--color-selected); color: var(--color-on-selected); }"
+    },
+    {
+      "name": "Discount Seal",
+      "kind": "custom",
+      "refersTo": "seal",
+      "description": "The signature element: a tilted yellow sticker whose size steps up with the discount.",
+      "html": "<span class=\"ds-seal\"><span class=\"ds-seal-pct\">50%</span><span class=\"ds-seal-off\">OFF</span></span>",
+      "css": ".ds-seal { display: inline-grid; place-content: center; justify-items: center; width: var(--seal-lg); height: var(--seal-lg); border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-on-accent); box-shadow: var(--shadow-seal); line-height: 1; transform: rotate(var(--seal-tilt)); transition: transform var(--dur-base) var(--ease-press); font-family: var(--font-sans); } .ds-seal:hover { transform: none; } .ds-seal-pct { font-size: 1.5rem; font-weight: var(--weight-black); letter-spacing: var(--tracking-figure); } .ds-seal-off { font-size: 0.65rem; font-weight: var(--weight-bold); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label above, help or error below.",
+      "html": "<label class=\"ds-label\">Email<input class=\"ds-input\" type=\"email\"></label>",
+      "css": ".ds-label { display: grid; gap: var(--space-2); font: var(--weight-semibold) var(--text-sm) var(--font-sans); color: var(--color-ink); } .ds-input { height: var(--control-height); padding: 0 var(--space-3); border: var(--border-width) solid var(--color-line-strong); border-radius: var(--radius-field); background: var(--color-surface); color: var(--color-ink); font: var(--text-base) var(--font-sans); } .ds-input:hover { border-color: var(--color-ink); } .ds-input:focus-visible { outline: var(--outline-width) solid var(--color-focus); outline-offset: var(--outline-offset); }"
+    },
+    {
+      "name": "Shell Navigation",
+      "kind": "nav",
+      "refersTo": "",
+      "description": "Green header with a yellow bar under the current section.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" aria-current=\"page\">Home</a><a class=\"ds-nav-link\">Browse</a><a class=\"ds-nav-link\">Favorites</a></nav>",
+      "css": ".ds-nav { display: flex; gap: var(--space-1); height: var(--header-height); padding: 0 var(--space-4); background: var(--color-shell); font-family: var(--font-sans); } .ds-nav-link { position: relative; display: inline-flex; align-items: center; padding: 0 var(--space-3); color: var(--color-on-shell-muted); font-size: var(--text-sm); font-weight: var(--weight-medium); } .ds-nav-link:hover { color: var(--color-on-shell); } .ds-nav-link[aria-current='page'] { color: var(--color-on-shell); font-weight: var(--weight-semibold); } .ds-nav-link[aria-current='page']::after { content: ''; position: absolute; left: var(--space-3); right: var(--space-3); bottom: 0; height: var(--space-1); border-radius: var(--radius-pill) var(--radius-pill) 0 0; background: var(--color-accent); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The carrier bag and its paper seal",
+    "overview": "A bargain is something you carry home wrapped. Bargainu borrows the department-store carrier bag and its paper seal: one bottle green for the shell, one saffron-yellow sticker for the discount, and everything else is paper and ink. The surface is an Operate screen, so the world lends only type, palette, density and one signature move; layout, navigation and controls are standard.",
+    "keyCharacteristics": [
+      "Bottle-green shell, green-tinted paper ground, green-black ink",
+      "One accent: yellow, for the seal and the primary action",
+      "Cardless deal tiles with the seal straddling the photo edge",
+      "Pills for anything pressed, soft corners for anything that holds",
+      "Flat depth: tone and hairlines, three shadows in total"
+    ],
+    "rules": [
+      { "name": "The One Sticker Rule", "body": "Yellow means the discount or the main thing to press. Nothing else is yellow.", "section": "colors" },
+      { "name": "Selection is green", "body": "Selected state never uses the accent.", "section": "colors" },
+      { "name": "Figures are tabular", "body": "Every price, percent, count and time uses tabular numerals.", "section": "typography" },
+      { "name": "Three things float", "body": "Only the seal, the toast and the sheet carry a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do read every value from tokens.css",
+      "Do put the seal on every deal photo and nowhere else",
+      "Do keep store names as plain text",
+      "Do show real counts and real time left"
+    ],
+    "donts": [
+      "Don't add a second accent, gradient, glass or glow",
+      "Don't box deals in bordered or shadowed cards",
+      "Don't use yellow for selection or red for discounts",
+      "Don't add eyebrows, section numbers or entrance animations"
+    ]
+  }
+}

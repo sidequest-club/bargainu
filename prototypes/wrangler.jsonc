@@ -1,0 +1,7 @@
+// Static hosting for the comparison page and the three prototypes (Cloudflare Workers static assets).
+// Deploy with: ./build.sh --shots && npx wrangler deploy
+{
+  "name": "bargainu-prototypes",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist" }
+}

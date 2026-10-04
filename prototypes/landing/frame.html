@@ -1,0 +1,11 @@
+<!doctype html>
+<!-- Screenshot helper: headless Chrome cannot lay out narrower than 500px, so build.sh
+     shoots this page, which shows a prototype in a 390px-wide iframe. Usage: frame.html#1/ -->
+<meta charset="UTF-8" />
+<title>Phone frame</title>
+<style>html,body{margin:0;height:100%;overflow:hidden}iframe{width:390px;height:100%;border:0;display:block}</style>
+<iframe id="f" title="Prototype at phone width"></iframe>
+<script>
+  const src = location.hash.slice(1) || '1/'
+  if (/^[123]\/$/.test(src)) document.getElementById('f').src = src
+</script>
