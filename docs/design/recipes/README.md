@@ -55,8 +55,11 @@ to Workers.
 Each prototype keeps its sign-in and favorites under its own `localStorage` keys
 (`bargainu.p1.*`, `bargainu.p2.*`, `bargainu.p3.*`), because all three are served from one origin.
 
-## After the team chooses
+## The team's choice
 
-1. Copy the chosen prototype's `DESIGN.md` to the repo root as `DESIGN.md`.
-2. Copy its `src/styles/tokens.css` into the real app as the single source of design tokens.
-3. Keep its recipe file and `RECIPE-NOTES.md`. Delete or archive the other two prototypes.
+On 2026-10-05 the team chose prototype 3. Its design system is now the root
+[DESIGN.md](../../../DESIGN.md), and screenshots of every screen are in
+[docs/design/reference/](../reference/README.md). To make more screens in the same way, follow
+[3-reference.md](3-reference.md) and give the agent `DESIGN.md` along with the brief.
+
+Prototypes 1 and 2 are kept as a record of what was compared.

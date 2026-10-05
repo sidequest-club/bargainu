@@ -59,11 +59,16 @@ About 4.5 weeks in total. Norty's leave still needs to be factored in.
 - Final timeline once Norty's leave dates are confirmed
 - Name checks for Bargainu: domain, app stores and Japanese trademarks (J-PlatPat) are not checked yet
 
-## UI/UX prototypes
+## Decisions so far
 
-Three prototypes of the finished v1 app, built from the same brief and data with three different design recipes:
-https://bargainu-prototypes.asakurayuta.workers.dev
+Recorded in [docs/decisions.md](docs/decisions.md).
 
-- Code: [prototypes/](prototypes/)
-- How each was built, and how to do it again: [docs/design/recipes/](docs/design/recipes/README.md)
-- Design system (pending the team's choice): [DESIGN.md](DESIGN.md)
+| Topic | Decision |
+|---|---|
+| UI/UX | Prototype 3, "Chirashi": https://bargainu-prototypes.asakurayuta.workers.dev/3/ |
+| Git branching | GitHub Flow |
+| Project management | Linear |
+
+- Design system: [DESIGN.md](DESIGN.md), with screenshots in [docs/design/reference/](docs/design/reference/README.md)
+- The three prototypes that were compared: https://bargainu-prototypes.asakurayuta.workers.dev, code in [prototypes/](prototypes/)
+- How each prototype was built: [docs/design/recipes/](docs/design/recipes/README.md)
