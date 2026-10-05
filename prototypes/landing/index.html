@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Bargainu UI/UX prototypes</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f6f6f4;
+        --surface: #ffffff;
+        --text: #1a1a1a;
+        --muted: #5c5c5c;
+        --line: #dcdcd8;
+        --accent: #1a1a1a;
+        --accent-text: #ffffff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141414;
+          --surface: #1e1e1e;
+          --text: #f0f0f0;
+          --muted: #a8a8a8;
+          --line: #343434;
+          --accent: #f0f0f0;
+          --accent-text: #141414;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.55 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      main { max-width: 1200px; margin: 0 auto; padding: 48px 16px 72px; }
+      h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 0 0 12px; text-wrap: balance; }
+      .lede { max-width: 62ch; color: var(--muted); margin: 0 0 8px; }
+      .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 36px; }
+      article { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+      .shots { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; padding: 12px; background: var(--bg); border-bottom: 1px solid var(--line); }
+      .shots img { width: 100%; height: 260px; object-fit: cover; object-position: top; border: 1px solid var(--line); border-radius: 6px; display: block; }
+      .body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+      .num { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+      h2 { font-size: 20px; margin: 0; }
+      .body p { margin: 0; color: var(--muted); font-size: 15px; }
+      .open { margin-top: auto; display: inline-block; text-align: center; background: var(--accent); color: var(--accent-text); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 600; }
+      .open:focus-visible, a:focus-visible { outline: 3px solid #3b82f6; outline-offset: 2px; }
+      section.how { margin-top: 48px; max-width: 70ch; }
+      section.how h2 { font-size: 18px; margin-bottom: 8px; }
+      section.how li { margin-bottom: 6px; color: var(--muted); }
+      footer { margin-top: 40px; font-size: 14px; color: var(--muted); }
+      a { color: inherit; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Bargainu: three UI/UX prototypes</h1>
+      <p class="lede">
+        Bargainu (バーゲイヌ, bargain + 犬) collects discounts from Japanese online stores in one place.
+        These are three takes on the finished v1 app. Each has the same five screens and the same
+        fake data, and only the design recipe differs. Pick the one we build on.
+      </p>
+
+      <div class="grid">
+        <article>
+          <div class="shots">
+            <img src="shots/1-desktop.png" alt="Prototype 1 home screen on desktop" />
+            <img src="shots/1-mobile.png" alt="Prototype 1 home screen on a phone" />
+          </div>
+          <div class="body">
+            <span class="num">Prototype 1</span>
+            <h2 data-name="1">Default stack</h2>
+            <p data-desc="1">frontend-design + web-design-guidelines + Emil Kowalski's design engineering skill.</p>
+            <a class="open" href="1/">Open prototype 1</a>
+          </div>
+        </article>
+        <article>
+          <div class="shots">
+            <img src="shots/2-desktop.png" alt="Prototype 2 home screen on desktop" />
+            <img src="shots/2-mobile.png" alt="Prototype 2 home screen on a phone" />
+          </div>
+          <div class="body">
+            <span class="num">Prototype 2</span>
+            <h2 data-name="2">Impeccable + Taste Skill</h2>
+            <p data-desc="2">Taste Skill for generation, Impeccable for critique, audit, polish and the detector pass.</p>
+            <a class="open" href="2/">Open prototype 2</a>
+          </div>
+        </article>
+        <article>
+          <div class="shots">
+            <img src="shots/3-desktop.png" alt="Prototype 3 home screen on desktop" />
+            <img src="shots/3-mobile.png" alt="Prototype 3 home screen on a phone" />
+          </div>
+          <div class="body">
+            <span class="num">Prototype 3</span>
+            <h2 data-name="3">Reference-driven</h2>
+            <p data-desc="3">No design skill. Direction taken from two Awwwards e-commerce sites and a footer.design entry, with motion from the fancy component library.</p>
+            <a class="open" href="3/">Open prototype 3</a>
+          </div>
+        </article>
+      </div>
+
+      <section class="how">
+        <h2>What to try in each</h2>
+        <ul>
+          <li>Home: find the Top Discounts section and open a deal.</li>
+          <li>Browse: combine filters (discount %, brand, category, online vs in-store, prefecture and city), then clear them.</li>
+          <li>Deal detail: save a deal. You will be asked to sign in.</li>
+          <li>Login: use the demo sign-in. There is no real account and nothing is sent anywhere.</li>
+          <li>Favorites: check the saved deal is there, then remove it to see the empty state.</li>
+          <li>Repeat on your phone.</li>
+        </ul>
+      </section>
+
+      <footer>
+        All deals, brands and prices are invented. Photos are from Unsplash. Store names are labels only.
+        How each one was built is recorded in <code>docs/design/recipes/</code> in the repo.
+      </footer>
+    </main>
+  </body>
+</html>

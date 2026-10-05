@@ -1,0 +1,246 @@
+/*
+ * Bargainu design tokens. Every colour, type, spacing, radius, elevation, motion and layout
+ * value lives here. Nothing outside this file uses a raw colour or a magic number.
+ * Breakpoints are the one exception: CSS cannot read custom properties inside @media,
+ * so the three widths below are repeated literally in the media queries.
+ *   --bp-sm 640px   --bp-md 900px   --bp-lg 1200px
+ *
+ * World: the department-store carrier bag and its paper seal.
+ * Bottle-green shell, green-tinted paper, green-black ink, one saffron-yellow accent.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- Colour: ground and surfaces ---- */
+  --color-ground: oklch(0.984 0.006 150);
+  --color-surface: oklch(0.996 0.003 150);
+  --color-sunken: oklch(0.955 0.012 150);
+  --color-line: oklch(0.895 0.016 150);
+  --color-line-strong: oklch(0.61 0.03 152);
+
+  /* ---- Colour: ink ---- */
+  --color-ink: oklch(0.22 0.035 155);
+  --color-ink-muted: oklch(0.43 0.03 155);
+  --color-ink-faint: oklch(0.5 0.026 155);
+
+  /* ---- Colour: shell (the carrier bag) ---- */
+  --color-shell: oklch(0.33 0.072 155);
+  --color-shell-deep: oklch(0.27 0.062 155);
+  --color-shell-line: oklch(0.43 0.07 155);
+  --color-on-shell: oklch(0.975 0.012 150);
+  --color-on-shell-muted: oklch(0.84 0.04 150);
+
+  /* ---- Colour: the one accent (the paper seal) ---- */
+  --color-accent: oklch(0.875 0.168 95);
+  --color-accent-hover: oklch(0.83 0.17 90);
+  --color-on-accent: oklch(0.23 0.05 155);
+
+  /* ---- Colour: selection and state ---- */
+  --color-selected: oklch(0.33 0.072 155);
+  --color-on-selected: oklch(0.975 0.012 150);
+  --color-selected-soft: oklch(0.93 0.035 150);
+  --color-link: oklch(0.36 0.09 155);
+  --color-danger: oklch(0.48 0.17 27);
+  --color-danger-soft: oklch(0.95 0.03 27);
+  --color-focus: oklch(0.22 0.035 155);
+  --color-focus-on-shell: oklch(0.875 0.168 95);
+  --color-selection-bg: oklch(0.875 0.168 95);
+  --color-selection-ink: oklch(0.23 0.05 155);
+  --color-scrim: oklch(0.2 0.03 155 / 0.5);
+  --color-photo-veil: oklch(0.996 0.003 150 / 0.92);
+
+  /* ---- Type ---- */
+  --font-sans:
+    'Geist Variable', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Noto Sans JP', system-ui,
+    sans-serif;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --text-display: 2.125rem;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.55;
+
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.015em;
+  --tracking-normal: 0;
+  --tracking-figure: -0.02em;
+
+  --measure: 62ch;
+  --measure-narrow: 38ch;
+
+  /* ---- Spacing (4px base) ---- */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-half: 0.125rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  --gutter: var(--space-4);
+  --section-gap: var(--space-12);
+
+  /* ---- Radius: pills for anything you press, soft corners for anything that holds ---- */
+  --radius-pill: 999px;
+  --radius-well: 0.875rem;
+  --radius-field: 0.625rem;
+  --radius-sm: 0.375rem;
+
+  /* ---- Borders and elevation ---- */
+  --border-width: 1px;
+  --border-width-strong: 1.5px;
+  --outline-width: 2px;
+  --outline-offset: 2px;
+  --underline-offset: 0.2em;
+
+  --shadow-none: none;
+  --shadow-seal: 0 1px 0 oklch(0.2 0.03 155 / 0.18), 0 3px 8px -2px oklch(0.2 0.03 155 / 0.22);
+  --shadow-float: 0 2px 4px -1px oklch(0.2 0.03 155 / 0.1), 0 12px 28px -8px oklch(0.2 0.03 155 / 0.22);
+  --shadow-sheet: 0 -8px 32px -8px oklch(0.2 0.03 155 / 0.28);
+
+  /* ---- Motion ---- */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-press: cubic-bezier(0.22, 1, 0.36, 1);
+  --press-scale: 0.97;
+  --seal-tilt: -8deg;
+  --seal-stamp-scale: 1.18;
+  --seal-straddle: 38%;
+  --seal-straddle-sm: 30%;
+  --seal-figure-ratio: 0.4;
+  --seal-label-ratio: 0.17;
+  --seal-sign-size: 0.6em;
+  --seal-clearance-ratio: 0.36;
+
+  /* ---- Layout ---- */
+  --page-max: 82rem;
+  --header-height: 3.75rem;
+  --tabbar-height: 3.75rem;
+  --sidebar-width: 17rem;
+  --control-height: 2.75rem;
+  --control-height-sm: 2.25rem;
+  --control-height-lg: 3.25rem;
+  --feature-photo: 15rem;
+  --feature-photo-sm: 6.5rem;
+  --feature-body: 18rem;
+  --facts-term: 6.5rem;
+  --hero-copy: 34rem;
+  --category-min: 15rem;
+  --category-min-sm: 9.5rem;
+  --count-min: 1.25rem;
+  --range-height: 1.5rem;
+  --line-clamp: 2;
+  --paper-dot: 0.1875rem;
+  --paper-pitch: 1.75rem;
+  --toast-max: 24rem;
+  --icon-button: 2.75rem;
+  --tile-min: 10rem;
+  --tile-min-wide: 13.5rem;
+  --rail-tile: 11.5rem;
+  --row-thumb: 4rem;
+  --category-thumb: 3rem;
+  --avatar: 2rem;
+  --logo-seal: 2.125rem;
+  --login-max: 26rem;
+  --search-max: 22rem;
+  --sheet-max-height: 88dvh;
+  --empty-mark: 4.5rem;
+  --detail-photo-max: 36rem;
+  --brands-list-max: 13rem;
+
+  /* Seal diameters: the bigger the discount, the bigger the seal */
+  --seal-xs: 2.125rem;
+  --seal-sm: 2.75rem;
+  --seal-md: 3.25rem;
+  --seal-lg: 3.875rem;
+  --seal-xl: 5.75rem;
+
+  /* ---- Icon sizes ---- */
+  --icon-sm: 1rem;
+  --icon-md: 1.25rem;
+  --icon-lg: 1.5rem;
+  --icon-xl: 2.25rem;
+
+  /* ---- Layers ---- */
+  --z-seal: 1;
+  --z-sticky: 10;
+  --z-header: 20;
+  --z-toast: 30;
+}
+
+/* Wider screens: more gutter, a larger display size. Fixed steps, not fluid type. */
+@media (min-width: 900px) {
+  :root {
+    --gutter: var(--space-8);
+    --section-gap: var(--space-16);
+    --text-display: 3rem;
+    --text-2xl: 2.5rem;
+    --header-height: 4rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ground: oklch(0.175 0.01 155);
+    --color-surface: oklch(0.215 0.012 155);
+    --color-sunken: oklch(0.245 0.014 155);
+    --color-line: oklch(0.31 0.016 155);
+    --color-line-strong: oklch(0.47 0.022 155);
+
+    --color-ink: oklch(0.95 0.012 150);
+    --color-ink-muted: oklch(0.78 0.025 150);
+    --color-ink-faint: oklch(0.7 0.025 150);
+
+    --color-shell: oklch(0.34 0.078 155);
+    --color-shell-deep: oklch(0.28 0.066 155);
+    --color-shell-line: oklch(0.45 0.075 155);
+
+    --color-selected: oklch(0.86 0.1 152);
+    --color-on-selected: oklch(0.2 0.04 155);
+    --color-selected-soft: oklch(0.32 0.05 155);
+    --color-link: oklch(0.86 0.09 150);
+    --color-danger: oklch(0.78 0.13 27);
+    --color-danger-soft: oklch(0.3 0.06 27);
+    --color-focus: oklch(0.875 0.168 95);
+    --color-scrim: oklch(0.1 0.02 155 / 0.66);
+    --color-photo-veil: oklch(0.215 0.012 155 / 0.9);
+
+    --shadow-seal: 0 1px 0 oklch(0.1 0.02 155 / 0.4), 0 3px 8px -2px oklch(0.1 0.02 155 / 0.5);
+    --shadow-float: 0 2px 4px -1px oklch(0.1 0.02 155 / 0.4), 0 12px 28px -8px oklch(0.1 0.02 155 / 0.6);
+    --shadow-sheet: 0 -8px 32px -8px oklch(0.1 0.02 155 / 0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --press-scale: 1;
+    --seal-stamp-scale: 1;
+  }
+}
