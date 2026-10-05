@@ -1,0 +1,13 @@
+# Copy to .dev.vars for local development. .dev.vars is not committed.
+# In production these are set with `npx wrangler secret put <NAME>`.
+
+# Where the app runs. Local dev server:
+BETTER_AUTH_URL=http://localhost:5173
+
+# At least 32 random characters: `openssl rand -base64 32`
+BETTER_AUTH_SECRET=
+
+# Google Cloud console > APIs & Services > Credentials > OAuth client ID (Web application).
+# Authorised redirect URI: http://localhost:5173/api/auth/callback/google
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
