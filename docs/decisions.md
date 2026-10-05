@@ -3,6 +3,20 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
+## 4. Hosting: Cloudflare (2026-10-05)
+
+**Decision:** the app is hosted on Cloudflare, in a team account that Mizuki created and invited
+everyone to.
+
+**Why:** Vercel's free tier does not let the three of us collaborate on one project. Cloudflare's
+does, and it also gives us Workers, Pages and R2 at low cost.
+
+**Options considered:** Vercel (the original proposal in the README) and Cloudflare. Agreed in
+the #brainstorming channel on Slack.
+
+**What follows:** the prototypes are still on Yuta's personal Cloudflare account and move to the
+team account during the initial project setup. The backend and database are not decided yet.
+
 ## 3. UI/UX: prototype 3, "Chirashi" (2026-10-05)
 
 **Decision:** the app is built on prototype 3, the reference-driven design in a Japanese sale-flyer
@@ -55,5 +69,4 @@ whether `main` gets branch protection on GitHub.
 **Decision:** work is tracked in Linear, in the Sidequest Club workspace, on the free plan.
 Issue keys start with `SID-`.
 
-**Not decided yet:** whether to connect Linear to GitHub so that branches and pull requests
-update issues automatically.
+Collaborative documents are being tried in Notion.

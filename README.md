@@ -33,8 +33,9 @@ About 4.5 weeks in total. Norty's leave still needs to be factored in.
 ## Tech stack (proposed)
 
 - **Frontend:** React + TypeScript
-- **Backend:** Serverless (Supabase / Cloudflare Workers / Vercel functions)
-- **Hosting & DB:** Vercel + Supabase or Neon
+- **Backend:** Serverless, not decided yet (Cloudflare Workers / Supabase)
+- **Hosting:** Cloudflare (decided, see [docs/decisions.md](docs/decisions.md))
+- **Database:** Supabase or Neon, not decided yet
 - **Project management:** Linear (free plan)
 
 ## End of project: what we'll have built
@@ -68,6 +69,7 @@ Recorded in [docs/decisions.md](docs/decisions.md).
 | UI/UX | Prototype 3, "Chirashi": https://bargainu-prototypes.asakurayuta.workers.dev/3/ |
 | Git branching | GitHub Flow |
 | Project management | Linear |
+| Hosting | Cloudflare |
 
 - Design system: [DESIGN.md](DESIGN.md), with screenshots in [docs/design/reference/](docs/design/reference/README.md)
 - The three prototypes that were compared: https://bargainu-prototypes.asakurayuta.workers.dev, code in [prototypes/](prototypes/)
