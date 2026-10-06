@@ -1,0 +1,35 @@
+name: Collect
+
+# Manual runs only for now. Add a schedule once the Worker ingest endpoint exists.
+on:
+  workflow_dispatch:
+    inputs:
+      keywords:
+        description: Search keywords, separated by spaces
+        required: true
+        default: イヤホン
+      pages:
+        description: Pages per keyword (30 items each)
+        required: true
+        default: "1"
+
+jobs:
+  rakuten:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect from Rakuten
+        env:
+          RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
+          RAKUTEN_ACCESS_KEY: ${{ secrets.RAKUTEN_ACCESS_KEY }}
+          RAKUTEN_AFFILIATE_ID: ${{ secrets.RAKUTEN_AFFILIATE_ID }}
+          KEYWORDS: ${{ inputs.keywords }}
+          PAGES: ${{ inputs.pages }}
+        run: python collector/rakuten.py $KEYWORDS --pages "$PAGES"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rakuten
+          path: collector/out/
