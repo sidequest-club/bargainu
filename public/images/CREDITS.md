@@ -1,0 +1,66 @@
+# Image credits
+
+All photos are from Unsplash under the Unsplash License (https://unsplash.com/license).
+
+| File | Source |
+|---|---|
+| shoes-1.jpg | https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a |
+| shoes-2.jpg | https://images.unsplash.com/photo-1600269452121-4f2416e55c28 |
+| shoes-3.jpg | https://images.unsplash.com/photo-1560769629-975ec94e6a86 |
+| shoes-4.jpg | https://images.unsplash.com/photo-1608231387042-66d1773070a5 |
+| shoes-5.jpg | https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb |
+| clothing-1.jpg | https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504 |
+| clothing-2.jpg | https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3 |
+| clothing-3.jpg | https://images.unsplash.com/photo-1649433911119-7cf48b3e8f50 |
+| clothing-4.jpg | https://images.unsplash.com/photo-1624548140150-108c3287f551 |
+| clothing-5.jpg | https://images.unsplash.com/photo-1649937408746-4d2f603f91c8 |
+| audio-1.jpg | https://images.unsplash.com/photo-1505740420928-5e560c06d30e |
+| audio-2.jpg | https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb |
+| audio-3.jpg | https://images.unsplash.com/photo-1546435770-a3e426bf472b |
+| audio-4.jpg | https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3 |
+| audio-5.jpg | https://images.unsplash.com/photo-1583394838336-acd977736f90 |
+| cameras-1.jpg | https://images.unsplash.com/photo-1516035069371-29a1b244cc32 |
+| cameras-2.jpg | https://images.unsplash.com/photo-1502920917128-1aa500764cbd |
+| cameras-3.jpg | https://images.unsplash.com/photo-1502982720700-bfff97f2ecac |
+| cameras-4.jpg | https://images.unsplash.com/photo-1564466809058-bf4114d55352 |
+| cameras-5.jpg | https://images.unsplash.com/photo-1621985499238-698dfd45b017 |
+| computers-1.jpg | https://images.unsplash.com/photo-1496181133206-80ce9b88a853 |
+| computers-2.jpg | https://images.unsplash.com/photo-1541807084-5c52b6b3adef |
+| computers-3.jpg | https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2 |
+| computers-4.jpg | https://images.unsplash.com/photo-1531297484001-80022131f5a1 |
+| computers-5.jpg | https://images.unsplash.com/photo-1611186871348-b1ce696e52c9 |
+| watches-1.jpg | https://images.unsplash.com/photo-1523170335258-f5ed11844a49 |
+| watches-2.jpg | https://images.unsplash.com/photo-1620625515032-6ed0c1790c75 |
+| watches-3.jpg | https://images.unsplash.com/photo-1542496658-e33a6d0d50f6 |
+| watches-4.jpg | https://images.unsplash.com/photo-1622434641406-a158123450f9 |
+| watches-5.jpg | https://images.unsplash.com/photo-1587925358603-c2eea5305bbc |
+| appliances-1.jpg | https://images.unsplash.com/photo-1620807773206-49c1f2957417 |
+| appliances-2.jpg | https://images.unsplash.com/photo-1475296204602-08d15839e95f |
+| appliances-3.jpg | https://images.unsplash.com/photo-1616388761741-a5936c6f61f6 |
+| appliances-4.jpg | https://images.unsplash.com/photo-1707241358597-bafcc8a8e73d |
+| appliances-5.jpg | https://images.unsplash.com/photo-1637029436347-e33bf98a5412 |
+| beauty-1.jpg | https://images.unsplash.com/photo-1583209814683-c023dd293cc6 |
+| beauty-2.jpg | https://images.unsplash.com/photo-1631730486572-226d1f595b68 |
+| beauty-3.jpg | https://images.unsplash.com/photo-1576426863848-c21f53c60b19 |
+| beauty-4.jpg | https://images.unsplash.com/photo-1613803745799-ba6c10aace85 |
+| beauty-5.jpg | https://images.unsplash.com/photo-1638609927040-8a7e97cd9d6a |
+| bags-1.jpg | https://images.unsplash.com/photo-1553062407-98eeb64c6a62 |
+| bags-2.jpg | https://images.unsplash.com/photo-1622560480654-d96214fdc887 |
+| bags-3.jpg | https://images.unsplash.com/photo-1622560480605-d83c853bc5c3 |
+| bags-4.jpg | https://images.unsplash.com/photo-1509762774605-f07235a08f1f |
+| bags-5.jpg | https://images.unsplash.com/photo-1680039211156-66c721b87625 |
+| kitchen-1.jpg | https://images.unsplash.com/photo-1556909212-d5b604d0c90d |
+| kitchen-2.jpg | https://images.unsplash.com/photo-1556910585-09baa3a3998e |
+| kitchen-3.jpg | https://images.unsplash.com/photo-1584990347163-2b86b71390d6 |
+| kitchen-4.jpg | https://images.unsplash.com/photo-1584990347193-6bebebfeaeee |
+| kitchen-5.jpg | https://images.unsplash.com/photo-1556910602-38f53e68e15d |
+| gaming-1.jpg | https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf |
+| gaming-2.jpg | https://images.unsplash.com/photo-1509198397868-475647b2a1e5 |
+| gaming-3.jpg | https://images.unsplash.com/photo-1552820728-8b83bb6b773f |
+| gaming-4.jpg | https://images.unsplash.com/photo-1592840496694-26d035b52b48 |
+| gaming-5.jpg | https://images.unsplash.com/photo-1600861194942-f883de0dfe96 |
+| furniture-1.jpg | https://images.unsplash.com/photo-1592078615290-033ee584e267 |
+| furniture-2.jpg | https://images.unsplash.com/photo-1634712282287-14ed57b9cc89 |
+| furniture-3.jpg | https://images.unsplash.com/photo-1612372606404-0ab33e7187ee |
+| furniture-4.jpg | https://images.unsplash.com/photo-1640938776314-4d303f8a1380 |
+| furniture-5.jpg | https://images.unsplash.com/photo-1603376728541-6e1906a300e6 |

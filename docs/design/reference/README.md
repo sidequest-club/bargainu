@@ -1,10 +1,12 @@
 # What Bargainu looks like
 
 Screenshots of the chosen design (prototype 3, "Chirashi"), taken on 2026-10-04 from
-`prototypes/3-reference`. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
+`prototypes/3-reference`. The two Login shots were retaken from the app on 2026-10-06, when the
+demo account and email form gave way to Google sign-in. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
 these show the result. A new or changed screen should look like it belongs next to these.
 
-The same screens are live at https://bargainu-prototypes.asakurayuta.workers.dev/3/.
+The prototype's screens are live at https://bargainu-prototypes.asakurayuta.workers.dev/3/. The
+Route column is the prototype's hash route; the app uses the same paths without the `#`.
 
 | Screen | Desktop, 1440 wide | Phone, 390 wide | Route |
 |---|---|---|---|
@@ -24,14 +26,14 @@ The same screens are live at https://bargainu-prototypes.asakurayuta.workers.dev
   part-way. `deal-390.jpg` shows 32% on a deal that is 40% off. The data in
   `prototypes/shared/deals.ts` is correct.
 - Not captured: hover and pressed states, the marquees moving, the toast, and the signed-in
-  account panel. Run the prototype to see those.
+  account panel. Run the app to see those.
+- The footer's small print reads differently in the app, as on the Login shots.
 
 ## Retaking them
 
 ```
-cd prototypes/3-reference
-npx vite --port 5173 --strictPort
-../shared/scripts/shot.sh "http://localhost:5173/#/browse" out.png 1440 1000
+npm run dev
+prototypes/shared/scripts/shot.sh "http://localhost:5173/browse" out.png 1440 1000
 ```
 
 `shot.sh` cannot lay out narrower than about 500px, so phone shots need device emulation

@@ -16,6 +16,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:seed:local": "node scripts/seed.ts && wrangler d1 execute DB --local --file node_modules/.tmp/seed.sql",
+    "db:seed:remote": "node scripts/seed.ts && wrangler d1 execute DB --remote --file node_modules/.tmp/seed.sql",
     "auth:generate": "npx --yes auth@latest generate --config scripts/auth.generate.ts --output worker/db/auth-schema.ts --yes && oxfmt worker/db/auth-schema.ts"
   },
   "dependencies": {
@@ -25,8 +27,10 @@
     "better-auth": "^1.7.7",
     "drizzle-orm": "^0.45.3",
     "hono": "^4.13.13",
+    "motion": "^14.0.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router": "^8.4.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.62.5",
