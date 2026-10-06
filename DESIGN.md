@@ -8,7 +8,7 @@ The record of the decision is in [docs/decisions.md](docs/decisions.md).
 
 | What | Where |
 |---|---|
-| The app running | `npm install && npm run dev` in [prototypes/3-reference/](prototypes/3-reference/). The prototype is no longer deployed |
+| The app running | `npm install && npm run dev` in the repo root, after the setup in [README.md](README.md). Deployed at https://bargainu.sidequest-club.workers.dev |
 | Screenshots of every screen, desktop and phone | [docs/design/reference/](docs/design/reference/README.md) |
 | Reference implementation | [prototypes/3-reference/](prototypes/3-reference/) |
 | Tokens, the only place values are defined | [src/styles/tokens.css](src/styles/tokens.css) |
