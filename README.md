@@ -63,11 +63,26 @@ npm run dev                        # http://localhost:5173
 | `npm run build` | Typechecks and builds into `dist/` |
 | `npm run db:generate` | Writes a new migration into `drizzle/` after `worker/db/schema.ts` changes |
 | `npm run db:migrate:local` | Applies migrations to the local database |
-| `npm run db:migrate:remote` | Applies migrations to the deployed database |
+| `npm run db:migrate:remote` | Applies migrations to the deployed database. CI runs this on every merge to `main` |
 | `npm run db:seed:local` | Loads 60 sample deals into the local database. Run it again once they have ended (the longest lasts about 10 days) |
 | `npm run db:seed:remote` | Loads the sample deals into the deployed database |
 | `npm run auth:generate` | Regenerates the login tables after `worker/auth.ts` changes |
-| `npm run deploy` | Builds and deploys to Cloudflare |
+| `npm run deploy` | Builds and deploys to Cloudflare. CI runs this on every merge to `main` |
+
+## Deploying
+
+Merging a pull request into `main` deploys it. The `deploy` job in
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs after the checks pass: it applies any
+new database migrations to the deployed database, then builds and deploys the Worker. Nobody needs
+to run a command.
+
+- If a migration fails, the job stops and the previous version of the app keeps running. Fix the
+  migration in a new pull request.
+- The database changes a moment before the code does, so the previous version of the app has to
+  keep working on the new schema. Add tables and columns in one pull request and remove the old
+  ones in a later one, once nothing uses them.
+- The job signs in with the `CLOUDFLARE_API_TOKEN` repository secret: an API token for the team
+  Cloudflare account with the Workers edit and D1 edit permissions.
 
 Where things are: `src/` is the React app, `worker/` is the API, `drizzle/` holds the database
 migrations, and `prototypes/` holds the three design prototypes that were compared.
