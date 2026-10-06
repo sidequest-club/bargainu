@@ -11,7 +11,7 @@ on:
       pages:
         description: Pages per keyword (30 items each)
         required: true
-        default: "1"
+        default: '1'
 
 jobs:
   rakuten:
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.12'
       - name: Collect from Rakuten
         env:
           RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
