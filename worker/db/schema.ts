@@ -1,10 +1,10 @@
 import { sql } from 'drizzle-orm'
 import { index, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { user } from './auth-schema'
-import { CATEGORIES, CHANNELS, STORES } from './taxonomy'
+import { user } from './auth-schema.ts'
+import { CATEGORIES, CHANNELS, STORES } from './taxonomy.ts'
 
 // Tables Better Auth needs. Regenerate with `npm run auth:generate` after changing worker/auth.ts.
-export * from './auth-schema'
+export * from './auth-schema.ts'
 
 // App tables. The columns follow what the screens show, which is the prototype's dataset.
 // Expect them to change when the collector's data model is agreed.

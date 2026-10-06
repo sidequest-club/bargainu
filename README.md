@@ -59,6 +59,7 @@ npm run dev                        # http://localhost:5173
 |---|---|
 | `npm run dev` | Runs the app and the API together, with a local database |
 | `npm run check` | Format check, lint and typecheck. Run before opening a pull request |
+| `npm test` | Runs the tests (`scripts/*.test.ts`) with Node's built-in test runner |
 | `npm run format` | Formats the code with Oxfmt |
 | `npm run build` | Typechecks and builds into `dist/` |
 | `npm run db:generate` | Writes a new migration into `drizzle/` after `worker/db/schema.ts` changes |
@@ -66,8 +67,21 @@ npm run dev                        # http://localhost:5173
 | `npm run db:migrate:remote` | Applies migrations to the deployed database |
 | `npm run db:seed:local` | Loads 60 sample deals into the local database. Run it again once they have ended (the longest lasts about 10 days) |
 | `npm run db:seed:remote` | Loads the sample deals into the deployed database |
+| `npm run dev:session` | Signs a test user in to the local app without Google. See below |
 | `npm run auth:generate` | Regenerates the login tables after `worker/auth.ts` changes |
 | `npm run deploy` | Builds and deploys to Cloudflare |
+
+### A signed-in session without Google
+
+Google is the only way to sign in, and a Google sign-in cannot be scripted. For automated tests
+and coding agents, `npm run dev:session` writes a test user (`dev-session@example.invalid`) and a
+session into the local database and saves the cookie to `.dev-session/storage-state.json`, a
+Playwright `storageState` file. It also prints a `document.cookie` line for browser tools that
+can only run page script. The file is gitignored and holds a live token for your local database.
+
+The app has no sign-in shortcut; the session is made by the script. It refuses to run unless
+`BETTER_AUTH_URL` in `.dev.vars` is an `http://localhost` address, and it only ever writes to the
+local database.
 
 Where things are: `src/` is the React app, `worker/` is the API, `drizzle/` holds the database
 migrations, and `prototypes/` holds the three design prototypes that were compared.
