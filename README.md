@@ -51,6 +51,7 @@ Needs Node 24 or newer.
 npm install
 cp .dev.vars.example .dev.vars     # then fill in the values, see the comments in the file
 npm run db:migrate:local           # creates the local database
+npm run db:seed:local              # fills it with sample deals
 npm run dev                        # http://localhost:5173
 ```
 
@@ -63,6 +64,8 @@ npm run dev                        # http://localhost:5173
 | `npm run db:generate` | Writes a new migration into `drizzle/` after `worker/db/schema.ts` changes |
 | `npm run db:migrate:local` | Applies migrations to the local database |
 | `npm run db:migrate:remote` | Applies migrations to the deployed database |
+| `npm run db:seed:local` | Loads 60 sample deals into the local database. Run it again once they have ended (the longest lasts about 10 days) |
+| `npm run db:seed:remote` | Loads the sample deals into the deployed database |
 | `npm run auth:generate` | Regenerates the login tables after `worker/auth.ts` changes |
 | `npm run deploy` | Builds and deploys to Cloudflare |
 

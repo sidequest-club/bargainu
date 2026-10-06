@@ -1,57 +1,114 @@
-import { useEffect, useState } from 'react'
-import { api } from './lib/api'
-import { authClient } from './lib/auth-client'
+import { useEffect } from 'react'
+import type { ReactNode } from 'react'
+import { Link, Route, Routes, useLocation } from 'react-router'
+import { CatalogProvider, StoreProvider } from './components/Providers'
+import { EmptyState, Footer, Nav, TabBar, Ticker, Toast } from './components/Shell'
+import { useCatalog } from './lib/catalog'
+import { Browse } from './pages/Browse'
+import { DealPage } from './pages/Deal'
+import { Favorites } from './pages/Favorites'
+import { Home } from './pages/Home'
+import { Login } from './pages/Login'
 
-type Health = 'checking' | 'ok' | 'down'
-
-// Starter page for the initial project setup. It proves the three pieces talk to each
-// other (page, API, database) and that Google sign-in is wired. Replace it with the real
-// Home screen from prototypes/3-reference.
-export default function App() {
-  const [health, setHealth] = useState<Health>('checking')
-  const { data: session, isPending } = authClient.useSession()
-
-  useEffect(() => {
-    api.health
-      .$get()
-      .then((res) => setHealth(res.ok ? 'ok' : 'down'))
-      .catch(() => setHealth('down'))
-  }, [])
-
+/** Stands in for a screen that needs deals while they load, fail to load, or there are none. */
+function Pile({ children }: { children: ReactNode }) {
+  const { status, deals, reload } = useCatalog()
+  if (status === 'ready' && deals.length > 0) return children
   return (
-    <main className="wrap setup">
-      <p className="eyebrow">Initial project setup</p>
-      <h1 className="shout">Bargainu</h1>
-      <p className="aside">Every sale, sniffed out. Nothing to sniff yet.</p>
-
-      <dl className="setup__status">
-        <div className="setup__row">
-          <dt>API and database</dt>
-          <dd>
-            <span className="tag" data-state={health}>
-              {health === 'checking' ? 'Checking' : health === 'ok' ? 'Connected' : 'Not reachable'}
-            </span>
-          </dd>
-        </div>
-        <div className="setup__row">
-          <dt>Signed in as</dt>
-          <dd>{isPending ? 'Checking' : (session?.user.name ?? 'Nobody')}</dd>
-        </div>
-      </dl>
-
-      {session ? (
-        <button type="button" className="btn btn--paper" onClick={() => authClient.signOut()}>
-          Sign out
-        </button>
+    <div className="wrap page">
+      {status === 'loading' ? (
+        <EmptyState mood="sniff" title="Sniffing through the pile">
+          <output>The dog is fetching today's deals.</output>
+        </EmptyState>
+      ) : status === 'error' ? (
+        <EmptyState title="The pile is out of reach">
+          <p role="alert">The deals did not load. Check your connection and try again.</p>
+          <button type="button" className="btn btn--cta" onClick={reload}>
+            Try again
+          </button>
+        </EmptyState>
       ) : (
-        <button
-          type="button"
-          className="btn btn--cta"
-          onClick={() => authClient.signIn.social({ provider: 'google' })}
-        >
-          Sign in with Google
-        </button>
+        <EmptyState title="The pile is empty">
+          <p>No store has a live deal right now. The dog checks again soon.</p>
+        </EmptyState>
       )}
-    </main>
+    </div>
+  )
+}
+
+function NotFound() {
+  return (
+    <div className="wrap page">
+      <EmptyState title="Wrong pile">
+        <p>There is no page at this address.</p>
+        <Link to="/" className="btn btn--cta">
+          Back to the front page
+        </Link>
+      </EmptyState>
+    </div>
+  )
+}
+
+/** Scrolls to the top when the path changes, but not when only the query does. */
+function useScrollReset(path: string) {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [path])
+}
+
+export default function App() {
+  const { pathname } = useLocation()
+  useScrollReset(pathname)
+  return (
+    <CatalogProvider>
+      <StoreProvider>
+        <a href="#main" className="skip">
+          Skip to content
+        </a>
+        <Ticker />
+        <Nav />
+        <main id="main" tabIndex={-1}>
+          <Routes>
+            <Route
+              index
+              element={
+                <Pile>
+                  <Home />
+                </Pile>
+              }
+            />
+            <Route
+              path="browse"
+              element={
+                <Pile>
+                  <Browse />
+                </Pile>
+              }
+            />
+            <Route
+              path="deal/:id"
+              element={
+                <Pile>
+                  <DealPage />
+                </Pile>
+              }
+            />
+            <Route
+              path="favorites"
+              element={
+                <Pile>
+                  <Favorites />
+                </Pile>
+              }
+            />
+            <Route path="login" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+        <TabBar />
+        <Toast />
+      </StoreProvider>
+    </CatalogProvider>
   )
 }

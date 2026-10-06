@@ -12,12 +12,12 @@ The record of the decision is in [docs/decisions.md](docs/decisions.md).
 | Screenshots of every screen, desktop and phone | [docs/design/reference/](docs/design/reference/README.md) |
 | Reference implementation | [prototypes/3-reference/](prototypes/3-reference/) |
 | Tokens, the only place values are defined | [src/styles/tokens.css](src/styles/tokens.css) |
-| Shared components (card, sticker, dog, marquee, shell) | [prototypes/3-reference/src/components/](prototypes/3-reference/src/components/) |
+| Shared components (card, sticker, dog, marquee, shell) | [src/components/](src/components/) |
+| Screens | [src/pages/](src/pages/) |
 | How the design was produced | [docs/design/recipes/3-reference.md](docs/design/recipes/3-reference.md) |
 
-The tokens and base styles now live in the app (`src/styles/`). The prototype keeps its own
-copy as a record; change the app's copy. The component path still points into the prototype.
-When a component is ported into the app, update its path in this table in the same pull request.
+The tokens, styles, components and screens now live in the app (`src/`). The prototype keeps its
+own copy as a record; change the app's copy.
 
 ## How to change the design
 
@@ -109,7 +109,7 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 
 - CSS: `--dur-fast` 120ms for hover and press, `--dur-base` 200ms, `--dur-slow` 420ms for the filter sheet;
   `--ease-out` by default, `--ease-pop` for small playful moves (logo dog, favourite, toast).
-- JS motion reads unitless tokens through `tokenNumber()` in `prototypes/3-reference/src/lib/tokens.ts`:
+- JS motion reads unitless tokens through `tokenNumber()` in `src/lib/tokens.ts`:
   `--marquee-ticker`, `--marquee-band`, `--marquee-hover-factor`, `--rotate-interval`, `--rotate-hold`,
   `--stagger`, `--reveal-stagger`, `--count-duration`, `--spring-stiffness`, `--spring-damping`, `--settle-ms`.
 - Marquees slow to a quarter speed on hover so their links can be clicked.
@@ -152,18 +152,21 @@ button, Escape to close and a "Show N deals" action. Controls: search input, seg
 channel, range slider for minimum discount, checkbox chips for category and store (checked = ink fill),
 a scrolling checklist for brand, two selects for prefecture then city. City is disabled until a
 prefecture is picked; the whole location group is disabled for "Online". Active filters repeat above
-the grid as ink chips with a remove cross, followed by "Clear all". Filter state lives in the URL hash query.
+the grid as ink chips with a remove cross, followed by "Clear all". Filter state lives in the URL query string.
 
 **Nav**: floating pill bar (`.nav`), sticky under the ticker. Logo, three links, sign-in or the user chip.
 The current item is a yellow pill with an outline. Under 640px the links move to a floating bottom tab bar
 with four tabs and a favourites count pip.
 
 **Form** (`.form-card`): surface card with thick outline and `--shadow-lg`. Labels are small caps above the field.
-Inputs are 44px, `--r-md`, 2px outline. The one-click demo button is the yellow primary; the email form's
-submit is the ink button. Hints sit below in `--text-sm` muted.
+Inputs are 44px, `--r-md`, 2px outline. Sign-in is one yellow button, "Continue with Google"; there is no
+email form, and Google is named in plain text with no logo. Hints sit below in `--text-sm` muted. A sign-in
+that failed is one bold line in `--color-urgent` above the button (`.form-card__error`).
 
 **Empty state** (`EmptyState`): dashed outline box on surface, the dog (sleepy when there is nothing,
 sniffing when the user needs to sign in), an Anton title, one or two sentences, one yellow button.
+The same box stands in for a screen while its data loads (sniffing dog, no button), when the data did not
+load (sleepy dog, "Try again") and when there are no deals at all.
 
 **Colour block** (`.block--yellow`, `.block--blue`, `.panel--pink`, `.panel--green`): flat fill with a thick
 ink rule. Use one to change section on Home. Do not use them on Browse or Deal detail.
