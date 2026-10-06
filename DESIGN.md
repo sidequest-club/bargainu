@@ -8,7 +8,7 @@ The record of the decision is in [docs/decisions.md](docs/decisions.md).
 
 | What | Where |
 |---|---|
-| The app running | https://bargainu-prototypes.asakurayuta.workers.dev/3/ |
+| The app running | `npm install && npm run dev` in [prototypes/3-reference/](prototypes/3-reference/). The prototype is no longer deployed |
 | Screenshots of every screen, desktop and phone | [docs/design/reference/](docs/design/reference/README.md) |
 | Reference implementation | [prototypes/3-reference/](prototypes/3-reference/) |
 | Tokens, the only place values are defined | [src/styles/tokens.css](src/styles/tokens.css) |

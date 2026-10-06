@@ -1,6 +1,8 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "bargainu",
+  // The team's Cloudflare account (Sidequest Club), so no command lands on a personal one.
+  "account_id": "23aad27a2abddb9d42b66c967c78c815",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // Better Auth needs AsyncLocalStorage on Workers.
@@ -14,8 +16,7 @@
     {
       "binding": "DB",
       "database_name": "bargainu",
-      // Replace with the id from `npx wrangler d1 create bargainu` in the team account.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "daf9bd58-ebeb-4b37-822e-fb04d05af1f1",
       "migrations_dir": "drizzle",
     },
   ],

@@ -5,8 +5,7 @@ Screenshots of the chosen design (prototype 3, "Chirashi"), taken on 2026-10-04 
 demo account and email form gave way to Google sign-in. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
 these show the result. A new or changed screen should look like it belongs next to these.
 
-The prototype's screens are live at https://bargainu-prototypes.asakurayuta.workers.dev/3/. The
-Route column is the prototype's hash route; the app uses the same paths without the `#`.
+To see the same screens running, run `npm install && npm run dev` in `prototypes/3-reference`.
 
 | Screen | Desktop, 1440 wide | Phone, 390 wide | Route |
 |---|---|---|---|

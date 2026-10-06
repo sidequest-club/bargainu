@@ -100,12 +100,12 @@ Recorded in [docs/decisions.md](docs/decisions.md).
 
 | Topic | Decision |
 |---|---|
-| UI/UX | Prototype 3, "Chirashi": https://bargainu-prototypes.asakurayuta.workers.dev/3/ |
+| UI/UX | Prototype 3, "Chirashi": [docs/design/reference/](docs/design/reference/README.md) |
 | Git branching | GitHub Flow |
 | Project management | Linear |
 | Hosting | Cloudflare |
 | Tech stack | Vite + React, Hono, D1, Better Auth, all on Cloudflare |
 
 - Design system: [DESIGN.md](DESIGN.md), with screenshots in [docs/design/reference/](docs/design/reference/README.md)
-- The three prototypes that were compared: https://bargainu-prototypes.asakurayuta.workers.dev, code in [prototypes/](prototypes/)
+- The three prototypes that were compared: code in [prototypes/](prototypes/). They are no longer deployed.
 - How each prototype was built: [docs/design/recipes/](docs/design/recipes/README.md)
