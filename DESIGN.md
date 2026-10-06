@@ -11,13 +11,13 @@ The record of the decision is in [docs/decisions.md](docs/decisions.md).
 | The app running | https://bargainu-prototypes.asakurayuta.workers.dev/3/ |
 | Screenshots of every screen, desktop and phone | [docs/design/reference/](docs/design/reference/README.md) |
 | Reference implementation | [prototypes/3-reference/](prototypes/3-reference/) |
-| Tokens, the only place values are defined | [prototypes/3-reference/src/styles/tokens.css](prototypes/3-reference/src/styles/tokens.css) |
+| Tokens, the only place values are defined | [src/styles/tokens.css](src/styles/tokens.css) |
 | Shared components (card, sticker, dog, marquee, shell) | [prototypes/3-reference/src/components/](prototypes/3-reference/src/components/) |
 | How the design was produced | [docs/design/recipes/3-reference.md](docs/design/recipes/3-reference.md) |
 
-The token and component paths point into the prototype until the real app is scaffolded. When
-`tokens.css` and the components move into the app, update the paths in this table in the same
-pull request.
+The tokens and base styles now live in the app (`src/styles/`). The prototype keeps its own
+copy as a record; change the app's copy. The component path still points into the prototype.
+When a component is ported into the app, update its path in this table in the same pull request.
 
 ## How to change the design
 

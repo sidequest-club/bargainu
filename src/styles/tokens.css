@@ -1,0 +1,259 @@
+/*
+ * Bargainu prototype 3, "Chirashi". Every design token lives here.
+ * Nothing outside this file may use a raw colour or a raw length.
+ * Media query widths are the one exception (custom properties cannot be used there):
+ * 640px = phone to tablet, 960px = tablet to desktop.
+ */
+
+:root {
+  /* ---------- Colour: palette ---------- */
+  --paper: #fbf1dc; /* cream flyer stock, the page */
+  --paper-deep: #f1e2bf; /* photo wells, pressed states */
+  --card: #fffcf4; /* cut-out paper pieces */
+  --ink: #16120e; /* outlines, text, hard shadows */
+  --ink-soft: #51483c; /* secondary text on paper */
+  --red: #dd2016; /* flyer red: prices, big stickers */
+  --red-ink: #7a0d07;
+  --yellow: #ffd60a; /* flyer yellow: primary action, mid stickers */
+  --yellow-ink: #5e4500;
+  --pink: #ff9ec6; /* band and sticker colour */
+  --pink-ink: #8c1049;
+  --green: #74d68a; /* band and sticker colour */
+  --green-ink: #0c4a22;
+  --blue: #8ec9ff; /* band and sticker colour */
+  --blue-ink: #0a3a78;
+
+  /* ---------- Colour: roles ---------- */
+  --color-bg: var(--paper);
+  --color-surface: var(--card);
+  --color-well: var(--paper-deep);
+  --color-text: var(--ink);
+  --color-text-muted: var(--ink-soft);
+  --color-line: var(--ink);
+  --color-price: var(--red);
+  --color-cta: var(--yellow);
+  --color-cta-text: var(--ink);
+  --color-urgent: var(--red);
+  --color-focus: var(--blue-ink);
+  --color-focus-on-dark: var(--yellow);
+  --color-inverse-bg: var(--ink);
+  --color-inverse-text: var(--paper);
+  --color-scrim: rgb(22 18 14 / 0.55);
+  --color-tape: rgb(255 214 10 / 0.82);
+
+  /* ---------- Type: families ---------- */
+  --font-display: 'Anton', 'Arial Narrow', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  --font-serif: 'Fraunces Variable', 'Hiragino Mincho ProN', 'Noto Serif JP', serif;
+  --font-body: 'Hanken Grotesk Variable', 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
+  --serif-soft: 'SOFT' 100, 'wght' 900; /* the chunky, rounded cut of Fraunces */
+  --serif-soft-mid: 'SOFT' 100, 'wght' 600;
+
+  /* ---------- Type: scale ---------- */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --text-title: clamp(2.25rem, 5vw, 4rem); /* page titles on calm screens */
+  --text-section: clamp(2.75rem, 8vw, 6.5rem); /* section shouts on Home */
+  --text-hero: clamp(3.25rem, 9.2vw, 8.75rem);
+  --text-hero-serif: clamp(1.75rem, 4.4vw, 4rem);
+  --text-band: clamp(2rem, 5.2vw, 4.5rem);
+  --text-price-card: clamp(1.375rem, 2.2vw, 1.75rem);
+  --text-price-detail: clamp(3rem, 7vw, 5.5rem);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --weight-black: 900;
+
+  --lh-none: 1;
+  --lh-wordmark: 0.8;
+  --lh-display: 0.92;
+  --lh-tight: 1.1;
+  --lh-snug: 1.3;
+  --lh-body: 1.55;
+
+  --track-tight: -0.02em;
+  --track-display: 0.01em;
+  --track-label: 0.08em;
+  --track-none: 0;
+
+  /* ---------- Space (4px base) ---------- */
+  --s-0: 0px;
+  --s-px: 1px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+  --s-32: 128px;
+
+  /* ---------- Layout ---------- */
+  --page-max: 1320px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --measure: 34rem;
+  --sidebar-w: 272px;
+  --form-w: 26rem;
+  --card-min: 208px;
+  --card-min-phone: 150px;
+  --tile-min: 152px;
+  --tile-min-phone: 104px;
+  --thumb: 72px;
+  --thumb-lg: 88px;
+  --tap: 44px; /* minimum hit target */
+  --icon-sm: 16px;
+  --icon: 20px;
+  --icon-lg: 28px;
+  --nav-h: 60px;
+  --tabbar-h: 64px;
+  --ticker-h: 36px;
+  --ticker-dot: 20px;
+  --band-pad: var(--s-3);
+  --band-overlap: calc(var(--s-4) * -1);
+  --band-bleed: 6vw; /* how far a tilted band runs past each edge */
+  --sheet-max-h: 86dvh;
+  --brand-list-h: 216px;
+  --range-h: 12px;
+  --range-thumb: 26px;
+  --check: 18px;
+
+  /* dog mark */
+  --dog-xs: 34px;
+  --dog-sm: 56px;
+  --dog-md: 120px;
+  --dog-lg: 200px;
+  --dog-xl: clamp(180px, 26vw, 320px);
+  --dog-line-xs: 5px; /* thicker strokes so the mark holds at logo size */
+
+  /* starburst stickers */
+  --sticker-sm: 58px;
+  --sticker-md: 80px;
+  --sticker-lg: clamp(112px, 15vw, 168px);
+  --sticker-text-sm: 1.125rem;
+  --sticker-text-md: 1.625rem;
+  --sticker-text-lg: clamp(2.25rem, 4.6vw, 3.5rem);
+  --sticker-off-sm: 0.5625rem;
+  --sticker-off-md: 0.6875rem;
+  --sticker-off-lg: clamp(0.875rem, 1.4vw, 1.125rem);
+  --sticker-inset: calc(var(--s-2) * -1);
+  --sticker-nudge: -0.02; /* optical centring of the number, as a share of sticker size */
+  --sticker-pct: 0.6em; /* the % sign relative to the number */
+  --sticker-hang-collage: -0.3; /* how far a sticker hangs off its piece, as a share of its size */
+  --sticker-hang-detail-y: -0.14;
+  --sticker-hang-detail-x: -0.08;
+  --tape-hang: -0.6;
+  --spark-hang-y: -0.35;
+  --spark-hang-x: -0.6;
+
+  /* hero collage */
+  --collage-ratio: 10 / 13;
+  --collage-max: 540px;
+  --collage-card-a: 56%;
+  --collage-card-b: 44%;
+  --collage-card-c: 38%;
+  --collage-a-x: 0%;
+  --collage-a-y: 2%;
+  --collage-b-x: 5%;
+  --collage-b-y: 10%;
+  --collage-c-x: 18%;
+  --collage-c-y: 0%;
+  --collage-dog-x: 4%;
+  --collage-dog-y: 0%;
+  --collage-arrow-x: -15%;
+  --collage-arrow-y: 64%;
+  --hero-cols: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  --hero-clip-pad: 0.08em; /* room for Anton's tall caps inside clipped reveal boxes */
+  --tile-cols-phone: 2;
+  --tile-cols-tablet: 4;
+  --tile-cols-desktop: 6;
+  --duo-cols: 2;
+  --login-min-h: 680px;
+  --tape-w: 84px;
+  --tape-h: 26px;
+  --doodle-underline-h: 0.32em;
+  --doodle-spark: 0.9em;
+
+  /* ---------- Outline, radius, elevation ---------- */
+  --line: 2px;
+  --line-thick: 3px;
+  --border: var(--line) solid var(--color-line);
+  --border-thick: var(--line-thick) solid var(--color-line);
+  --border-dashed: var(--line) dashed var(--color-line);
+
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  /* Elevation is a hard, flat offset in ink. Never blurred, never grey. */
+  --shadow-sm: 2px 2px 0 var(--ink);
+  --shadow-md: 4px 4px 0 var(--ink);
+  --shadow-lg: 7px 7px 0 var(--ink);
+  --shadow-none: 0 0 0 var(--ink);
+  --lift: -2px; /* hover: the piece lifts off the page */
+  --press: 2px; /* active: the piece is pushed flat */
+  --press-deep: 4px;
+
+  /* ---------- Tilt ---------- */
+  --tilt-sticker: -9deg;
+  --tilt-sticker-alt: 7deg;
+  --tilt-band-a: -3.2deg;
+  --tilt-band-b: 2.4deg;
+  --tilt-band-c: -1.4deg;
+  --tilt-collage-a: -5deg;
+  --tilt-collage-b: 6deg;
+  --tilt-collage-c: -3deg;
+  --tilt-tape: -12deg;
+  --tilt-word: -2deg;
+  --tilt-dog: -6deg;
+
+  /* ---------- Motion ---------- */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 420ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Unitless values below are read from JS (src/lib/tokens.ts) and passed to motion. */
+  --marquee-ticker: 2.2; /* percent of one loop per second */
+  --marquee-band: 3;
+  --marquee-hover-factor: 0.25;
+  --rotate-interval: 3000; /* ms between hero words */
+  --stagger: 0.03; /* s between characters */
+  --reveal-stagger: 0.09; /* s between words */
+  --count-duration: 0.9; /* s for number tickers */
+  --spring-stiffness: 260;
+  --spring-damping: 24;
+  --toast-ms: 3200;
+  /* Entrance animations are swapped for their settled result after this long, so a throttled
+     tab or a headless screenshot can never be left showing a half-revealed headline or number. */
+  --settle-ms: 1600;
+  --rotate-hold: 5200; /* ms the first hero word stays before rotation starts */
+
+  /* ---------- Layers ---------- */
+  --z-raised: 2;
+  --z-sticker: 3;
+  --z-nav: 50;
+  --z-sheet: 60;
+  --z-toast: 70;
+
+  /* ---------- Misc ---------- */
+  --opacity-disabled: 0.45;
+  --opacity-quiet: 0.72;
+  --opacity-tape: 0.88;
+  --clamp-title: 2;
+  --ratio-photo: 1 / 1;
+  --cols-top: 4;
+  --strike: var(--line);
+}

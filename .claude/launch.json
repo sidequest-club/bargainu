@@ -2,21 +2,54 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"],
+      "port": 5173
+    },
+    {
       "name": "proto-1",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "prototypes/1-default", "run", "dev", "--", "--port", "5171", "--strictPort"],
+      "runtimeArgs": [
+        "--prefix",
+        "prototypes/1-default",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5171",
+        "--strictPort"
+      ],
       "port": 5171
     },
     {
       "name": "proto-2",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "prototypes/2-impeccable-taste", "run", "dev", "--", "--port", "5172", "--strictPort"],
+      "runtimeArgs": [
+        "--prefix",
+        "prototypes/2-impeccable-taste",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5172",
+        "--strictPort"
+      ],
       "port": 5172
     },
     {
       "name": "proto-3",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "prototypes/3-reference", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "--prefix",
+        "prototypes/3-reference",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
       "port": 5173
     },
     {

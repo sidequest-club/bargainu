@@ -7,8 +7,9 @@ Bargainu has a chosen design, called "Chirashi". Before creating or changing any
 1. Read [DESIGN.md](DESIGN.md). It is the source of truth for how the app looks and behaves.
 2. Look at the screenshots in [docs/design/reference/](docs/design/reference/README.md) for the
    screen you are touching, or the closest one. Your result should look like it belongs with them.
-3. Reuse the reference implementation in [prototypes/3-reference/](prototypes/3-reference/):
-   its tokens (`src/styles/tokens.css`) and its components (`src/components/`).
+3. Use the app's tokens and base styles in `src/styles/`. For a screen or component that is not
+   in the app yet, port it from the reference implementation in
+   [prototypes/3-reference/](prototypes/3-reference/) (`src/components/`, `src/pages/`).
 
 Rules:
 
@@ -22,6 +23,14 @@ Rules:
   If the look changed on purpose, replace the screenshots.
 - `prototypes/1-default` and `prototypes/2-impeccable-taste` were not chosen. Do not copy their
   styles.
+
+## App layout
+
+- `src/` is the React app (Vite). `worker/` is the API (Hono on a Cloudflare Worker), served
+  under `/api`. `worker/db/schema.ts` is the Drizzle schema; migrations are generated into
+  `drizzle/`.
+- Run `npm run check` (format, lint, typecheck) before opening a pull request. Setup and the
+  other commands are in [README.md](README.md).
 
 ## Git
 
