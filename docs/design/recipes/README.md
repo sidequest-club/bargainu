@@ -48,9 +48,9 @@ cd prototypes
 npx wrangler deploy    # uploads dist/ as static assets, configured in wrangler.jsonc
 ```
 
-The deployed site is https://bargainu-prototypes.asakurayuta.workers.dev (Yuta's Cloudflare account,
-Workers static assets). `wrangler pages` was not used: wrangler 4.142 now hands Pages projects over
-to Workers.
+The site was deployed to Yuta's Cloudflare account as Workers static assets, and was removed on
+2026-10-06 after the team chose prototype 3. `wrangler pages` was not used: wrangler 4.142 now
+hands Pages projects over to Workers.
 
 Each prototype keeps its sign-in and favorites under its own `localStorage` keys
 (`bargainu.p1.*`, `bargainu.p2.*`, `bargainu.p3.*`), because all three are served from one origin.
