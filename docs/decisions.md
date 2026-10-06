@@ -54,21 +54,22 @@ does, and it also gives us Workers, Pages and R2 at low cost.
 **Options considered:** Vercel (the original proposal in the README) and Cloudflare. Agreed in
 the #brainstorming channel on Slack.
 
-**What follows:** the prototypes are still on Yuta's personal Cloudflare account and move to the
-team account during the initial project setup. The backend and database are not decided yet.
+**What follows:** the prototypes were on Yuta's personal Cloudflare account and were going to move
+to the team account. They were retired instead on 2026-10-06, once prototype 3 was being ported
+into the app: the deployment was removed and only the app is deployed to the team account. The
+backend and database are not decided yet.
 
 ## 3. UI/UX: prototype 3, "Chirashi" (2026-10-05)
 
 **Decision:** the app is built on prototype 3, the reference-driven design in a Japanese sale-flyer
 style.
 
-- Live: https://bargainu-prototypes.asakurayuta.workers.dev/3/
 - Design system: [DESIGN.md](../DESIGN.md)
 - Screenshots of every screen: [docs/design/reference/](design/reference/README.md)
 - Code: [prototypes/3-reference/](../prototypes/3-reference/)
 
-**Options considered:** three prototypes with the same screens and data, compared at
-https://bargainu-prototypes.asakurayuta.workers.dev.
+**Options considered:** three prototypes with the same screens and data, compared side by side on
+a deployed page that has since been removed. Their code is in [prototypes/](../prototypes/).
 
 | # | Recipe | Outcome |
 |---|---|---|
