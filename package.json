@@ -13,11 +13,13 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "check": "npm run format:check && npm run lint && npm run typecheck",
+    "test": "node --test \"scripts/**/*.test.ts\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "db:seed:local": "node scripts/seed.ts && wrangler d1 execute DB --local --file node_modules/.tmp/seed.sql",
     "db:seed:remote": "node scripts/seed.ts && wrangler d1 execute DB --remote --file node_modules/.tmp/seed.sql",
+    "dev:session": "node scripts/dev-session.ts",
     "auth:generate": "npx --yes auth@latest generate --config scripts/auth.generate.ts --output worker/db/auth-schema.ts --yes && oxfmt worker/db/auth-schema.ts"
   },
   "dependencies": {

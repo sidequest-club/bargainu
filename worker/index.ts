@@ -1,8 +1,12 @@
+import { env } from 'cloudflare:workers'
 import { and, desc, eq, gt, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { auth } from './auth'
-import { db } from './db'
-import { deals, favorites } from './db/schema'
+import { createAuth } from './auth.ts'
+import { createDb } from './db/index.ts'
+import { deals, favorites } from './db/schema.ts'
+
+const db = createDb(env.DB)
+const auth = createAuth(env, db)
 
 const app = new Hono()
   .basePath('/api')

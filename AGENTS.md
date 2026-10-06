@@ -29,6 +29,8 @@ Rules:
 - `src/` is the React app (Vite). `worker/` is the API (Hono on a Cloudflare Worker), served
   under `/api`. `worker/db/schema.ts` is the Drizzle schema; migrations are generated into
   `drizzle/`.
+- To see a signed-in screen locally (Favorites, saving a deal), run `npm run dev:session` and
+  load the cookie it prints. Do not add a sign-in shortcut to the app.
 - Run `npm run check` (format, lint, typecheck) before opening a pull request. Setup and the
   other commands are in [README.md](README.md).
 
