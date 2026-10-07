@@ -95,7 +95,8 @@ How it works for us:
    `feat/top-discounts`, `fix/login-redirect`.
 3. Push the branch and open a pull request.
 4. After review, merge the pull request into `main` and delete the branch.
-5. Every merge to `main` is deployed.
+5. Every merge to `main` is deployed. GitHub Actions does it: database migrations first, then
+   the app. A failed migration stops the deploy.
 
 **Options considered:** [GitHub Flow](branching/1-github-flow.drawio.png),
 [Git Flow](branching/2-git-flow.drawio.png) and
