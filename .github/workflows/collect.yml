@@ -1,6 +1,6 @@
 name: Collect
 
-# Manual runs only for now. Add a schedule once the Worker ingest endpoint exists.
+# Manual runs only for now. Add a schedule once we agree how often to collect.
 on:
   workflow_dispatch:
     inputs:
@@ -17,7 +17,7 @@ jobs:
   rakuten:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -28,8 +28,26 @@ jobs:
           RAKUTEN_AFFILIATE_ID: ${{ secrets.RAKUTEN_AFFILIATE_ID }}
           KEYWORDS: ${{ inputs.keywords }}
           PAGES: ${{ inputs.pages }}
-        run: python collector/rakuten.py $KEYWORDS --pages "$PAGES"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: rakuten
-          path: collector/out/
+        # set -f: split KEYWORDS on spaces, but do not expand * or ? as file patterns.
+        run: |
+          set -f
+          python collector/rakuten.py $KEYWORDS --pages "$PAGES"
+      # Runs even when the collect step failed, so a partial file is still kept.
+      - name: Upload raw files to R2
+        if: always()
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # R2 does not support the checksums newer AWS CLI versions add by default.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+        run: |
+          if [ ! -d collector/out/raw ]; then
+            echo 'Nothing was collected.'
+            exit 0
+          fi
+          aws s3 cp collector/out/raw "s3://$R2_BUCKET/raw" --recursive \
+            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
