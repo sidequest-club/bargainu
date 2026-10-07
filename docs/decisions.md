@@ -40,8 +40,39 @@ Slack; Norty had not replied when this was recorded.
 - If the import step into D1 proves painful, option B is the fallback. Drizzle supports both
   databases.
 
-**Not checked yet:** whether Better Auth's Google sign-in and a collector import each fit in the
-free plan's 10 ms of CPU per request. Test both during the initial project setup.
+**CPU time, measured on the deployed Worker (2026-10-08):** the free plan allows 10 ms of CPU
+per request. The read routes fit. The Google sign-in does not.
+
+| Request | Samples | CPU ms, median | CPU ms, highest |
+|---|---|---|---|
+| `GET /api/health` | 25 | 0 | 1 |
+| `GET /api/me`, signed out | 25 | 0 | 0 |
+| `GET /api/deals`, signed out, no deals in the database | 25 | 1 | 5 |
+| `GET /api/auth/get-session`, signed out | 10 | 1 | 6 |
+| `POST /api/auth/sign-in/social`, the step before Google | 15 | 3 | 9 |
+| `GET /api/auth/callback/google`, the step after Google | 2 | 21 and 32 | 32 |
+| `GET /api/auth/get-session`, signed in | 3 | 5 | 33 |
+| `GET /api/favorites`, signed in, nothing saved | 3 | 5 | 6 |
+| `POST /api/auth/sign-out` | 3 | 11 | 31 |
+
+- The callback from Google was two to three times the limit on both sign-ins. The 33 ms and 31 ms
+  readings were each the first request after the Worker had been idle.
+- No request was stopped: every one finished with outcome `ok`, and both sign-ins worked.
+  Cloudflare lets a Worker run over the limit now and then, and stops it with error 1102 if it
+  goes over consistently
+  ([limits](https://developers.cloudflare.com/workers/platform/limits/#cpu-time)). So sign-in
+  works today on that allowance. It is not something to rely on.
+- How it was measured: `npx wrangler tail bargainu --format json` prints `cpuTime` in whole
+  milliseconds for each request. Requests were sent at least a second apart, because the tail
+  drops entries when they come faster.
+- Two sign-ins is a small sample. It is enough to say the callback is over, not by how much.
+
+**Not decided yet:** what to do about sign-in being over the limit. The options are to cut the
+work the callback does, or the Workers Paid plan at $5 a month for the account. Moving the
+database to Neon (option B) would not help: waiting on the database does not count as CPU time.
+
+**Not measured yet:** `/api/deals` with real deals, saving a favourite (the deployed database
+has no deals), and a collector import (the endpoint does not exist yet).
 
 ## 4. Hosting: Cloudflare (2026-10-05)
 
