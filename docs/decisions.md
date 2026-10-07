@@ -3,6 +3,33 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
+## 6. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
+
+**Decision:** two kinds of automated test, both run by CI on every pull request.
+
+| Kind | Tool | Where |
+|---|---|---|
+| API | Vitest 4 with `@cloudflare/vitest-plugin` | `tests/api/` |
+| Browser | Playwright, Chromium only | `tests/e2e/` |
+
+**Why:** Cloudflare's Vitest integration runs the tests inside the same runtime as the deployed
+Worker, with a real local D1 built from our migrations, so a route is tested with the bindings it
+has in production and nothing is mocked. Playwright reads the `storageState` file that
+`npm run dev:session` already writes, which gives a signed-in browser without Google.
+
+**Checked against our setup:** the integration needs Vitest 4.1 or later in the 4.x line (not
+Vitest 5), and works with Vite 8 and our `wrangler.jsonc` unchanged. The package was renamed from
+`@cloudflare/vitest-pool-workers`, which is deprecated.
+
+**What follows:**
+
+- A merge to `main` is deployed only if both the `check` and `e2e` jobs pass.
+- A new or changed Worker route comes with an API test. Browser tests are kept to whole flows a
+  user depends on; they are slower and use the local database.
+- The script tests in `scripts/` stay on Node's built-in test runner.
+
+Chosen by Yuta while doing SID-26; Norty and Mizuki have not reviewed it yet.
+
 ## 5. Tech stack: all on Cloudflare (2026-10-06)
 
 **Decision:** option A of the tech stack proposal. Everything runs in the team's Cloudflare

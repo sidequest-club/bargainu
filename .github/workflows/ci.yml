@@ -19,11 +19,39 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - run: npm test
+
+  # The signed-in flow in a browser, against the local app and a local database.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Local values only. The session is written by dev:session, so Google is never called.
+      - run: |
+          cat > .dev.vars <<EOF
+          BETTER_AUTH_URL=http://localhost:5173
+          BETTER_AUTH_SECRET=$(openssl rand -base64 32)
+          GOOGLE_CLIENT_ID=ci
+          GOOGLE_CLIENT_SECRET=ci
+          EOF
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results
+          retention-days: 7
 
   # Every merge to main is deployed (docs/decisions.md, decision 2).
   deploy:
     if: github.event_name == 'push'
-    needs: check
+    needs: [check, e2e]
     runs-on: ubuntu-latest
     # One deploy at a time, in merge order. A running deploy is never cancelled part-way.
     concurrency:
