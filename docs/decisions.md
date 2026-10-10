@@ -3,6 +3,18 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
+| #   | Decision                                                                     | Date       |
+| --- | ---------------------------------------------------------------------------- | ---------- |
+| 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
+| 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
+| 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
+| 6   | [Rakuten data](#6-rakuten-data-what-the-terms-allow-2026-10-08): prices 24 h  | 2026-10-08 |
+| 5   | [Tech stack](#5-tech-stack-all-on-cloudflare-2026-10-06): all on Cloudflare   | 2026-10-06 |
+| 4   | [Hosting](#4-hosting-cloudflare-2026-10-05): Cloudflare                       | 2026-10-05 |
+| 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
+| 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
+| 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
 ## 9. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
 
 **Decision:** two kinds of automated test, both run by CI on every pull request.
@@ -29,6 +41,66 @@ Vitest 5), and works with Vite 8 and our `wrangler.jsonc` unchanged. The package
 - The script tests in `scripts/` stay on Node's built-in test runner.
 
 Chosen by Yuta while doing SID-26; Norty and Mizuki have not reviewed it yet.
+
+## 8. How we work (2026-10-10)
+
+**Decision:** we follow one written routine. It is kept in two documents on the team's Home page
+in Linear, and not repeated here:
+[Start here](https://linear.app/sidequest-club/document/start-here-where-things-go-and-how-a-week-runs-61244d237fb9)
+for where things go and how a week runs, and
+[Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
+Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, to be presented to the team on
+2026-10-13.
+
+A week has two 30-minute meetings. On Monday we plan: pick the week's work and give each task an
+owner, a reviewer, a "done when" sentence and a review label. On Friday we review: demo what got
+finished, look at what did not, and discuss anything open. Anyone can propose a rule change, and
+proposals are gone through on Friday.
+
+![How a project, a week and a pull request go](process/how-we-work.drawio.png)
+
+The one rule copied here, because coding agents read this file and not Linear, is the pull request
+label. `ai-review` is the default: the pull request merges when CI passes and the AI review is
+clean, and nobody waits for a person. Use `human-review` only when one of these is true:
+
+| Question                                    | Example                                       |
+| ------------------------------------------- | --------------------------------------------- |
+| Does a person have to see it to judge it?   | How a screen looks or feels                   |
+| Is it impossible to undo?                   | Deletes real users' data, spends money        |
+| Is it a decision for all three of us?       | Scope, a rule, what a store's terms let us do |
+
+A `human-review` pull request also waits for its named reviewer. Database changes, sign-in code,
+deploy scripts and new libraries are `ai-review` unless one of the three questions applies.
+
+**Why:** after the first week one person had created and done most of the work, the others did not
+know what to pick up, and long AI-written text hid the few things a person had to read.
+
+**What follows:**
+
+- Notion is no longer used. Rules live in the Linear documents, decisions stay in this file. This
+  replaces the last line of decision 1.
+- Linear has one project per app, starting with "Bargainu v1", with a milestone for each week.
+  Tasks about how we work carry the `team` label and belong to no project.
+- Long AI-written updates go to #p1-updates in Slack. #project-1-bargainu is for short messages.
+- A problem the AI reviewer finds outside a pull request's scope becomes a Linear issue.
+
+**Not decided yet:** which AI reviewer runs on pull requests (SID-36).
+
+## 7. v1 scope: Rakuten only (2026-10-10)
+
+**Decision:** v1 collects and shows deals from Rakuten only. A deal is an item in a sale period or
+with boosted points, which is option 1 for the deal data model (SID-17). Decided by Yuta on
+2026-10-10, to be presented to the team on 2026-10-13.
+
+**Why:** Rakuten is the only store with a working collector. Decision 6 rules out price history,
+which leaves option 1, and leaves open whether a site that also lists other stores breaks
+第10条1項(6). One store removes that question for v1.
+
+**What follows:**
+
+- The end date is fixed at 2026-11-02. If time runs short, scope is cut in this order: the
+  discount % filter, then the prefecture/city and in-store filters.
+- Amazon, Yodobashi and Yahoo! Shopping are out of v1. SID-18 and SID-33 are not needed for it.
 
 ## 6. Rakuten data: what the terms allow (2026-10-08)
 
@@ -293,4 +365,4 @@ Decided by Yuta on 2026-10-11.
 **Decision:** work is tracked in Linear, in the Sidequest Club workspace, on the free plan.
 Issue keys start with `SID-`.
 
-Collaborative documents are being tried in Notion.
+Collaborative documents were tried in Notion until 2026-10-10. See decision 8.
