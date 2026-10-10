@@ -5,7 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
-| 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels      | 2026-10-10 |
+| 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
 | 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
 | 6   | [Rakuten data](#6-rakuten-data-what-the-terms-allow-2026-10-08): prices 24 h  | 2026-10-08 |
 | 5   | [Tech stack](#5-tech-stack-all-on-cloudflare-2026-10-06): all on Cloudflare   | 2026-10-06 |
