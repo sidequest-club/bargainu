@@ -5,6 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
+| 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
 | 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
 | 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
 | 6   | [Rakuten data](#6-rakuten-data-what-the-terms-allow-2026-10-08): prices 24 h  | 2026-10-08 |
@@ -13,6 +14,33 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 | 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
 | 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
 | 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
+## 9. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
+
+**Decision:** two kinds of automated test, both run by CI on every pull request.
+
+| Kind | Tool | Where |
+|---|---|---|
+| API | Vitest 4 with `@cloudflare/vitest-plugin` | `tests/api/` |
+| Browser | Playwright, Chromium only | `tests/e2e/` |
+
+**Why:** Cloudflare's Vitest integration runs the tests inside the same runtime as the deployed
+Worker, with a real local D1 built from our migrations, so a route is tested with the bindings it
+has in production and nothing is mocked. Playwright reads the `storageState` file that
+`npm run dev:session` already writes, which gives a signed-in browser without Google.
+
+**Checked against our setup:** the integration needs Vitest 4.1 or later in the 4.x line (not
+Vitest 5), and works with Vite 8 and our `wrangler.jsonc` unchanged. The package was renamed from
+`@cloudflare/vitest-pool-workers`, which is deprecated.
+
+**What follows:**
+
+- A merge to `main` is deployed only if both the `check` and `e2e` jobs pass.
+- A new or changed Worker route comes with an API test. Browser tests are kept to whole flows a
+  user depends on; they are slower and use the local database.
+- The script tests in `scripts/` stay on Node's built-in test runner.
+
+Chosen by Yuta while doing SID-26; Norty and Mizuki have not reviewed it yet.
 
 ## 8. How we work (2026-10-10)
 
@@ -56,8 +84,7 @@ know what to pick up, and long AI-written text hid the few things a person had t
 - Long AI-written updates go to #p1-updates in Slack. #project-1-bargainu is for short messages.
 - A problem the AI reviewer finds outside a pull request's scope becomes a Linear issue.
 
-**Not decided yet:** whether merges are squashed, and branch protection on `main` (SID-22). Which
-AI reviewer runs on pull requests (SID-36).
+**Not decided yet:** which AI reviewer runs on pull requests (SID-36).
 
 ## 7. v1 scope: Rakuten only (2026-10-10)
 
@@ -197,8 +224,68 @@ Slack; Norty had not replied when this was recorded.
 - If the import step into D1 proves painful, option B is the fallback. Drizzle supports both
   databases.
 
-**Not checked yet:** whether Better Auth's Google sign-in and a collector import each fit in the
-free plan's 10 ms of CPU per request. Test both during the initial project setup.
+**CPU time, measured on the deployed Worker (2026-10-08):** the free plan allows 10 ms of CPU
+per request. The signed-out routes fit. The Google sign-in, sign-out and the first signed-in
+request after an idle spell do not.
+
+| Request | Samples | CPU ms, median | CPU ms, highest |
+|---|---|---|---|
+| `GET /api/health` | 25 | 0 | 1 |
+| `GET /api/me`, signed out | 25 | 0 | 0 |
+| `GET /api/deals`, signed out, no deals in the database | 25 | 1 | 5 |
+| `GET /api/auth/get-session`, signed out | 10 | 1 | 6 |
+| `POST /api/auth/sign-in/social`, the step before Google | 15 | 3 | 9 |
+| `GET /api/auth/callback/google`, the step after Google | 2 | 21 and 32 | 32 |
+| `GET /api/auth/get-session`, signed in | 3 | 5 | 33 |
+| `GET /api/favorites`, signed in, nothing saved | 3 | 5 | 6 |
+| `POST /api/auth/sign-out` | 3 | 11 | 31 |
+
+- The callback from Google was two to three times the limit on both sign-ins. The 33 ms and 31 ms
+  readings were each the first request after the Worker had been idle.
+- No request was stopped: every one finished with outcome `ok`, and both sign-ins worked.
+  Cloudflare lets a Worker run over the limit now and then, and stops it with error 1102 if it
+  goes over consistently
+  ([limits](https://developers.cloudflare.com/workers/platform/limits/#cpu-time)). So sign-in
+  works today on that allowance. It is not something to rely on.
+- How it was measured: `npx wrangler tail bargainu --format json` prints `cpuTime` in whole
+  milliseconds for each request. Requests were sent at least a second apart, because the tail
+  drops entries when they come faster.
+- Two sign-ins is a small sample. It is enough to say the callback is over, not by how much.
+
+**Where the callback's time goes (profiled locally, 2026-10-11):** there is no single expensive
+step to remove. Better Auth does not verify the signature of Google's ID token in the callback,
+and the only hashing is cheap: it checks one signed cookie and signs another. The work is database statements: a first
+sign-in runs 10 and a returning one 9, against 1 for the step before Google and 2 for a signed-in
+`get-session`. The CPU time is spread across Better Auth, zod and Drizzle building and reading
+them.
+
+- How it was profiled: the Worker's own auth options run in Node against a local D1, with Google's
+  token endpoint stubbed, under the V8 CPU profiler. In that setup the callback's first run in a
+  fresh process cost about five times its warm runs. That ratio is from Node on a laptop, not from
+  the Worker.
+- Cloudflare's limits page says Workers that handle authentication typically use 10 to 20 ms.
+
+**Decided (Yuta, 2026-10-11):** stay on the free plan and change no code.
+
+- Three requests went over: the callback on both sign-ins, sign-out at its median (11 ms), and the
+  first signed-in `get-session` after the Worker had been idle (33 ms). The app asks for the
+  session on every page load, so that last one is the one a signed-in visitor meets most often.
+  Once the Worker was warm, `get-session` took 5 ms.
+- All of them work today on Cloudflare's allowance for running over now and then, and every
+  route a signed-out visitor uses is under the limit.
+- Move the account to Workers Paid ($5 a month) when a request ends with outcome `exceededCpu`
+  (error 1102), or before the public launch, whichever comes first. The outcome shows in the
+  Cloudflare dashboard under the Worker's Metrics, Errors, Invocation Statuses, as "Exceeded CPU
+  Time Limits".
+- Not chosen: storing the sign-in state in a cookie (`account.storeStateStrategy`), which would
+  take 5 statements off the callback. It is unlikely to bring the callback under 10 ms by itself,
+  does nothing for `get-session` or sign-out, and was not measured on the deployed Worker. It is
+  the first thing to try if we want to stay free for longer.
+- Not chosen: moving the database to Neon (option B). It would not help, because waiting on the
+  database does not count as CPU time.
+
+**Not measured yet:** `/api/deals` with real deals, saving a favourite (the deployed database
+has no deals), and a collector import (the endpoint does not exist yet).
 
 ## 4. Hosting: Cloudflare (2026-10-05)
 
@@ -251,7 +338,7 @@ How it works for us:
 2. Start each piece of work on a short branch off `main`, named for what it does:
    `feat/top-discounts`, `fix/login-redirect`.
 3. Push the branch and open a pull request.
-4. After review, merge the pull request into `main` and delete the branch.
+4. After review, merge the pull request into `main` with a merge commit and delete the branch.
 5. Every merge to `main` is deployed. GitHub Actions does it: database migrations first, then
    the app. A failed migration stops the deploy.
 
@@ -260,8 +347,18 @@ How it works for us:
 [trunk-based development](branching/3-trunk-based.drawio.png). The editable diagrams are the
 `.drawio` files next to each image.
 
-**Not decided yet:** how many approvals a pull request needs, whether merges are squashed, and
-whether `main` gets branch protection on GitHub.
+**Protection on `main` (2026-10-11, SID-22):** GitHub enforces rule 1 and the checks.
+
+- A change reaches `main` only through a pull request. A direct push is refused, for
+  administrators too.
+- A pull request merges only when the `check`, `e2e` and `review-label` jobs pass.
+- GitHub requires no approval, because an `ai-review` pull request merges without one
+  (decision 8). GitHub does not enforce the named reviewer of a `human-review` pull request.
+- Pull requests are merged with a merge commit. Squash and rebase merging are turned off. A merge
+  commit keeps the branch's commits for `git log` and `git bisect`, and
+  `git log --first-parent main` still gives one line per pull request.
+
+Decided by Yuta on 2026-10-11.
 
 ## 1. Project management: Linear (2026-10-05)
 

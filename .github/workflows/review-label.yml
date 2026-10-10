@@ -1,0 +1,26 @@
+name: Review label
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+
+permissions: {}
+
+# A label change starts a new run, which replaces the one before it.
+concurrency:
+  group: review-label-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # Every pull request carries exactly one review label (docs/decisions.md, decision 8).
+  review-label:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          count=$(jq '[.[] | select(. == "ai-review" or . == "human-review")] | length' <<<"$LABELS")
+          if [ "$count" -ne 1 ]; then
+            echo "::error::Add exactly one label, ai-review or human-review. This pull request has $count of them."
+            exit 1
+          fi

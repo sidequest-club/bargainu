@@ -31,6 +31,9 @@ Rules:
   `drizzle/`.
 - To see a signed-in screen locally (Favorites, saving a deal), run `npm run dev:session` and
   load the cookie it prints. Do not add a sign-in shortcut to the app.
+- [docs/architecture/as-is.drawio](docs/architecture/as-is.drawio) shows how the app is connected
+  today. When a change adds or removes a Worker route, a binding, a workflow or an outside
+  service, update the diagram and export `as-is.drawio.png` again in the same pull request.
 - Run `npm run check` (format, lint, typecheck) before opening a pull request. Setup and the
   other commands are in [README.md](README.md).
 

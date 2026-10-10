@@ -59,7 +59,8 @@ npm run dev                        # http://localhost:5173
 |---|---|
 | `npm run dev` | Runs the app and the API together, with a local database |
 | `npm run check` | Format check, lint and typecheck. Run before opening a pull request |
-| `npm test` | Runs the tests (`scripts/*.test.ts`) with Node's built-in test runner |
+| `npm test` | Runs the script tests (`scripts/*.test.ts`, Node's test runner) and the API tests (`tests/api/`, Vitest inside the Workers runtime). No setup needed |
+| `npm run test:e2e` | Runs the browser tests (`tests/e2e/`, Playwright) against the local app. See below |
 | `npm run format` | Formats the code with Oxfmt |
 | `npm run build` | Typechecks and builds into `dist/` |
 | `npm run db:generate` | Writes a new migration into `drizzle/` after `worker/db/schema.ts` changes |
@@ -98,8 +99,20 @@ The app has no sign-in shortcut; the session is made by the script. It refuses t
 `BETTER_AUTH_URL` in `.dev.vars` is an `http://localhost` address, and it only ever writes to the
 local database.
 
+### Tests
+
+- **API tests** (`tests/api/`) call the Worker's routes inside the Workers runtime, with an empty
+  database that is migrated from `drizzle/` for the run. They never touch `.dev.vars` values or
+  your local database. Signed-in requests use a session written by Better Auth's test plugin.
+- **Browser tests** (`tests/e2e/`) open the local app in Chromium, signed in as the
+  `dev:session` test user. `npm run test:e2e` applies migrations, reloads the sample deals and
+  runs `dev:session` first, all on your local database, and starts `npm run dev` if it is not
+  already running. It needs `.dev.vars`, and once per machine: `npx playwright install chromium`.
+
+CI runs both on every pull request, and a merge is deployed only if they pass.
+
 Where things are: `src/` is the React app, `worker/` is the API, `drizzle/` holds the database
-migrations, and `prototypes/` holds the three design prototypes that were compared.
+migrations, `tests/` holds the API and browser tests, and `prototypes/` holds the three design prototypes that were compared.
 
 ## End of project: what we'll have built
 
@@ -135,6 +148,7 @@ Recorded in [docs/decisions.md](docs/decisions.md).
 | Hosting | Cloudflare |
 | Tech stack | Vite + React, Hono, D1, Better Auth, all on Cloudflare |
 
+- Architecture as it is today: [docs/architecture/as-is.drawio.png](docs/architecture/as-is.drawio.png). To change it, open [as-is.drawio](docs/architecture/as-is.drawio) in draw.io and export the image again.
 - Design system: [DESIGN.md](DESIGN.md), with screenshots in [docs/design/reference/](docs/design/reference/README.md)
 - The three prototypes that were compared: code in [prototypes/](prototypes/). They are no longer deployed.
 - How each prototype was built: [docs/design/recipes/](docs/design/recipes/README.md)
