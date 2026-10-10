@@ -148,6 +148,7 @@ Recorded in [docs/decisions.md](docs/decisions.md).
 | Hosting | Cloudflare |
 | Tech stack | Vite + React, Hono, D1, Better Auth, all on Cloudflare |
 
+- Architecture as it is today: [docs/architecture/as-is.drawio.png](docs/architecture/as-is.drawio.png). To change it, open [as-is.drawio](docs/architecture/as-is.drawio) in draw.io and export the image again.
 - Design system: [DESIGN.md](DESIGN.md), with screenshots in [docs/design/reference/](docs/design/reference/README.md)
 - The three prototypes that were compared: code in [prototypes/](prototypes/). They are no longer deployed.
 - How each prototype was built: [docs/design/recipes/](docs/design/recipes/README.md)
