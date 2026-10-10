@@ -21,7 +21,7 @@ in Linear, and not repeated here:
 [Start here](https://linear.app/sidequest-club/document/start-here-where-things-go-and-how-a-week-runs-61244d237fb9)
 for where things go and how a week runs, and
 [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
-Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, and presented to the team on
+Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, to be presented to the team on
 2026-10-13.
 
 A week has two 30-minute meetings. On Monday we plan: pick the week's work and give each task an
@@ -63,7 +63,7 @@ AI reviewer runs on pull requests (SID-36).
 
 **Decision:** v1 collects and shows deals from Rakuten only. A deal is an item in a sale period or
 with boosted points, which is option 1 for the deal data model (SID-17). Decided by Yuta on
-2026-10-10 and presented to the team on 2026-10-13.
+2026-10-10, to be presented to the team on 2026-10-13.
 
 **Why:** Rakuten is the only store with a working collector. Decision 6 rules out price history,
 which leaves option 1, and leaves open whether a site that also lists other stores breaks
