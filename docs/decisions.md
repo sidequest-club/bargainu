@@ -67,8 +67,68 @@ Slack; Norty had not replied when this was recorded.
 - If the import step into D1 proves painful, option B is the fallback. Drizzle supports both
   databases.
 
-**Not checked yet:** whether Better Auth's Google sign-in and a collector import each fit in the
-free plan's 10 ms of CPU per request. Test both during the initial project setup.
+**CPU time, measured on the deployed Worker (2026-10-08):** the free plan allows 10 ms of CPU
+per request. The signed-out routes fit. The Google sign-in, sign-out and the first signed-in
+request after an idle spell do not.
+
+| Request | Samples | CPU ms, median | CPU ms, highest |
+|---|---|---|---|
+| `GET /api/health` | 25 | 0 | 1 |
+| `GET /api/me`, signed out | 25 | 0 | 0 |
+| `GET /api/deals`, signed out, no deals in the database | 25 | 1 | 5 |
+| `GET /api/auth/get-session`, signed out | 10 | 1 | 6 |
+| `POST /api/auth/sign-in/social`, the step before Google | 15 | 3 | 9 |
+| `GET /api/auth/callback/google`, the step after Google | 2 | 21 and 32 | 32 |
+| `GET /api/auth/get-session`, signed in | 3 | 5 | 33 |
+| `GET /api/favorites`, signed in, nothing saved | 3 | 5 | 6 |
+| `POST /api/auth/sign-out` | 3 | 11 | 31 |
+
+- The callback from Google was two to three times the limit on both sign-ins. The 33 ms and 31 ms
+  readings were each the first request after the Worker had been idle.
+- No request was stopped: every one finished with outcome `ok`, and both sign-ins worked.
+  Cloudflare lets a Worker run over the limit now and then, and stops it with error 1102 if it
+  goes over consistently
+  ([limits](https://developers.cloudflare.com/workers/platform/limits/#cpu-time)). So sign-in
+  works today on that allowance. It is not something to rely on.
+- How it was measured: `npx wrangler tail bargainu --format json` prints `cpuTime` in whole
+  milliseconds for each request. Requests were sent at least a second apart, because the tail
+  drops entries when they come faster.
+- Two sign-ins is a small sample. It is enough to say the callback is over, not by how much.
+
+**Where the callback's time goes (profiled locally, 2026-10-11):** there is no single expensive
+step to remove. Better Auth does not verify the signature of Google's ID token in the callback,
+and the only hashing is cheap: it checks one signed cookie and signs another. The work is database statements: a first
+sign-in runs 10 and a returning one 9, against 1 for the step before Google and 2 for a signed-in
+`get-session`. The CPU time is spread across Better Auth, zod and Drizzle building and reading
+them.
+
+- How it was profiled: the Worker's own auth options run in Node against a local D1, with Google's
+  token endpoint stubbed, under the V8 CPU profiler. In that setup the callback's first run in a
+  fresh process cost about five times its warm runs. That ratio is from Node on a laptop, not from
+  the Worker.
+- Cloudflare's limits page says Workers that handle authentication typically use 10 to 20 ms.
+
+**Decided (Yuta, 2026-10-11):** stay on the free plan and change no code.
+
+- Three requests went over: the callback on both sign-ins, sign-out at its median (11 ms), and the
+  first signed-in `get-session` after the Worker had been idle (33 ms). The app asks for the
+  session on every page load, so that last one is the one a signed-in visitor meets most often.
+  Once the Worker was warm, `get-session` took 5 ms.
+- All of them work today on Cloudflare's allowance for running over now and then, and every
+  route a signed-out visitor uses is under the limit.
+- Move the account to Workers Paid ($5 a month) when a request ends with outcome `exceededCpu`
+  (error 1102), or before the public launch, whichever comes first. The outcome shows in the
+  Cloudflare dashboard under the Worker's Metrics, Errors, Invocation Statuses, as "Exceeded CPU
+  Time Limits".
+- Not chosen: storing the sign-in state in a cookie (`account.storeStateStrategy`), which would
+  take 5 statements off the callback. It is unlikely to bring the callback under 10 ms by itself,
+  does nothing for `get-session` or sign-out, and was not measured on the deployed Worker. It is
+  the first thing to try if we want to stay free for longer.
+- Not chosen: moving the database to Neon (option B). It would not help, because waiting on the
+  database does not count as CPU time.
+
+**Not measured yet:** `/api/deals` with real deals, saving a favourite (the deployed database
+has no deals), and a collector import (the endpoint does not exist yet).
 
 ## 4. Hosting: Cloudflare (2026-10-05)
 
