@@ -16,10 +16,12 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 ## 8. How we work (2026-10-10)
 
-**Decision:** we follow one written routine. The full text is the "How we work" document in
-Linear: https://linear.app/sidequest-club/document/how-we-work-7841ba32ee1b. Decided by Yuta on
-2026-10-10 after the sync on 2026-10-09, and presented to the team on 2026-10-13. Anyone can
-propose a change at a Monday meeting.
+**Decision:** we follow one written routine. It lives in the "How we work" project in Linear:
+the routine is on the project's
+[Overview page](https://linear.app/sidequest-club/project/how-we-work-f2ca83078f3d) and the rules
+are in the [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b)
+document. Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, and presented to the team
+on 2026-10-13. Anyone can propose a change at a Monday meeting.
 
 ![How a project, a week and a pull request go](process/how-we-work.drawio.png)
 

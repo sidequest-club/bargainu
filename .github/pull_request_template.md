@@ -1,4 +1,4 @@
-<!-- Add one label: ai-review or human-review. The rules are in the "How we work" doc in Linear. -->
+<!-- Add one label: ai-review or human-review. The rules are in the "Team rules" doc in Linear. -->
 
 Closes SID-
 
