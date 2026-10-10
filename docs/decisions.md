@@ -3,32 +3,90 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
-## 9. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
+## 6. Rakuten data: what the terms allow (2026-10-08)
 
-**Decision:** two kinds of automated test, both run by CI on every pull request.
+This entry records what Rakuten's rules say, read on 2026-10-08 for SID-19. The team has not
+agreed the points under "Not decided yet". The Japanese text of the terms is the binding one, so
+the article names below are the Japanese ones.
 
-| Kind | Tool | Where |
-|---|---|---|
-| API | Vitest 4 with `@cloudflare/vitest-plugin` | `tests/api/` |
-| Browser | Playwright, Chromium only | `tests/e2e/` |
+Sources:
 
-**Why:** Cloudflare's Vitest integration runs the tests inside the same runtime as the deployed
-Worker, with a real local D1 built from our migrations, so a route is tested with the bindings it
-has in production and nothing is mocked. Playwright reads the `storageState` file that
-`npm run dev:session` already writes, which gives a signed-in browser without Google.
+- [楽天ウェブサービス規約](https://webservice.rakuten.co.jp/guide/rule), last revised 2012-06-28.
+- [クレジット表示方法と注意](https://webservice.rakuten.co.jp/guide/credit).
+- Rakuten Web Service help, ご利用ルール:
+  [how often to update data](https://webservice.faq.rakuten.net/hc/ja/articles/900001974343)
+  (edited 2024-04-01),
+  [what the data may be used for](https://webservice.faq.rakuten.net/hc/ja/articles/900001974363),
+  [showing other stores' items](https://webservice.faq.rakuten.net/hc/ja/articles/900001970786),
+  [request limit](https://webservice.faq.rakuten.net/hc/ja/articles/900001974383).
 
-**Checked against our setup:** the integration needs Vitest 4.1 or later in the 4.x line (not
-Vitest 5), and works with Vite 8 and our `wrangler.jsonc` unchanged. The package was renamed from
-`@cloudflare/vitest-pool-workers`, which is deprecated.
+The terms themselves give no storage period. 第10条1項(7) allows copying only as Rakuten sets out
+separately, and 第1条4項 makes the help pages part of the rules. The periods are in the help.
+
+**Storing prices: 24 hours at most.**
+
+| Rule | What the help page says |
+|---|---|
+| Keeping data | Price and availability (価格情報、販売可能情報): 24 hours. Everything else: 3 months. Rakuten can tell us to delete it at any time. |
+| Refreshing what we show | A price or availability we display must be fetched again at least once a week. |
+| Showing the update time | If we update less often than once an hour, the update date and time goes next to the price, with the disclaimer below next to it or behind a link. |
+| Purpose | To introduce Rakuten's items and link to the item's page on Rakuten. Copying or changing the data for any other purpose is forbidden. |
+| Requests | One request a second for each application ID. Rakuten does not raise this limit. |
+
+The disclaimer, with our site name in place of ●●:
+
+> このサイトで掲載されている情報は、●●（サイト名）の作成者により運営されています。価格、販売可能情報は、変更される場合があります。購入時に楽天市場店舗（www.rakuten.co.jp）に表示されている価格が、その商品の販売に適用されます。
+
+So we cannot keep a price history and calculate price drops from it. That was option 2 for the
+deal data model (SID-17). Option 1, a deal is an item in a sale period or with boosted points,
+uses only what the API returns at the time and is allowed.
+
+**Credit: required on every site that uses the API.**
+
+- Use one of Rakuten's three credits, with their HTML unchanged. The text one is
+  `<a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>`.
+  The other two are banner images, 221 x 21 and 311 x 30.
+- It can go anywhere on the page, as long as it stays clear that the site uses Rakuten Web Service.
+- Nothing may suggest that Rakuten runs the site or is our partner (第10条1項(1)). We have to say
+  that we make and run it and are responsible for it (第11条1項).
+
+**Other rules that affect the app.**
+
+- Links (第8条4項): the part of the app that uses Rakuten data must link to Rakuten, and must not
+  link to any other website. The help page says items from other stores may sit on the same page
+  if each shows where it came from. A Rakuten deal card or page links only to Rakuten.
+- Income (第3条, 第10条1項(4) and (5)): the only income allowed from this data is Rakuten
+  Affiliate, with links made through it. No other affiliate programme on Rakuten items, and no
+  paid tool built on the API. Rakuten Affiliate's own
+  [guideline](https://affiliate.rakuten.co.jp/guideline/rule/) lists showing a list price we made
+  up next to a lower price as a misleading display.
+- Competing services (第10条1項(6)): the API may not be used for a service that competes, or might
+  compete, with the Rakuten group. Nothing says whether a site that also lists Amazon and
+  Yodobashi counts. Rakuten's help says it does not answer whether a particular use breaks the
+  terms; each developer has to judge.
+- Where the data is kept (第10条1項(9)): not anywhere that shares it with the public or with many
+  people. The R2 bucket has to stay private.
+- No press release about the app or the API without Rakuten's written consent (第19条).
 
 **What follows:**
 
-- A merge to `main` is deployed only if both the `check` and `e2e` jobs pass.
-- A new or changed Worker route comes with an API test. Browser tests are kept to whole flows a
-  user depends on; they are slower and use the local database.
-- The script tests in `scripts/` stay on Node's built-in test runner.
+- SID-17: choose option 1. Do not add price history for Rakuten.
+- Collector (SID-28, SID-25): every Rakuten price we hold has to be fetched again or deleted
+  within 24 hours. That means a run at least once a day, removing deals a run did not refresh, and
+  deleting raw files in R2 after a day or keeping them without prices.
+- Screens (SID-24): the credit, the update time and disclaimer by each Rakuten price, a label
+  showing which store a deal is from, and a line saying who runs the site.
+- `collector/samples/rakuten-item-search.json` is a real API response with prices, committed to
+  this public repository on 2026-10-06. It is past 24 hours and in a public place. Replace it with
+  invented values.
 
-Chosen by Yuta while doing SID-26; Norty and Mizuki have not reviewed it yet.
+**Not decided yet:**
+
+- Whether a multi-store deal site is acceptable under 第10条1項(6). This is a risk for the v1 scope
+  of three stores and the team has to judge it.
+- Whether we join Rakuten Affiliate. If the app earns nothing, 第3条 does not apply.
+- Whether our collector, a server sending `Referer` for a Web Application, is within the terms.
+  Not checked here.
 
 ## 5. Tech stack: all on Cloudflare (2026-10-06)
 

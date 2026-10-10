@@ -85,6 +85,9 @@ S3-compatible endpoint. Local runs do not upload.
 
 ## Still open
 
-- How long the terms allow us to store prices, and what credit display is required (SID-19).
+- Prices may be kept for 24 hours and other item data for 3 months, so raw files with prices
+  cannot stay in R2 as they do now. See decision 6 in `docs/decisions.md`.
+- `samples/rakuten-item-search.json` is a real response with prices. Replace it with invented
+  values (decision 6).
 - Whether a server sending `Referer` for a Web Application is within the terms.
 - How R2 files reach D1: a Worker that loads them, or the ingest endpoint (SID-23, SID-28).
