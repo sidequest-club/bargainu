@@ -5,7 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
-| 8   | [How we work](#8-how-we-work-2026-10-10): weekly routine, two review labels   | 2026-10-10 |
+| 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels      | 2026-10-10 |
 | 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
 | 6   | [Rakuten data](#6-rakuten-data-what-the-terms-allow-2026-10-08): prices 24 h  | 2026-10-08 |
 | 5   | [Tech stack](#5-tech-stack-all-on-cloudflare-2026-10-06): all on Cloudflare   | 2026-10-06 |
@@ -18,10 +18,16 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 **Decision:** we follow one written routine. It is kept in two documents on the team's Home page
 in Linear, and not repeated here:
-[How we work](https://linear.app/sidequest-club/document/how-we-work-61244d237fb9) for the routine
-and [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
+[Start here](https://linear.app/sidequest-club/document/start-here-where-things-go-and-how-a-week-runs-61244d237fb9)
+for where things go and how a week runs, and
+[Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
 Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, and presented to the team on
-2026-10-13. Anyone can propose a change at a Monday meeting.
+2026-10-13.
+
+A week has two 30-minute meetings. On Monday we plan: pick the week's work and give each task an
+owner, a reviewer, a "done when" sentence and a review label. On Friday we review: demo what got
+finished, look at what did not, and discuss anything open. Anyone can propose a rule change, and
+proposals are gone through on Friday.
 
 ![How a project, a week and a pull request go](process/how-we-work.drawio.png)
 
@@ -38,7 +44,7 @@ know what to pick up, and long AI-written text hid the few things a person had t
 
 **What follows:**
 
-- Notion is no longer used. Rules live in the Linear document, decisions stay in this file. This
+- Notion is no longer used. Rules live in the Linear documents, decisions stay in this file. This
   replaces the last line of decision 1.
 - Linear has one project per app, starting with "Bargainu v1", with a milestone for each week.
   Tasks about how we work carry the `team` label and belong to no project.
