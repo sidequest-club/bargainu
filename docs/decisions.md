@@ -16,21 +16,17 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 ## 8. How we work (2026-10-10)
 
-**Decision:** we follow one written routine. It lives in the "How we work" project in Linear:
-the routine is on the project's
-[Overview page](https://linear.app/sidequest-club/project/how-we-work-f2ca83078f3d) and the rules
-are in the [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b)
-document. Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, and presented to the team
-on 2026-10-13. Anyone can propose a change at a Monday meeting.
+**Decision:** we follow one written routine. It is kept in two documents on the team's Home page
+in Linear, and not repeated here:
+[How we work](https://linear.app/sidequest-club/document/how-we-work-61244d237fb9) for the routine
+and [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
+Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, and presented to the team on
+2026-10-13. Anyone can propose a change at a Monday meeting.
 
 ![How a project, a week and a pull request go](process/how-we-work.drawio.png)
 
-- **A project** goes Idea, Plan, Build, Launch, Look back. In Linear it is one project with a
-  milestone for each step or week.
-- **A week** starts with a 30-minute Monday meeting: show what got finished, pick the week's work,
-  and give every task an owner, a reviewer and a "done when" sentence. One person leads each week.
-- **A pull request** starts with five lines for a person: what changed, why, how to check it, what
-  the author needs, what the author is unsure about. It carries one of two labels.
+The one rule copied here, because coding agents read this file and not Linear, is the pull request
+label:
 
 | Label          | For                                                                             | Before merge                                      |
 | -------------- | ------------------------------------------------------------------------------- | ------------------------------------------------- |
@@ -44,8 +40,8 @@ know what to pick up, and long AI-written text hid the few things a person had t
 
 - Notion is no longer used. Rules live in the Linear document, decisions stay in this file. This
   replaces the last line of decision 1.
-- Linear has two projects, "Bargainu v1" and "How we work". The three phase projects (Plan &
-  Research, Build, Test) are empty.
+- Linear has one project per app, starting with "Bargainu v1", with a milestone for each week.
+  Tasks about how we work carry the `team` label and belong to no project.
 - Long AI-written updates go to #p1-updates in Slack. #project-1-bargainu is for short messages.
 - A problem the AI reviewer finds outside a pull request's scope becomes a Linear issue.
 
