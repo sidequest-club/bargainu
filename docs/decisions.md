@@ -266,7 +266,7 @@ How it works for us:
 2. Start each piece of work on a short branch off `main`, named for what it does:
    `feat/top-discounts`, `fix/login-redirect`.
 3. Push the branch and open a pull request.
-4. After review, merge the pull request into `main` and delete the branch.
+4. After review, merge the pull request into `main` with a merge commit and delete the branch.
 5. Every merge to `main` is deployed. GitHub Actions does it: database migrations first, then
    the app. A failed migration stops the deploy.
 
@@ -275,8 +275,18 @@ How it works for us:
 [trunk-based development](branching/3-trunk-based.drawio.png). The editable diagrams are the
 `.drawio` files next to each image.
 
-**Not decided yet:** how many approvals a pull request needs, whether merges are squashed, and
-whether `main` gets branch protection on GitHub.
+**Protection on `main` (2026-10-11, SID-22):** GitHub enforces rule 1 and the checks.
+
+- A change reaches `main` only through a pull request. A direct push is refused, for
+  administrators too.
+- A pull request merges only when the `check`, `e2e` and `review-label` jobs pass.
+- GitHub requires no approval, because an `ai-review` pull request merges without one
+  (decision 8). GitHub does not enforce the named reviewer of a `human-review` pull request.
+- Pull requests are merged with a merge commit. Squash and rebase merging are turned off. A merge
+  commit keeps the branch's commits for `git log` and `git bisect`, and
+  `git log --first-parent main` still gives one line per pull request.
+
+Decided by Yuta on 2026-10-11.
 
 ## 1. Project management: Linear (2026-10-05)
 
