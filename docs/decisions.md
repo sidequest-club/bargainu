@@ -3,7 +3,7 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
-## 6. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
+## 9. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
 
 **Decision:** two kinds of automated test, both run by CI on every pull request.
 
