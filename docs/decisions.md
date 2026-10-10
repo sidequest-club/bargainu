@@ -68,7 +68,8 @@ Slack; Norty had not replied when this was recorded.
   databases.
 
 **CPU time, measured on the deployed Worker (2026-10-08):** the free plan allows 10 ms of CPU
-per request. The read routes fit. The Google sign-in does not.
+per request. The signed-out routes fit. The Google sign-in, sign-out and the first signed-in
+request after an idle spell do not.
 
 | Request | Samples | CPU ms, median | CPU ms, highest |
 |---|---|---|---|
@@ -94,9 +95,37 @@ per request. The read routes fit. The Google sign-in does not.
   drops entries when they come faster.
 - Two sign-ins is a small sample. It is enough to say the callback is over, not by how much.
 
-**Not decided yet:** what to do about sign-in being over the limit. The options are to cut the
-work the callback does, or the Workers Paid plan at $5 a month for the account. Moving the
-database to Neon (option B) would not help: waiting on the database does not count as CPU time.
+**Where the callback's time goes (profiled locally, 2026-10-11):** there is no single expensive
+step to remove. Better Auth does not verify the signature of Google's ID token in the callback,
+and the only hashing is cheap: it checks one signed cookie and signs another. The work is database statements: a first
+sign-in runs 10 and a returning one 9, against 1 for the step before Google and 2 for a signed-in
+`get-session`. The CPU time is spread across Better Auth, zod and Drizzle building and reading
+them.
+
+- How it was profiled: the Worker's own auth options run in Node against a local D1, with Google's
+  token endpoint stubbed, under the V8 CPU profiler. In that setup the callback's first run in a
+  fresh process cost about five times its warm runs. That ratio is from Node on a laptop, not from
+  the Worker.
+- Cloudflare's limits page says Workers that handle authentication typically use 10 to 20 ms.
+
+**Decided (Yuta, 2026-10-11):** stay on the free plan and change no code.
+
+- Three requests went over: the callback on both sign-ins, sign-out at its median (11 ms), and the
+  first signed-in `get-session` after the Worker had been idle (33 ms). The app asks for the
+  session on every page load, so that last one is the one a signed-in visitor meets most often.
+  Once the Worker was warm, `get-session` took 5 ms.
+- All of them work today on Cloudflare's allowance for running over now and then, and every
+  route a signed-out visitor uses is under the limit.
+- Move the account to Workers Paid ($5 a month) when a request ends with outcome `exceededCpu`
+  (error 1102), or before the public launch, whichever comes first. The outcome shows in the
+  Cloudflare dashboard under the Worker's Metrics, Errors, Invocation Statuses, as "Exceeded CPU
+  Time Limits".
+- Not chosen: storing the sign-in state in a cookie (`account.storeStateStrategy`), which would
+  take 5 statements off the callback. It is unlikely to bring the callback under 10 ms by itself,
+  does nothing for `get-session` or sign-out, and was not measured on the deployed Worker. It is
+  the first thing to try if we want to stay free for longer.
+- Not chosen: moving the database to Neon (option B). It would not help, because waiting on the
+  database does not count as CPU time.
 
 **Not measured yet:** `/api/deals` with real deals, saving a favourite (the deployed database
 has no deals), and a collector import (the endpoint does not exist yet).
