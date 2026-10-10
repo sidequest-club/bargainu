@@ -32,12 +32,17 @@ proposals are gone through on Friday.
 ![How a project, a week and a pull request go](process/how-we-work.drawio.png)
 
 The one rule copied here, because coding agents read this file and not Linear, is the pull request
-label:
+label. `ai-review` is the default: the pull request merges when CI passes and the AI review is
+clean, and nobody waits for a person. Use `human-review` only when one of these is true:
 
-| Label          | For                                                                             | Before merge                                      |
-| -------------- | ------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `ai-review`    | Docs, tests, clean-ups, small changes already agreed                            | CI and the AI review pass                         |
-| `human-review` | How the app looks, database changes, sign-in, deploy, store rules, new libraries | The same, and the named reviewer tries the change |
+| Question                                    | Example                                       |
+| ------------------------------------------- | --------------------------------------------- |
+| Does a person have to see it to judge it?   | How a screen looks or feels                   |
+| Is it impossible to undo?                   | Deletes real users' data, spends money        |
+| Is it a decision for all three of us?       | Scope, a rule, what a store's terms let us do |
+
+A `human-review` pull request also waits for its named reviewer. Database changes, sign-in code,
+deploy scripts and new libraries are `ai-review` unless one of the three questions applies.
 
 **Why:** after the first week one person had created and done most of the work, the others did not
 know what to pick up, and long AI-written text hid the few things a person had to read.
@@ -51,9 +56,8 @@ know what to pick up, and long AI-written text hid the few things a person had t
 - Long AI-written updates go to #p1-updates in Slack. #project-1-bargainu is for short messages.
 - A problem the AI reviewer finds outside a pull request's scope becomes a Linear issue.
 
-**Not decided yet:** how many approvals a `human-review` pull request needs beyond the named
-reviewer, whether merges are squashed, and branch protection on `main` (SID-22). Which AI reviewer
-runs on pull requests (SID-36).
+**Not decided yet:** whether merges are squashed, and branch protection on `main` (SID-22). Which
+AI reviewer runs on pull requests (SID-36).
 
 ## 7. v1 scope: Rakuten only (2026-10-10)
 
