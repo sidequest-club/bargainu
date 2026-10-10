@@ -3,6 +3,70 @@
 Team decisions for Bargainu, newest first. Add an entry when the team agrees something that
 changes how we work or what we build. Recorded on the date shown; the team is Yuta, Norty and Mizuki.
 
+| #   | Decision                                                                     | Date       |
+| --- | ---------------------------------------------------------------------------- | ---------- |
+| 8   | [How we work](#8-how-we-work-2026-10-10): weekly routine, two review labels   | 2026-10-10 |
+| 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
+| 6   | [Rakuten data](#6-rakuten-data-what-the-terms-allow-2026-10-08): prices 24 h  | 2026-10-08 |
+| 5   | [Tech stack](#5-tech-stack-all-on-cloudflare-2026-10-06): all on Cloudflare   | 2026-10-06 |
+| 4   | [Hosting](#4-hosting-cloudflare-2026-10-05): Cloudflare                       | 2026-10-05 |
+| 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
+| 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
+| 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
+## 8. How we work (2026-10-10)
+
+**Decision:** we follow one written routine. The full text is the "How we work" document in
+Linear: https://linear.app/sidequest-club/document/how-we-work-7841ba32ee1b. Decided by Yuta on
+2026-10-10 after the sync on 2026-10-09, and presented to the team on 2026-10-13. Anyone can
+propose a change at a Monday meeting.
+
+![How a project, a week and a pull request go](process/how-we-work.drawio.png)
+
+- **A project** goes Idea, Plan, Build, Launch, Look back. In Linear it is one project with a
+  milestone for each step or week.
+- **A week** starts with a 30-minute Monday meeting: show what got finished, pick the week's work,
+  and give every task an owner, a reviewer and a "done when" sentence. One person leads each week.
+- **A pull request** starts with five lines for a person: what changed, why, how to check it, what
+  the author needs, what the author is unsure about. It carries one of two labels.
+
+| Label          | For                                                                             | Before merge                                      |
+| -------------- | ------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `ai-review`    | Docs, tests, clean-ups, small changes already agreed                            | CI and the AI review pass                         |
+| `human-review` | How the app looks, database changes, sign-in, deploy, store rules, new libraries | The same, and the named reviewer tries the change |
+
+**Why:** after the first week one person had created and done most of the work, the others did not
+know what to pick up, and long AI-written text hid the few things a person had to read.
+
+**What follows:**
+
+- Notion is no longer used. Rules live in the Linear document, decisions stay in this file. This
+  replaces the last line of decision 1.
+- Linear has two projects, "Bargainu v1" and "How we work". The three phase projects (Plan &
+  Research, Build, Test) are empty.
+- Long AI-written updates go to #p1-updates in Slack. #project-1-bargainu is for short messages.
+- A problem the AI reviewer finds outside a pull request's scope becomes a Linear issue.
+
+**Not decided yet:** how many approvals a `human-review` pull request needs beyond the named
+reviewer, whether merges are squashed, and branch protection on `main` (SID-22). Which AI reviewer
+runs on pull requests (SID-36).
+
+## 7. v1 scope: Rakuten only (2026-10-10)
+
+**Decision:** v1 collects and shows deals from Rakuten only. A deal is an item in a sale period or
+with boosted points, which is option 1 for the deal data model (SID-17). Decided by Yuta on
+2026-10-10 and presented to the team on 2026-10-13.
+
+**Why:** Rakuten is the only store with a working collector. Decision 6 rules out price history,
+which leaves option 1, and leaves open whether a site that also lists other stores breaks
+第10条1項(6). One store removes that question for v1.
+
+**What follows:**
+
+- The end date is fixed at 2026-11-02. If time runs short, scope is cut in this order: the
+  discount % filter, then the prefecture/city and in-store filters.
+- Amazon, Yodobashi and Yahoo! Shopping are out of v1. SID-18 and SID-33 are not needed for it.
+
 ## 6. Rakuten data: what the terms allow (2026-10-08)
 
 This entry records what Rakuten's rules say, read on 2026-10-08 for SID-19. The team has not
@@ -196,4 +260,4 @@ whether `main` gets branch protection on GitHub.
 **Decision:** work is tracked in Linear, in the Sidequest Club workspace, on the free plan.
 Issue keys start with `SID-`.
 
-Collaborative documents are being tried in Notion.
+Collaborative documents were tried in Notion until 2026-10-10. See decision 8.
