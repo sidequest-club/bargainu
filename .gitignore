@@ -8,3 +8,5 @@ dist
 !.dev.vars.example
 .dev-session
 worker-configuration.d.ts
+test-results
+playwright-report
