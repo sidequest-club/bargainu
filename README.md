@@ -21,14 +21,37 @@ This is the first Sidequest Club project. The main goal is to learn how to work 
 
 ## Timeline
 
-About 4.5 weeks in total. Norty's leave still needs to be factored in.
+v1 runs from 2026-10-02 to 2026-11-02. The goal is a deployed app that shows real Rakuten deals,
+used by the three of us.
 
-| Phase | Duration |
-|---|---|
-| Planning | 1 week |
-| Build | 2 weeks |
-| Testing | 1 week |
-| Deployment / infra | 3 days |
+| Milestone | Dates | Done when |
+|---|---|---|
+| Plan | Oct 2 – Oct 13 | We know what each feature means, how the parts connect and what the data looks like |
+| A real deal shows in the app | Oct 14 – Oct 18 | The app can take in a real Rakuten deal and show it |
+| It runs by itself every day | Oct 19 – Oct 25 | Deals refresh daily on their own, ended deals disappear, the Rakuten credit and price notice are shown |
+| Ready to use | Oct 26 – Nov 1 | Filters and favorites work on real deals. Tested and fixed |
+| Look back | Nov 2 | We have written down what worked and what to change for the next project |
+
+```mermaid
+gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %b %d
+    tickInterval 1week
+    Plan                         :plan, 2026-10-02, 2026-10-14
+    A real deal shows in the app :deal, 2026-10-14, 2026-10-19
+    It runs by itself every day  :daily, 2026-10-19, 2026-10-26
+    Ready to use                 :ready, 2026-10-26, 2026-11-02
+    Look back                    :milestone, 2026-11-02, 0d
+```
+
+The dates and the issues under each milestone are kept in the
+[Bargainu v1 project in Linear](https://linear.app/sidequest-club/project/bargainu-v1-baa24eea5ee5).
+If the two disagree, Linear is right.
+
+To see the same schedule in Linear, open Projects, choose the Timeline tab and set the zoom to
+Week or Month:
+
+![The Bargainu v1 timeline in Linear, with a diamond for each milestone](docs/timeline/linear-timeline.webp)
 
 ## Tech stack
 
