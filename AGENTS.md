@@ -42,6 +42,9 @@ Rules:
 We use GitHub Flow, described in [docs/decisions.md](docs/decisions.md): branch off `main` as
 `feat/<name>` or `fix/<name>`, open a pull request, merge after review. Do not commit to `main`.
 
+A pull request follows `.github/pull_request_template.md` and carries one label, `ai-review` or
+`human-review`. Decision 8 says which to use.
+
 ## Decisions
 
 Team decisions are recorded in [docs/decisions.md](docs/decisions.md). Read it before proposing
