@@ -146,8 +146,8 @@ migrations, `tests/` holds the API and browser tests, and `prototypes/` holds th
 - User login
 - Favorites
 
-What each item means for v1 is drafted in [docs/v1-features.md](docs/v1-features.md). The team
-has not agreed it yet.
+What each item means for v1, and what was cut, is in
+[docs/v1-features.md](docs/v1-features.md). The team agreed it on 2026-10-13.
 
 ## Homework before next sync
 
