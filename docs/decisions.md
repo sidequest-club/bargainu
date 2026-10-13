@@ -5,6 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
+| 10  | [v1 features](#10-v1-features-what-each-one-means-2026-10-13): three cut, brand becomes shop | 2026-10-13 |
 | 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
 | 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
 | 7   | [v1 scope](#7-v1-scope-rakuten-only-2026-10-10): Rakuten only                 | 2026-10-10 |
@@ -14,6 +15,26 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 | 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
 | 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
 | 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
+## 10. v1 features: what each one means (2026-10-13)
+
+**Decision:** each item on the v1 list has a one-line definition in
+[v1-features.md](v1-features.md). Agreed at the sync on 2026-10-13.
+
+**Why:** the list was written before we knew what the data looks like. Rakuten returns no original
+price, no brand and no place, so some items could not be built as the prototype shows them.
+
+**What changed from the list:**
+
+- "Top Discounts" and the discount % filter are cut from v1.
+- The brand filter becomes a filter by the Rakuten shop that sells the item.
+- The prefecture/city and online vs in-store filters are not shown in v1.
+- An item whose Rakuten genre fits none of our 12 categories is not collected.
+
+**Kept, though not on the list:** search and sorting on Browse, the store filter, and the "Ending
+soon" and "Just sniffed out" sections on Home.
+
+**Not decided yet:** which keywords the collector searches for, and who keeps the list (SID-28).
 
 ## 9. Testing: Vitest in the Workers runtime, Playwright in a browser (2026-10-08)
 
