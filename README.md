@@ -13,7 +13,7 @@ This is the first Sidequest Club project. The main goal is to learn how to work 
 | | |
 |---|---|
 | **Market** | Japan only |
-| **Stores (trial)** | Yodobashi, Rakuten, Amazon |
+| **Store** | Rakuten only. Amazon, Yodobashi and Yahoo! Shopping are out of v1 ([decision 7](docs/decisions.md#7-v1-scope-rakuten-only-2026-10-10)) |
 | **Channel** | Online stores only |
 | **Platform** | Web app first (mobile can be tried in a later project) |
 | **Team** | Yuta, Norty, Mizuki |
@@ -139,10 +139,11 @@ migrations, `tests/` holds the API and browser tests, and `prototypes/` holds th
 
 ## End of project: what we'll have built
 
-- Collects data from online stores on ongoing discounts and bargain sales
+- Collects data from Rakuten on ongoing discounts and bargain sales
 - Shows those discounts in the app
-- A "Top Discounts" section
-- Filters: discount %, brand, category (shoes, clothes, etc.), prefecture/city, and online vs in-store
+- A "Top Discounts" section (cut from v1)
+- Filters: Rakuten shop and category (shoes, clothes, etc.). Discount % was cut, brand became
+  shop, and prefecture/city and online vs in-store are not shown in v1
 - User login
 - Favorites
 
