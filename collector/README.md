@@ -1,16 +1,21 @@
 # Collector
 
-Fetches product data from store APIs and lands it raw in R2. It is independent of the web
-app: plain Python, standard library only, run by GitHub Actions.
+Fetches deals from store APIs, lands them raw in R2 and loads them into the app's D1 database.
+It is independent of the web app: plain Python, standard library only, run by GitHub Actions.
 
-The flow is raw first, clean afterwards:
+The Collect workflow runs once a day at 10:17 Japan time, and can be started by hand:
 
-1. `rakuten.py` saves what the API returned, unchanged, as NDJSON.
-2. The workflow copies those files to R2.
-3. `normalize.py` turns raw files into cleaned records. It is a draft until the deal data
-   model is agreed (SID-17).
+1. `rakuten.py` searches each Rakuten genre in `categories.json` and saves what the API
+   returned, unchanged, as NDJSON.
+2. The workflow copies that file to R2.
+3. A second job downloads it, `normalize.py` turns it into SQL for the tables in
+   [data-model.md](../docs/architecture/data-model.md), and `wrangler d1 execute` runs it on D1.
+   D1 runs the file as one, so a failed load changes nothing.
+4. The load deletes every deal the run did not refresh, and R2 keeps only this run's file.
+   Prices may be kept for 24 hours (decision 6). If a run fails or starts late, the old prices
+   stay until the next run.
 
-Status: Rakuten only. Runs are started by hand.
+Status: Rakuten only.
 
 ## Where the data goes
 
@@ -21,14 +26,28 @@ raw/rakuten/<YYYY-MM-DD>/<HHMMSS>Z.ndjson
 Dates and times are UTC. One file per run. Each line is one item:
 
 ```json
-{"fetched_at": "2026-10-07T07:12:29+00:00", "keyword": "イヤホン", "page": 1, "item": { ... }}
+{"fetched_at": "2026-10-07T07:12:29+00:00", "keyword": null, "genre_id": 558885, "page": 1, "item": { ... }}
 ```
 
-`item` is exactly what Rakuten returned. Locally the same layout is written under
+`item` is exactly what Rakuten returned. `genre_id` is the genre that was searched, which
+gives the item its category. A keyword search has a `keyword` and no `genre_id`, so its items
+are not loaded. Locally the same layout is written under
 `collector/out/`, which is not committed.
 
 Raw files keep Rakuten's item URLs as sent, and those contain our application ID
 (`rafcid=...`). Keep the bucket private. `normalize.py` removes the parameter.
+
+## What counts as a deal
+
+`categories.json` maps each of our categories to Rakuten genres. Each genre gets two searches:
+one for boosted points (`pointRateFlag=1`), and one for everything, because the API cannot
+filter for time-limited sales. `normalize.py` keeps a listing only if:
+
+- it is in a time-limited sale that has started and has a real end date (`9999-12-31` is not
+  one), or its point rate is above 1 and the boost is running, and
+- it has an image, and its price includes tax.
+
+One page of every search (2026-10-14) gave 288 deals out of 780 listings, in all 12 categories.
 
 ## Run it locally
 
@@ -36,14 +55,18 @@ Raw files keep Rakuten's item URLs as sent, and those contain our application ID
 2. Collect:
 
    ```
-   python3 collector/rakuten.py イヤホン --pages 1
+   python3 collector/rakuten.py --categories collector/categories.json --pages 1
    ```
 
-3. Clean a raw file:
+3. Turn the raw file into SQL and load it into your local database. `--cutoff` is in
+   milliseconds; deals fetched before it are deleted, and 0 keeps everything:
 
    ```
-   python3 collector/normalize.py collector/out/raw/rakuten/<date>/<time>Z.ndjson
+   python3 collector/normalize.py --cutoff 0 collector/out/raw/rakuten/<date>/<time>Z.ndjson > collector/out/load.sql
+   npx wrangler d1 execute DB --local --file collector/out/load.sql
    ```
+
+4. Run the tests: `python3 -m unittest discover -s collector`.
 
 To try it without keys or network:
 
@@ -51,7 +74,8 @@ To try it without keys or network:
 python3 collector/rakuten.py --from-file collector/samples/rakuten-item-search.json
 ```
 
-If a later page fails, the run stops with an error but keeps the items already fetched.
+If a later page fails, the run stops with an error but keeps the items already fetched, and
+the workflow still loads them.
 
 ## GitHub Actions setup
 
@@ -59,16 +83,25 @@ The Collect workflow needs these in the repository settings.
 
 Secrets:
 
-- `RAKUTEN_APP_ID`, `RAKUTEN_ACCESS_KEY`, `RAKUTEN_AFFILIATE_ID` (optional)
+- `RAKUTEN_APP_ID`, `RAKUTEN_ACCESS_KEY`, `RAKUTEN_AFFILIATE_ID` (optional; leave it unset
+  until we decide on Rakuten Affiliate)
 - `R2_ACCOUNT_ID`: the Cloudflare account ID
-- `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`: an R2 API token with write access to the bucket
+- `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`: an R2 API token with object read and write on
+  the bucket only
+- `CLOUDFLARE_D1_TOKEN`: a Cloudflare API token with D1 edit only, separate from the deploy
+  token. Only the load job gets it.
 
 Variables:
 
 - `R2_BUCKET`: the bucket name
 
-The upload uses the AWS CLI that GitHub's runners already have, pointed at R2's
+The bucket must be private. Give it a lifecycle rule that deletes `raw/` after 1 day, in case
+the workflow stops running: R2 removes expired objects within about a day after that.
+
+R2 is reached with the AWS CLI that GitHub's runners already have, pointed at R2's
 S3-compatible endpoint. Local runs do not upload.
+
+GitHub turns off a scheduled workflow in a public repository after 60 days without activity.
 
 ## What we learned about the Rakuten API (2026-10-06)
 
@@ -85,9 +118,6 @@ S3-compatible endpoint. Local runs do not upload.
 
 ## Still open
 
-- Prices may be kept for 24 hours and other item data for 3 months, so raw files with prices
-  cannot stay in R2 as they do now. See decision 6 in `docs/decisions.md`.
 - `samples/rakuten-item-search.json` is a real response with prices. Replace it with invented
   values (decision 6).
 - Whether a server sending `Referer` for a Web Application is within the terms.
-- How R2 files reach D1: a Worker that loads them, or the ingest endpoint (SID-23, SID-28).
