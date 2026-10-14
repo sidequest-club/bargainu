@@ -41,7 +41,7 @@ export function DealPage() {
   const sameCategory = deals.filter((d) => d.category === deal.category && d.id !== deal.id)
   const filler = deals
     .filter((d) => d.category !== deal.category && d.store === deal.store)
-    .sort((a, b) => b.discountPct - a.discountPct)
+    .sort((a, b) => a.endsInHours - b.endsInHours)
   const related = [...sameCategory, ...filler].slice(0, RELATED_COUNT)
 
   return (

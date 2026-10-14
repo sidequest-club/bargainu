@@ -35,16 +35,12 @@ const yenFact: Fact = { text: 'Prices in yen, tax included', icon: <YenIcon />, 
 // The counts only mean something once there are deals; until then the strip keeps the fixed facts.
 function tickerFacts({ deals, stores, categories }: Catalog): Fact[] {
   if (deals.length === 0) return [storesFact(stores), yenFact]
-  const maxDiscount = Math.max(...deals.map((d) => d.discountPct))
-  const inStoreCount = deals.filter((d) => d.channel === 'in-store').length
   const endingToday = deals.filter((d) => d.endsInHours <= 24).length
   return [
     { text: `${deals.length} deals sniffed out today`, icon: <PawIcon />, tone: 'yellow' },
-    { text: `Biggest discount ${maxDiscount}% off`, icon: <StarIcon />, tone: 'pink' },
     storesFact(stores),
     { text: `${categories.length} categories in the pile`, icon: <BoneIcon />, tone: 'blue' },
     { text: `${endingToday} deals end within 24 hours`, icon: <StarIcon />, tone: 'yellow' },
-    { text: `${inStoreCount} in-store deals across Japan`, icon: <PawIcon />, tone: 'pink' },
     yenFact,
   ]
 }
@@ -207,11 +203,6 @@ export function Footer() {
             </Link>
           </li>
           <li>
-            <Link to="/browse?channel=in-store">
-              <CenterUnderline>In-store deals</CenterUnderline>
-            </Link>
-          </li>
-          <li>
             <Link to="/favorites">
               <CenterUnderline>Favorites</CenterUnderline>
             </Link>
@@ -230,6 +221,21 @@ export function Footer() {
         </span>
         <span>Store names are plain labels, not endorsements.</span>
       </p>
+      <div className="footer__legal">
+        <p>
+          Bargainu is made and run by Sidequest Club (Yuta, Norty and Mizuki), who are responsible
+          for it. It is not run by Rakuten, and Rakuten is not our partner.
+        </p>
+        <p lang="ja">
+          このサイトで掲載されている情報は、Bargainuの作成者により運営されています。価格、販売可能情報は、変更される場合があります。購入時に楽天市場店舗（www.rakuten.co.jp）に表示されている価格が、その商品の販売に適用されます。
+        </p>
+        <p>
+          {/* Rakuten's credit, kept exactly as Rakuten gives it (decision 6). */}
+          <a href="https://developers.rakuten.com/" target="_blank">
+            Supported by Rakuten Developers
+          </a>
+        </p>
+      </div>
     </footer>
   )
 }
