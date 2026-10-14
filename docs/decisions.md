@@ -5,6 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
+| 11  | [Search log](#11-search-log-kept-in-d1-and-the-search-moves-into-the-api-2026-10-10): in D1, search in the API | 2026-10-10 |
 | 10  | [v1 features](#10-v1-features-what-each-one-means-2026-10-13): three cut, brand becomes shop | 2026-10-13 |
 | 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
 | 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
@@ -15,6 +16,41 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 | 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
 | 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
 | 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
+## 11. Search log: kept in D1, and the search moves into the API (2026-10-10)
+
+**Decision (temporary):** the app records searches in its own database, not in Google Analytics.
+For each search it stores what was searched, what was returned and how many items were returned.
+How many times a term was searched is the number of records for it.
+
+| Question | Decision |
+|---|---|
+| Where the search runs | In the API. The browser sends the search text and every filter it has set, and the Worker applies the same filters the browser applies today. |
+| When a search counts | When the user submits it, not on every keystroke. |
+| Who searched | The signed-in user's ID is stored with the search. A signed-out search has none. |
+| How much is kept | The number of results, the IDs of the first 100 in the order shown, and no prices. Records older than 3 months are deleted. |
+
+**Why:**
+
+- The Worker has the search and its results when it answers, so it can record them in the same
+  request, and ad blockers cannot stop it.
+- Google Analytics caps each value at 100 characters and an event at 25 values, so the list of
+  returned deals does not fit. It would also be a new third-party script that sets cookies.
+- The 3 months and leaving out prices follow decision 6: Rakuten lets us keep prices for 24
+  hours and other item data for 3 months.
+
+**Options considered:** Google Analytics, and keeping the search in the browser and having it
+report what it showed to a log endpoint. The second is a smaller change, but anyone could post
+made-up searches.
+
+**What follows:**
+
+- `/api/deals` keeps its current behaviour, because the whole app loads its catalog from it. The
+  search gets its own endpoint.
+- Better Auth stores the name and email address of the Google account in `user`, so a search
+  stored with a user ID is linked to an email address.
+
+Decided by Mizuki; Yuta and Norty have not reviewed it yet.
 
 ## 10. v1 features: what each one means (2026-10-13)
 
