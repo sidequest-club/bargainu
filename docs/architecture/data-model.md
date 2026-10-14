@@ -1,7 +1,7 @@
 # Data model
 
-The model agreed for SID-17. `worker/db/schema.ts` does not match it yet: it still holds the
-prototype's `deals` table. Change this file in the same pull request as any schema change.
+The model agreed for SID-17, as built in `worker/db/schema.ts`. Change this file in the same pull
+request as any schema change.
 
 ```mermaid
 erDiagram
