@@ -2,7 +2,9 @@
 
 Screenshots of the chosen design (prototype 3, "Chirashi"), taken on 2026-10-04 from
 `prototypes/3-reference`. The two Login shots were retaken from the app on 2026-10-06, when the
-demo account and email form gave way to Google sign-in. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
+demo account and email form gave way to Google sign-in. The Home and Browse shots were retaken
+from the app on 2026-10-14 (SID-24), after the features cut by decision 10 were removed and the
+footer gained Rakuten's notices; they show the local sample deals. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
 these show the result. A new or changed screen should look like it belongs next to these.
 
 To see the same screens running, run `npm install && npm run dev` in the repo root, after the

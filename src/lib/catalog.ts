@@ -18,7 +18,6 @@ export interface Deal extends Omit<DealsResponse['deals'][number], 'endsAt' | 'f
 }
 
 const MS_PER_HOUR = 60 * 60 * 1000
-const TOP_COUNT = 8
 
 export function toDeals({ now, deals }: DealsResponse): Deal[] {
   return deals.map(({ endsAt, foundAt, ...deal }) => ({
@@ -36,31 +35,16 @@ export interface Catalog {
   categories: Category[]
   stores: readonly Store[]
   brands: string[]
-  prefectures: string[]
-  citiesByPrefecture: Record<string, string[]>
-  /** The "Top Discounts" list: biggest percentage off first. */
-  topDiscounts: Deal[]
   getDeal: (id: string) => Deal | undefined
 }
 
 export function buildCatalog(deals: Deal[]): Catalog {
-  const prefectures = [
-    ...new Set(deals.flatMap((d) => (d.prefecture ? [d.prefecture] : []))),
-  ].sort()
   const byId = new Map(deals.map((d) => [d.id, d]))
   return {
     deals,
     categories: CATEGORIES.filter((category) => deals.some((d) => d.category === category)),
     stores: STORES,
     brands: [...new Set(deals.map((d) => d.brand))].sort(),
-    prefectures,
-    citiesByPrefecture: Object.fromEntries(
-      prefectures.map((p) => [
-        p,
-        [...new Set(deals.flatMap((d) => (d.prefecture === p && d.city ? [d.city] : [])))].sort(),
-      ]),
-    ),
-    topDiscounts: deals.toSorted((a, b) => b.discountPct - a.discountPct).slice(0, TOP_COUNT),
     getDeal: (id) => byId.get(id),
   }
 }

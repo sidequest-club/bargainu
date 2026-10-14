@@ -25,18 +25,15 @@ export function FavButton({ deal, className }: { deal: Deal; className?: string 
 
 interface DealCardProps {
   deal: Deal
-  /** 1-based position in a ranked list. Shows a "No.1" tab. */
-  rank?: number
   headingLevel?: 'h2' | 'h3'
 }
 
-export function DealCard({ deal, rank, headingLevel: Heading = 'h3' }: DealCardProps) {
+export function DealCard({ deal, headingLevel: Heading = 'h3' }: DealCardProps) {
   const where = place(deal)
   return (
     <article className="card">
       <div className="card__photo">
         <img src={deal.image} alt="" loading="lazy" width={900} height={900} />
-        {rank !== undefined && <span className="card__rank">No.{rank}</span>}
       </div>
       <Sticker pct={deal.discountPct} size="md" className="card__sticker" />
       <FavButton deal={deal} className="card__fav" />

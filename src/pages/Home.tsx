@@ -1,9 +1,9 @@
 import { useReducedMotion } from 'motion/react'
 import { Link } from 'react-router'
-import { DealCard, DealRow } from '../components/DealCard'
+import { DealRow } from '../components/DealCard'
 import { Dog } from '../components/Dog'
 import { CurlyArrow, Spark, Squiggle } from '../components/Doodles'
-import { ArrowIcon, BoneIcon, PawIcon, PinIcon, StarIcon } from '../components/Icons'
+import { ArrowIcon, BoneIcon, PawIcon, StarIcon } from '../components/Icons'
 import { Marquee } from '../components/Marquee'
 import { Sticker } from '../components/Sticker'
 import TextRotate from '../fancy/text-rotate'
@@ -45,30 +45,25 @@ export function Home() {
   const reduced = useReducedMotion()
   const revealed = useSettled()
   const rotating = useAfter('--rotate-hold')
-  const { deals, categories, prefectures, topDiscounts } = useCatalog()
+  const { deals, categories } = useCatalog()
   const words = categories.map((c) => c.toUpperCase())
 
-  const endingSoon = deals
-    .filter(notIn(topDiscounts))
-    .sort((a, b) => a.endsInHours - b.endsInHours)
-    .slice(0, LIST_LENGTH)
+  const byEnding = deals.toSorted((a, b) => a.endsInHours - b.endsInHours)
+  const collage = byEnding.slice(0, COLLAGE_SLOTS.length)
+  const endingSoon = byEnding.filter(notIn(collage)).slice(0, LIST_LENGTH)
   const justFound = deals
-    .filter(notIn([...topDiscounts, ...endingSoon]))
+    .filter(notIn([...collage, ...endingSoon]))
     .sort((a, b) => a.postedHoursAgo - b.postedHoursAgo)
     .slice(0, LIST_LENGTH)
 
   const byCategory = categories.map((category) => {
     const list = deals.filter((d) => d.category === category)
-    const best = list.reduce((a, b) => (b.discountPct > a.discountPct ? b : a))
-    return { category, count: list.length, best }
+    const cover = list.reduce((a, b) => (b.endsInHours < a.endsInHours ? b : a))
+    return { category, count: list.length, cover }
   })
   const bands = Array.from({ length: BAND_COUNT }, (_, band) =>
     categories.filter((_, i) => i % BAND_COUNT === band),
   )
-  const inStoreByPrefecture = prefectures.map((prefecture) => ({
-    prefecture,
-    count: deals.filter((d) => d.prefecture === prefecture).length,
-  }))
 
   return (
     <>
@@ -111,24 +106,23 @@ export function Home() {
               </span>
             </h1>
             <p className="hero__lede">
-              Bargainu collects the live sales at Yodobashi, Rakuten and Amazon and lays them out in
-              one pile. The dog has already been through it.
+              Bargainu collects the live sales at Rakuten and lays them out in one pile. The dog has
+              already been through it.
             </p>
             <div className="hero__actions">
               <Link to="/browse" className="btn btn--cta btn--lg">
                 Browse all {deals.length} deals
                 <ArrowIcon />
               </Link>
-              <button type="button" className="text-link" onClick={scrollToTopDiscounts}>
-                <CenterUnderline>See the top discounts</CenterUnderline>
+              <button type="button" className="text-link" onClick={scrollToEndingSoon}>
+                <CenterUnderline>See what ends soon</CenterUnderline>
               </button>
             </div>
           </div>
 
           <div className="collage">
             {COLLAGE_SLOTS.map(
-              (slot, i) =>
-                topDiscounts[i] && <CollageCard key={slot} deal={topDiscounts[i]} slot={slot} />,
+              (slot, i) => collage[i] && <CollageCard key={slot} deal={collage[i]} slot={slot} />,
             )}
             <div className="collage__dog" aria-hidden="true">
               <span className="bubble">Found it!</span>
@@ -167,30 +161,6 @@ export function Home() {
         ))}
       </section>
 
-      <section className="block block--yellow" id="top-discounts" aria-labelledby="top-title">
-        <div className="wrap">
-          <header className="block__head">
-            <h2 id="top-title" className="shout">
-              Top Discounts
-            </h2>
-            <p className="aside">The deepest cuts in the pile right now.</p>
-          </header>
-          <ol className="grid grid--top">
-            {topDiscounts.map((deal, i) => (
-              <li key={deal.id}>
-                <DealCard deal={deal} rank={i + 1} />
-              </li>
-            ))}
-          </ol>
-          <p className="block__more">
-            <Link to="/browse?sort=discount" className="btn btn--ink">
-              All deals, biggest cut first
-              <ArrowIcon />
-            </Link>
-          </p>
-        </div>
-      </section>
-
       <section className="block" aria-labelledby="cat-title">
         <div className="wrap">
           <header className="block__head">
@@ -200,14 +170,14 @@ export function Home() {
             <p className="aside">{categories.length} piles. Pick one.</p>
           </header>
           <ul className="tiles">
-            {byCategory.map(({ category, count, best }, i) => (
+            {byCategory.map(({ category, count, cover }, i) => (
               <li key={category}>
                 <Link
                   to={browseCategory(category)}
                   className={`tile tile--${bandTones[i % bandTones.length]}`}
                 >
                   <img
-                    src={best.image}
+                    src={cover.image}
                     alt=""
                     loading="lazy"
                     width={900}
@@ -216,7 +186,7 @@ export function Home() {
                   />
                   <span className="tile__name">{category}</span>
                   <span className="tile__meta">
-                    {count} deals, up to {best.discountPct}% off
+                    {count} {count === 1 ? 'deal' : 'deals'}
                   </span>
                 </Link>
               </li>
@@ -227,7 +197,7 @@ export function Home() {
 
       <section className="block block--tight" aria-label="More deals">
         <div className="wrap duo">
-          <div className="panel panel--pink">
+          <div className="panel panel--pink" id="ending-soon">
             <header className="panel__head">
               <h2 className="shout shout--sm">Ending soon</h2>
               <Link to="/browse?sort=ending" className="text-link">
@@ -259,38 +229,13 @@ export function Home() {
           </div>
         </div>
       </section>
-
-      <section className="block block--blue" aria-labelledby="near-title">
-        <div className="wrap near">
-          <div>
-            <h2 id="near-title" className="shout">
-              In a shop near you
-            </h2>
-            <p className="aside">Some cuts only happen at the counter. Pick a prefecture.</p>
-          </div>
-          <ul className="near__list">
-            {inStoreByPrefecture.map(({ prefecture, count }) => (
-              <li key={prefecture}>
-                <Link
-                  to={`/browse?channel=in-store&prefecture=${encodeURIComponent(prefecture)}`}
-                  className="btn btn--paper"
-                >
-                  <PinIcon />
-                  {prefecture}
-                  <span className="count">{count}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
     </>
   )
 }
 
 // Scrolls by hand so the move is smooth only for people who have not asked for less motion.
-function scrollToTopDiscounts() {
-  const target = document.getElementById('top-discounts')
+function scrollToEndingSoon() {
+  const target = document.getElementById('ending-soon')
   if (!target) return
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })

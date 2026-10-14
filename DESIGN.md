@@ -49,7 +49,7 @@ All colour is flat. No gradients, no glass, no blurred or grey shadows.
 | `--ink` | `#16120e` | Text, every outline, every shadow, inverse blocks |
 | `--ink-soft` | `#51483c` | Secondary text (`--color-text-muted`) |
 | `--red` | `#dd2016` | Sale price, big-cut sticker, urgency, counts (`--color-price`, `--color-urgent`) |
-| `--yellow` | `#ffd60a` | The one primary action, current nav item, mid sticker, Top Discounts block (`--color-cta`) |
+| `--yellow` | `#ffd60a` | The one primary action, current nav item, mid sticker (`--color-cta`) |
 | `--pink` / `--pink-ink` | `#ff9ec6` / `#8c1049` | Band, tile, panel, saved state |
 | `--green` / `--green-ink` | `#74d68a` / `#0c4a22` | Band, tile, panel |
 | `--blue` / `--blue-ink` | `#8ec9ff` / `#0a3a78` | Band, tile, in-store tag and location, focus ring (`--color-focus` uses blue-ink) |
@@ -59,7 +59,7 @@ Rules:
 - Red and yellow are the two loud colours. Red means price or discount. Yellow means "press this".
 - Pink, green and blue are block colours. On a band, the text is the `-ink` shade of the same hue.
   Everywhere else text on a colour block is `--ink`.
-- Blue also marks anything in-store (tag, location box, "near you" block), so it reads as a channel.
+- Blue also marks anything in-store (tag, location box), so it reads as a channel.
 - Focus ring: `--color-focus` (blue-ink) on paper, `--color-focus-on-dark` (yellow) on ink.
 
 ## Typography
@@ -127,7 +127,9 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 3. **Starburst sticker** (`Sticker`): 16-point burst with a hard shadow, tilted `--tilt-sticker`. Red from 40% off, yellow below. Sizes sm (rows), md (cards), lg (detail).
 4. **Cut-out paper**: ink outline plus hard offset shadow on cards, buttons, nav, panels.
 5. **Dog mark** (`Dog`): white dog, one yellow eye patch, oversized nose. Moods: `happy` (logo), `sniff` (hero, login, sign-in gate, footer), `sleepy` (empty states).
-6. **Wordmark footer** (`.footer`): one serif line, then BARGAINU fitted edge to edge in yellow on ink.
+6. **Wordmark footer** (`.footer`): one serif line, then BARGAINU fitted edge to edge in yellow on ink,
+   then the small print: who runs the site, Rakuten's price notice in Japanese and Rakuten's credit
+   link, unchanged (decision 6 in [docs/decisions.md](docs/decisions.md)).
 
 ## Components
 
@@ -135,7 +137,7 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 sticker hanging off the top right corner, favourite button top left. Body order is fixed: store and
 channel tag, title (2 lines), brand, sale price in Anton red with the struck original beside it,
 dashed rule, time left and (in-store only) place. The title link covers the whole card. Time left turns
-red and bold under 24 hours. `rank` adds a "No.1" tab for ranked lists only.
+red and bold under 24 hours.
 
 **Row** (`DealRow`): the compact card for lists inside a coloured panel. Thumb, note, one-line title, price, small sticker.
 
@@ -148,10 +150,10 @@ red and bold under 24 hours. `rank` adds a "No.1" tab for ranked lists only.
 Text links use fancy's centre underline and stay 44px tall.
 
 **Filter**: left rail on desktop (sticky, calm, no shadow), bottom sheet on phones with a scrim, a close
-button, Escape to close and a "Show N deals" action. Controls: search input, segmented control for
-channel, range slider for minimum discount, checkbox chips for category and store (checked = ink fill),
-a scrolling checklist for brand, two selects for prefecture then city. City is disabled until a
-prefecture is picked; the whole location group is disabled for "Online". Active filters repeat above
+button, Escape to close and a "Show N deals" action. Controls: search input, checkbox chips for
+category and store (checked = ink fill), and a scrolling checklist for brand. v1 has no discount,
+channel or location filter (decision 10); the segmented control and range slider stay in the base
+styles for later. Results sort by "Ending soonest" unless the URL says otherwise. Active filters repeat above
 the grid as ink chips with a remove cross, followed by "Clear all". Filter state lives in the URL query string.
 
 **Nav**: floating pill bar (`.nav`), sticky under the ticker. Logo, three links, sign-in or the user chip.
