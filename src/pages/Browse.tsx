@@ -6,17 +6,22 @@ import { CloseIcon, FilterIcon, SearchIcon } from '../components/Icons'
 import { EmptyState } from '../components/Shell'
 import NumberTicker from '../fancy/basic-number-ticker'
 import { useCatalog } from '../lib/catalog'
-import type { Deal } from '../lib/catalog'
+import type { Deal, Shop } from '../lib/catalog'
+import { byEnding } from '../lib/format'
 import { tokenNumber, useSettled } from '../lib/tokens'
 
 const sorts = {
-  ending: { label: 'Ending soonest', compare: (a: Deal, b: Deal) => a.endsInHours - b.endsInHours },
-  price: { label: 'Lowest price', compare: (a: Deal, b: Deal) => a.salePrice - b.salePrice },
+  ending: { label: 'Ending soonest', compare: byEnding },
+  price: { label: 'Lowest price', compare: (a: Deal, b: Deal) => a.price - b.price },
   newest: {
     label: 'Just found',
     compare: (a: Deal, b: Deal) => a.postedHoursAgo - b.postedHoursAgo,
   },
-  rating: { label: 'Top rated', compare: (a: Deal, b: Deal) => b.rating - a.rating },
+  // Unreviewed items have a rating of 0 from Rakuten; among equal ratings, more reviews first.
+  rating: {
+    label: 'Top rated',
+    compare: (a: Deal, b: Deal) => b.rating - a.rating || b.reviews - a.reviews,
+  },
 } as const
 type SortKey = keyof typeof sorts
 const DEFAULT_SORT: SortKey = 'ending'
@@ -24,7 +29,8 @@ const DEFAULT_SORT: SortKey = 'ending'
 interface Filters {
   q: string
   category: string[]
-  brand: string[]
+  /** Shop codes. */
+  shop: string[]
   store: string[]
   sort: SortKey
 }
@@ -36,7 +42,7 @@ function parse(query: URLSearchParams): Filters {
   return {
     q: query.get('q') ?? '',
     category: list(query.get('category')),
-    brand: list(query.get('brand')),
+    shop: list(query.get('shop')),
     store: list(query.get('store')),
     sort: sort in sorts ? (sort as SortKey) : DEFAULT_SORT,
   }
@@ -46,7 +52,7 @@ function toPath(f: Filters): string {
   const query = new URLSearchParams()
   if (f.q) query.set('q', f.q)
   if (f.category.length) query.set('category', f.category.join(','))
-  if (f.brand.length) query.set('brand', f.brand.join(','))
+  if (f.shop.length) query.set('shop', f.shop.join(','))
   if (f.store.length) query.set('store', f.store.join(','))
   if (f.sort !== DEFAULT_SORT) query.set('sort', f.sort)
   const text = query.toString()
@@ -57,9 +63,11 @@ function apply(f: Filters, deals: Deal[]): Deal[] {
   const needle = f.q.trim().toLowerCase()
   return deals
     .filter((d) => f.category.length === 0 || f.category.includes(d.category))
-    .filter((d) => f.brand.length === 0 || f.brand.includes(d.brand))
+    .filter((d) => f.shop.length === 0 || f.shop.includes(d.shopCode))
     .filter((d) => f.store.length === 0 || f.store.includes(d.store))
-    .filter((d) => !needle || `${d.title} ${d.brand} ${d.category}`.toLowerCase().includes(needle))
+    .filter(
+      (d) => !needle || `${d.title} ${d.shopName} ${d.category}`.toLowerCase().includes(needle),
+    )
     .sort(sorts[f.sort].compare)
 }
 
@@ -72,7 +80,8 @@ interface ActiveChip {
   remove: Partial<Filters>
 }
 
-function activeChips(f: Filters): ActiveChip[] {
+function activeChips(f: Filters, shops: Shop[]): ActiveChip[] {
+  const shopName = (code: string) => shops.find((s) => s.code === code)?.label ?? code
   return [
     ...(f.q ? [{ key: 'q', label: `"${f.q}"`, remove: { q: '' } }] : []),
     ...f.category.map((c) => ({
@@ -80,10 +89,10 @@ function activeChips(f: Filters): ActiveChip[] {
       label: c,
       remove: { category: f.category.filter((v) => v !== c) },
     })),
-    ...f.brand.map((b) => ({
-      key: `b-${b}`,
-      label: b,
-      remove: { brand: f.brand.filter((v) => v !== b) },
+    ...f.shop.map((code) => ({
+      key: `p-${code}`,
+      label: shopName(code),
+      remove: { shop: f.shop.filter((v) => v !== code) },
     })),
     ...f.store.map((s) => ({
       key: `s-${s}`,
@@ -127,10 +136,10 @@ function CheckChips({
 export function Browse() {
   const [query] = useSearchParams()
   const navigate = useNavigate()
-  const { brands, categories, deals, stores } = useCatalog()
+  const { categories, deals, shops, stores } = useCatalog()
   const filters = useMemo(() => parse(query), [query])
   const results = useMemo(() => apply(filters, deals), [filters, deals])
-  const chips = activeChips(filters)
+  const chips = activeChips(filters, shops)
   const [sheetOpen, setSheetOpen] = useState(false)
   const closeRef = useRef<HTMLButtonElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
@@ -170,7 +179,7 @@ export function Browse() {
     <div className="wrap page">
       <header className="page__head">
         <h1 className="title">All deals</h1>
-        <p className="page__lede">Every live sale the dog found at Rakuten, in one list.</p>
+        <p className="page__lede">Every live deal the dog found at Rakuten, in one list.</p>
       </header>
 
       <div className="browse">
@@ -200,7 +209,7 @@ export function Browse() {
                   id="f-q"
                   type="search"
                   className="input"
-                  placeholder="Title, brand or category"
+                  placeholder="Title, shop or category"
                   value={filters.q}
                   onChange={(e) => set({ q: e.target.value })}
                 />
@@ -223,23 +232,21 @@ export function Browse() {
 
             <fieldset className="field">
               <legend className="field__label">
-                Brand
-                {filters.brand.length > 0 && (
-                  <span className="field__value">{filters.brand.length} picked</span>
+                Shop
+                {filters.shop.length > 0 && (
+                  <span className="field__value">{filters.shop.length} picked</span>
                 )}
               </legend>
               <div className="checklist">
-                {brands.map((brand) => (
-                  <label key={brand} className="check">
+                {shops.map((shop) => (
+                  <label key={shop.code} className="check">
                     <input
                       type="checkbox"
-                      checked={filters.brand.includes(brand)}
-                      onChange={() => set({ brand: toggle(filters.brand, brand) })}
+                      checked={filters.shop.includes(shop.code)}
+                      onChange={() => set({ shop: toggle(filters.shop, shop.code) })}
                     />
-                    <span>{brand}</span>
-                    <span className="check__count">
-                      {deals.filter((d) => d.brand === brand).length}
-                    </span>
+                    <span>{shop.label}</span>
+                    <span className="check__count">{shop.count}</span>
                   </label>
                 ))}
               </div>

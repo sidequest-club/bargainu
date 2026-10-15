@@ -11,7 +11,7 @@ import CenterUnderline from '../fancy/underline-center'
 import VerticalCutReveal from '../fancy/vertical-cut-reveal'
 import { formatYen, useCatalog } from '../lib/catalog'
 import type { Category, Deal } from '../lib/catalog'
-import { foundAgo, timeLeft } from '../lib/format'
+import { byEnding, foundAgo, priceAsOf, timeLeft } from '../lib/format'
 import { spring, tokenNumber, useAfter, useSettled } from '../lib/tokens'
 
 const LIST_LENGTH = 4
@@ -34,9 +34,10 @@ function CollageCard({ deal, slot }: { deal: Deal; slot: 'a' | 'b' | 'c' }) {
       <img src={deal.image} alt="" width={900} height={900} />
       <span className="collage__caption">
         <span className="collage__name">{deal.title}</span>
-        <span className="price">{formatYen(deal.salePrice)}</span>
+        <span className="price">{formatYen(deal.price)}</span>
+        <span className="collage__asof">{priceAsOf(deal)}</span>
       </span>
-      <Sticker pct={deal.discountPct} size="md" className="collage__sticker" />
+      <Sticker rate={deal.pointRate} size="md" className="collage__sticker" />
     </Link>
   )
 }
@@ -48,9 +49,13 @@ export function Home() {
   const { deals, categories } = useCatalog()
   const words = categories.map((c) => c.toUpperCase())
 
-  const byEnding = deals.toSorted((a, b) => a.endsInHours - b.endsInHours)
-  const collage = byEnding.slice(0, COLLAGE_SLOTS.length)
-  const endingSoon = byEnding.filter(notIn(collage)).slice(0, LIST_LENGTH)
+  const ending = deals.toSorted(byEnding)
+  const collage = ending.slice(0, COLLAGE_SLOTS.length)
+  // Deals with no end date have nothing to count down, so they never count as ending soon.
+  const endingSoon = ending
+    .filter((d) => d.endsInHours !== null)
+    .filter(notIn(collage))
+    .slice(0, LIST_LENGTH)
   const justFound = deals
     .filter(notIn([...collage, ...endingSoon]))
     .sort((a, b) => a.postedHoursAgo - b.postedHoursAgo)
@@ -58,7 +63,7 @@ export function Home() {
 
   const byCategory = categories.map((category) => {
     const list = deals.filter((d) => d.category === category)
-    const cover = list.reduce((a, b) => (b.endsInHours < a.endsInHours ? b : a))
+    const cover = list.toSorted(byEnding)[0]
     return { category, count: list.length, cover }
   })
   const bands = Array.from({ length: BAND_COUNT }, (_, band) =>

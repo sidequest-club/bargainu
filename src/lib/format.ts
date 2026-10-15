@@ -1,9 +1,14 @@
-import type { Deal } from './catalog'
+import type { Deal, Promotion } from './catalog'
 
 const HOURS_PER_DAY = 24
 const URGENT_HOURS = 24
 
-export const isUrgent = (deal: Deal) => deal.endsInHours <= URGENT_HOURS
+export const isUrgent = (deal: Deal) =>
+  deal.endsInHours !== null && deal.endsInHours <= URGENT_HOURS
+
+/** Soonest end first; deals with no end go last. */
+export const byEnding = (a: Deal, b: Deal) =>
+  (a.endsInHours ?? Infinity) - (b.endsInHours ?? Infinity)
 
 /** "6h", "1d 6h", "4d". */
 export function duration(hours: number): string {
@@ -13,15 +18,31 @@ export function duration(hours: number): string {
   return rest === 0 ? `${days}d` : `${days}d ${rest}h`
 }
 
-export const timeLeft = (deal: Deal) => `Ends in ${duration(deal.endsInHours)}`
+export const timeLeft = (deal: Deal) =>
+  deal.endsInHours === null ? 'No end date' : `Ends in ${duration(deal.endsInHours)}`
 
 export const foundAgo = (deal: Deal) =>
   deal.postedHoursAgo <= 1 ? 'Found in the last hour' : `Found ${duration(deal.postedHoursAgo)} ago`
 
-/** "Shinjuku, Tokyo". A city named after its prefecture (Osaka, Kyoto) is shown once. */
-export function place(deal: Deal): string | null {
-  if (!deal.city || !deal.prefecture) return null
-  return deal.city === deal.prefecture ? deal.city : `${deal.city}, ${deal.prefecture}`
-}
+// Rakuten prices are Japanese prices, so their times are shown in Japan time wherever the visitor is.
+const jst = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Asia/Tokyo',
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
 
-export const channelLabel = (deal: Deal) => (deal.channel === 'online' ? 'Online' : 'In-store')
+/** "15 Oct, 10:17 JST". */
+export const jstTime = (ms: number) => `${jst.format(ms)} JST`
+
+/** When the price was fetched. Rakuten asks for it next to every price (decision 6). */
+export const priceAsOf = (deal: Deal) => `Price as of ${jstTime(deal.fetchedAt)}`
+
+/** "Sale" or "5× points". */
+export const promotionLabel = (promotion: Promotion) =>
+  promotion.kind === 'sale' ? 'Sale' : `${promotion.pointRate}× points`
+
+/** Why the deal is a deal, in one line: "Sale and 5× points". */
+export const why = (deal: Deal) => deal.promotions.map(promotionLabel).join(' and ')

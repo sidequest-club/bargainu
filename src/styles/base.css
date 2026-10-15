@@ -663,7 +663,7 @@ button.text-link {
 
 .checklist {
   display: grid;
-  max-height: var(--brand-list-h);
+  max-height: var(--checklist-h);
   overflow-y: auto;
   background: var(--color-surface);
   border: var(--border);

@@ -1,9 +1,9 @@
 import { Link } from 'react-router'
 import { formatYen } from '../lib/catalog'
 import type { Deal } from '../lib/catalog'
-import { channelLabel, isUrgent, place, timeLeft } from '../lib/format'
+import { isUrgent, priceAsOf, promotionLabel, timeLeft } from '../lib/format'
 import { useFavoriteAction, useStore } from '../lib/store'
-import { ClockIcon, HeartIcon, PinIcon } from './Icons'
+import { ClockIcon, HeartIcon, YenIcon } from './Icons'
 import { Sticker } from './Sticker'
 
 export function FavButton({ deal, className }: { deal: Deal; className?: string }) {
@@ -29,42 +29,42 @@ interface DealCardProps {
 }
 
 export function DealCard({ deal, headingLevel: Heading = 'h3' }: DealCardProps) {
-  const where = place(deal)
   return (
     <article className="card">
       <div className="card__photo">
         <img src={deal.image} alt="" loading="lazy" width={900} height={900} />
       </div>
-      <Sticker pct={deal.discountPct} size="md" className="card__sticker" />
+      <Sticker rate={deal.pointRate} size="md" className="card__sticker" />
       <FavButton deal={deal} className="card__fav" />
       <div className="card__body">
         <p className="card__meta">
           <span>{deal.store}</span>
-          <span className={`tag tag--${deal.channel}`}>{channelLabel(deal)}</span>
+          {deal.promotions.map((promotion) => (
+            <span key={promotion.kind} className="tag">
+              {promotionLabel(promotion)}
+            </span>
+          ))}
         </p>
         <Heading className="card__title">
           <Link to={`/deal/${deal.id}`} className="card__link">
             {deal.title}
           </Link>
         </Heading>
-        <p className="card__brand">{deal.brand}</p>
+        <p className="card__shop">{deal.shopName}</p>
         <p className="card__prices">
-          <span className="sr-only">Sale price </span>
-          <span className="price">{formatYen(deal.salePrice)}</span>
-          <span className="sr-only">, was </span>
-          <s className="was">{formatYen(deal.originalPrice)}</s>
+          <span className="price">{formatYen(deal.price)}</span>
         </p>
         <ul className="card__foot">
           <li className={isUrgent(deal) ? 'is-urgent' : undefined}>
             <ClockIcon />
             {timeLeft(deal)}
           </li>
-          {where && (
-            <li>
-              <PinIcon />
-              {where}
-            </li>
-          )}
+          <li>
+            <YenIcon />
+            <a href="#price-notice" className="card__asof">
+              {priceAsOf(deal)}
+            </a>
+          </li>
         </ul>
       </div>
     </article>
@@ -84,12 +84,13 @@ export function DealRow({ deal, note }: { deal: Deal; note: string }) {
           </Link>
         </h3>
         <p className="row__prices">
-          <span className="price">{formatYen(deal.salePrice)}</span>
-          <s className="was">{formatYen(deal.originalPrice)}</s>
-          <span className="row__store">{deal.store}</span>
+          <span className="price">{formatYen(deal.price)}</span>
+          <a href="#price-notice" className="row__asof">
+            {priceAsOf(deal)}
+          </a>
         </p>
       </div>
-      <Sticker pct={deal.discountPct} size="sm" className="row__sticker" />
+      <Sticker rate={deal.pointRate} size="sm" className="row__sticker" />
     </article>
   )
 }
