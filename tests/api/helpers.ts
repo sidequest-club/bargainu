@@ -3,7 +3,7 @@ import { betterAuth } from 'better-auth'
 import { testUtils } from 'better-auth/plugins'
 import { authOptions } from '../../worker/auth.ts'
 import { createDb } from '../../worker/db/index.ts'
-import { deals, favorites, session, user } from '../../worker/db/schema.ts'
+import { deals, favorites, promotions, session, shops, user } from '../../worker/db/schema.ts'
 
 export const db = createDb(env.DB)
 
@@ -16,31 +16,46 @@ export const request = (path: string, init?: RequestInit) =>
 /** Empties the tables the tests write to. The database outlives a single test. */
 export async function resetDb() {
   await db.delete(favorites)
+  await db.delete(promotions)
   await db.delete(deals)
+  await db.delete(shops)
   await db.delete(session)
   await db.delete(user)
 }
 
-/** Inserts a deal that ends in a day unless told otherwise, and returns its id. */
-export async function insertDeal(id: string, overrides: Partial<typeof deals.$inferInsert> = {}) {
+type PromotionInsert = Omit<typeof promotions.$inferInsert, 'dealId'>
+
+/**
+ * Inserts a deal from the shop "hayate" with a sale that ends in a day, unless told otherwise,
+ * and returns its id.
+ */
+export async function insertDeal(
+  id: string,
+  overrides: Partial<typeof deals.$inferInsert> = {},
+  dealPromotions: PromotionInsert[] = [{ kind: 'sale', endsAt: new Date(Date.now() + 24 * HOUR) }],
+) {
+  await db
+    .insert(shops)
+    .values({ code: 'hayate', store: 'Rakuten', name: 'Hayate' })
+    .onConflictDoNothing()
   await db.insert(deals).values({
     id,
-    title: `Deal ${id}`,
-    brand: 'Hayate',
+    shopCode: 'hayate',
     category: 'Shoes',
-    store: 'Rakuten',
-    channel: 'online',
-    originalPrice: 10000,
-    salePrice: 7000,
-    endsAt: new Date(Date.now() + 24 * HOUR),
+    title: `Deal ${id}`,
+    blurb: 'A test deal.',
+    image: 'https://example.invalid/deal.jpg',
+    url: 'https://example.invalid/deal',
+    price: 7000,
+    fetchedAt: new Date(Date.now() - HOUR),
     foundAt: new Date(Date.now() - HOUR),
     rating: 4.5,
     reviews: 12,
-    image: 'https://example.invalid/deal.jpg',
-    url: 'https://example.invalid/deal',
-    blurb: 'A test deal.',
     ...overrides,
   })
+  if (dealPromotions.length) {
+    await db.insert(promotions).values(dealPromotions.map((p) => ({ dealId: id, ...p })))
+  }
   return id
 }
 

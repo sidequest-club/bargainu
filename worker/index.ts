@@ -1,9 +1,9 @@
 import { env } from 'cloudflare:workers'
-import { and, desc, eq, gt, sql } from 'drizzle-orm'
+import { and, desc, eq, gt, isNull, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { createAuth } from './auth.ts'
 import { createDb } from './db/index.ts'
-import { deals, favorites } from './db/schema.ts'
+import { deals, favorites, promotions, shops } from './db/schema.ts'
 
 const db = createDb(env.DB)
 const auth = createAuth(env, db)
@@ -19,21 +19,47 @@ const app = new Hono()
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
     return c.json({ user: session?.user ?? null })
   })
-  // Every deal that has not ended, newest find first. The app filters and sorts the list itself.
+  // Every deal with a promotion that has not ended, newest find first. The app filters and
+  // sorts the list itself.
   .get('/deals', async (c) => {
     const now = new Date()
     const rows = await db
-      .select()
+      .select({ deal: deals, shop: shops, promotion: promotions })
       .from(deals)
-      .where(gt(deals.endsAt, now))
-      .orderBy(desc(deals.foundAt), deals.id)
+      .innerJoin(shops, eq(shops.code, deals.shopCode))
+      .innerJoin(
+        promotions,
+        and(
+          eq(promotions.dealId, deals.id),
+          or(isNull(promotions.endsAt), gt(promotions.endsAt, now)),
+        ),
+      )
+      .orderBy(desc(deals.foundAt), deals.id, promotions.kind)
+
+    const byDeal = new Map<string, typeof rows>()
+    for (const row of rows) byDeal.set(row.deal.id, [...(byDeal.get(row.deal.id) ?? []), row])
+
     return c.json({
       now: now.getTime(),
-      deals: rows.map((row) => ({
-        ...row,
-        endsAt: row.endsAt.getTime(),
-        foundAt: row.foundAt.getTime(),
-      })),
+      deals: [...byDeal.values()].map((group) => {
+        const { deal, shop } = group[0]
+        const active = group.map(({ promotion }) => ({
+          kind: promotion.kind,
+          endsAt: promotion.endsAt?.getTime() ?? null,
+          pointRate: promotion.pointRate,
+        }))
+        // A deal lasts as long as its longest promotion, and has no end if one of them has none.
+        const last = Math.max(...active.map((promotion) => promotion.endsAt ?? Infinity))
+        return {
+          ...deal,
+          shopName: shop.name,
+          store: shop.store,
+          promotions: active,
+          endsAt: last === Infinity ? null : last,
+          fetchedAt: deal.fetchedAt.getTime(),
+          foundAt: deal.foundAt.getTime(),
+        }
+      }),
     })
   })
   // Ids of the signed-in user's saved deals, newest first.
