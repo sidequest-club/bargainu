@@ -60,7 +60,7 @@
           "name": "price",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "fetched_at": {
