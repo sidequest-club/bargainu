@@ -81,7 +81,7 @@ interface ActiveChip {
 }
 
 function activeChips(f: Filters, shops: Shop[]): ActiveChip[] {
-  const shopName = (code: string) => shops.find((s) => s.code === code)?.label ?? code
+  const shopName = (code: string) => shops.find((s) => s.code === code)?.name ?? code
   return [
     ...(f.q ? [{ key: 'q', label: `"${f.q}"`, remove: { q: '' } }] : []),
     ...f.category.map((c) => ({
@@ -245,7 +245,7 @@ export function Browse() {
                       checked={filters.shop.includes(shop.code)}
                       onChange={() => set({ shop: toggle(filters.shop, shop.code) })}
                     />
-                    <span>{shop.label}</span>
+                    <span>{shop.name}</span>
                     <span className="check__count">{shop.count}</span>
                   </label>
                 ))}

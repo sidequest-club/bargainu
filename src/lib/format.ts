@@ -43,6 +43,3 @@ export const priceAsOf = (deal: Deal) => `Price as of ${jstTime(deal.fetchedAt)}
 /** "Sale" or "5× points". */
 export const promotionLabel = (promotion: Promotion) =>
   promotion.kind === 'sale' ? 'Sale' : `${promotion.pointRate}× points`
-
-/** Why the deal is a deal, in one line: "Sale and 5× points". */
-export const why = (deal: Deal) => deal.promotions.map(promotionLabel).join(' and ')

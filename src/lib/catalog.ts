@@ -12,26 +12,28 @@ export type Promotion = ApiDeal['promotions'][number]
 
 /** A deal as the screens use it: the API row plus the numbers worked out from it. */
 export interface Deal extends Omit<ApiDeal, 'endsAt' | 'foundAt'> {
-  /** Hours from page load until the deal ends, or null when its points have no end. */
+  /** Hours from page load until its soonest promotion ends, or null when none has an end. */
   endsInHours: number | null
   /** Hours before page load that the deal was found. */
   postedHoursAgo: number
   /** The highest point rate among its promotions, or null when it has no points. */
   pointRate: number | null
-  onSale: boolean
 }
 
 const MS_PER_HOUR = 60 * 60 * 1000
 
 export function toDeals({ now, deals }: DealsResponse): Deal[] {
-  return deals.map(({ endsAt, foundAt, ...deal }) => {
+  // The API's endsAt is the latest end, and null if any promotion has none. A sale ending in two
+  // hours next to open-ended points still raises the price in two hours, so count to the soonest.
+  return deals.map(({ endsAt: _latest, foundAt, ...deal }) => {
     const rates = deal.promotions.flatMap((p) => (p.pointRate === null ? [] : [p.pointRate]))
+    const ends = deal.promotions.flatMap((p) => (p.endsAt === null ? [] : [p.endsAt]))
     return {
       ...deal,
-      endsInHours: endsAt === null ? null : Math.max(1, Math.ceil((endsAt - now) / MS_PER_HOUR)),
+      endsInHours:
+        ends.length > 0 ? Math.max(1, Math.ceil((Math.min(...ends) - now) / MS_PER_HOUR)) : null,
       postedHoursAgo: Math.max(0, Math.floor((now - foundAt) / MS_PER_HOUR)),
       pointRate: rates.length > 0 ? Math.max(...rates) : null,
-      onSale: deal.promotions.some((p) => p.kind === 'sale'),
     }
   })
 }
@@ -39,8 +41,6 @@ export function toDeals({ now, deals }: DealsResponse): Deal[] {
 export interface Shop {
   code: string
   name: string
-  /** The name, with the store added when another shop has the same name. */
-  label: string
   /** How many live deals the shop has. */
   count: number
 }
@@ -60,20 +60,13 @@ export interface Catalog {
 export function buildCatalog(deals: Deal[]): Catalog {
   const byId = new Map(deals.map((d) => [d.id, d]))
   const shops = new Map<string, Shop>()
-  const byCode = new Map(deals.map((d) => [d.shopCode, d.store]))
   for (const d of deals) {
     const shop = shops.get(d.shopCode) ?? {
       code: d.shopCode,
       name: d.shopName,
-      label: d.shopName,
       count: 0,
     }
     shops.set(d.shopCode, { ...shop, count: shop.count + 1 })
-  }
-  const nameCount = new Map<string, number>()
-  for (const shop of shops.values()) nameCount.set(shop.name, (nameCount.get(shop.name) ?? 0) + 1)
-  for (const shop of shops.values()) {
-    if ((nameCount.get(shop.name) ?? 0) > 1) shop.label = `${shop.name} (${byCode.get(shop.code)})`
   }
   return {
     deals,

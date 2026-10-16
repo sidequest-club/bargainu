@@ -958,6 +958,12 @@
   gap: var(--s-3) var(--s-6);
 }
 
+.hero__media {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+}
+
 .collage {
   position: relative;
   width: 100%;

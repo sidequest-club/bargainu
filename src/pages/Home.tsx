@@ -125,15 +125,21 @@ export function Home() {
             </div>
           </div>
 
-          <div className="collage">
-            {COLLAGE_SLOTS.map(
-              (slot, i) => collage[i] && <CollageCard key={slot} deal={collage[i]} slot={slot} />,
-            )}
-            <div className="collage__dog" aria-hidden="true">
-              <span className="bubble">Found it!</span>
-              <Dog size="md" mood="sniff" />
+          <div className="hero__media">
+            <div className="collage">
+              {COLLAGE_SLOTS.map(
+                (slot, i) => collage[i] && <CollageCard key={slot} deal={collage[i]} slot={slot} />,
+              )}
+              <div className="collage__dog" aria-hidden="true">
+                <span className="bubble">Found it!</span>
+                <Dog size="md" mood="sniff" />
+              </div>
+              <CurlyArrow className="collage__arrow" />
             </div>
-            <CurlyArrow className="collage__arrow" />
+            {/* Each collage card is one link, so Rakuten's notice is linked once here (decision 6). */}
+            <a href="#price-notice" className="text-link">
+              <CenterUnderline>About these prices</CenterUnderline>
+            </a>
           </div>
         </div>
       </section>
