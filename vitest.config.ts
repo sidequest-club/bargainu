@@ -19,7 +19,7 @@ export default defineConfig(async () => ({
     }),
   ],
   test: {
-    include: ['tests/api/**/*.test.ts'],
+    include: ['tests/api/**/*.test.ts', 'tests/app/**/*.test.ts'],
     setupFiles: ['tests/api/setup.ts'],
   },
 }))

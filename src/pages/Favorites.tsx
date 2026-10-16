@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { DealCard } from '../components/DealCard'
 import { ArrowIcon } from '../components/Icons'
 import { EmptyState } from '../components/Shell'
-import { formatYen, useCatalog } from '../lib/catalog'
+import { useCatalog } from '../lib/catalog'
 import { useStore } from '../lib/store'
 
 export function Favorites() {
@@ -35,7 +35,6 @@ export function Favorites() {
 
   // Keep the order in which deals were saved, newest first. A saved deal that has ended is not listed.
   const saved = favorites.flatMap((id) => getDeal(id) ?? [])
-  const totalSaving = saved.reduce((sum, d) => sum + d.originalPrice - d.salePrice, 0)
 
   return (
     <div className="wrap page">
@@ -44,7 +43,7 @@ export function Favorites() {
         <p className="page__lede">
           {saved.length === 0
             ? `Nothing saved yet, ${user.name.split(' ')[0]}.`
-            : `${saved.length} saved ${saved.length === 1 ? 'deal' : 'deals'}. Buy them all and you keep ${formatYen(totalSaving)}.`}
+            : `${saved.length} saved ${saved.length === 1 ? 'deal' : 'deals'}, newest first.`}
         </p>
       </header>
 

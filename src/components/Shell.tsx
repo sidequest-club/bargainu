@@ -4,6 +4,8 @@ import { Link, useLocation } from 'react-router'
 import CenterUnderline from '../fancy/underline-center'
 import { useCatalog } from '../lib/catalog'
 import type { Catalog } from '../lib/catalog'
+import { isUrgent } from '../lib/format'
+import { PRICE_NOTICE } from '../lib/rakuten'
 import { useStore } from '../lib/store'
 import { Dog } from './Dog'
 import {
@@ -25,21 +27,25 @@ interface Fact {
   tone: string
 }
 
-const storesFact = (stores: Catalog['stores']): Fact => ({
-  text: `${stores.length} stores covered: ${stores.join(', ')}`,
-  icon: <TagIcon />,
-  tone: 'green',
-})
 const yenFact: Fact = { text: 'Prices in yen, tax included', icon: <YenIcon />, tone: 'green' }
 
 // The counts only mean something once there are deals; until then the strip keeps the fixed facts.
-function tickerFacts({ deals, stores, categories }: Catalog): Fact[] {
-  if (deals.length === 0) return [storesFact(stores), yenFact]
-  const endingToday = deals.filter((d) => d.endsInHours <= 24).length
+function tickerFacts({ deals, stores, shops, categories }: Catalog): Fact[] {
+  if (deals.length === 0) return [yenFact]
+  const endingToday = deals.filter(isUrgent).length
+  const rates = deals.flatMap((d) => (d.pointRate === null ? [] : [d.pointRate]))
+  const topRate = rates.length > 0 ? Math.max(...rates) : null
   return [
     { text: `${deals.length} deals sniffed out today`, icon: <PawIcon />, tone: 'yellow' },
-    storesFact(stores),
+    {
+      text: `${shops.length} shops on ${stores.join(', ')}`,
+      icon: <TagIcon />,
+      tone: 'green',
+    },
     { text: `${categories.length} categories in the pile`, icon: <BoneIcon />, tone: 'blue' },
+    ...(topRate === null
+      ? []
+      : [{ text: `Up to ${topRate}× points`, icon: <YenIcon />, tone: 'pink' }]),
     { text: `${endingToday} deals end within 24 hours`, icon: <StarIcon />, tone: 'yellow' },
     yenFact,
   ]
@@ -216,9 +222,7 @@ export function Footer() {
       </div>
       <FitText className="footer__wordmark">Bargainu</FitText>
       <p className="footer__small">
-        <span>
-          バーゲイヌ = bargain + 犬. The deals are samples with invented brands and prices.
-        </span>
+        <span>バーゲイヌ = bargain + 犬.</span>
         <span>Store names are plain labels, not endorsements.</span>
       </p>
       <div className="footer__legal">
@@ -226,8 +230,8 @@ export function Footer() {
           Bargainu is made and run by Sidequest Club (Yuta, Norty and Mizuki), who are responsible
           for it. It is not run by Rakuten, and Rakuten is not our partner.
         </p>
-        <p lang="ja">
-          このサイトで掲載されている情報は、Bargainuの作成者により運営されています。価格、販売可能情報は、変更される場合があります。購入時に楽天市場店舗（www.rakuten.co.jp）に表示されている価格が、その商品の販売に適用されます。
+        <p lang="ja" id="price-notice">
+          {PRICE_NOTICE}
         </p>
         <p>
           {/* Rakuten's credit, kept exactly as Rakuten gives it (decision 6). */}

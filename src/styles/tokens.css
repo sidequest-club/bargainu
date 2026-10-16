@@ -124,7 +124,7 @@
   --band-overlap: calc(var(--s-4) * -1);
   --band-bleed: 6vw; /* how far a tilted band runs past each edge */
   --sheet-max-h: 86dvh;
-  --brand-list-h: 216px;
+  --checklist-h: 216px;
   --range-h: 12px;
   --range-thumb: 26px;
   --check: 18px;
@@ -149,7 +149,8 @@
   --sticker-off-lg: clamp(0.875rem, 1.4vw, 1.125rem);
   --sticker-inset: calc(var(--s-2) * -1);
   --sticker-nudge: -0.02; /* optical centring of the number, as a share of sticker size */
-  --sticker-pct: 0.6em; /* the % sign relative to the number */
+  --sticker-pct: 0.6em; /* the × sign relative to the number */
+  --sticker-word: 0.75; /* a word (SALE) relative to the number's size, so it fits the burst */
   --sticker-hang-collage: -0.3; /* how far a sticker hangs off its piece, as a share of its size */
   --sticker-hang-detail-y: -0.14;
   --sticker-hang-detail-x: -0.08;

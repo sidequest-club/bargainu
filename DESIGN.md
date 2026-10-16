@@ -48,15 +48,15 @@ All colour is flat. No gradients, no glass, no blurred or grey shadows.
 | `--card` | `#fffcf4` | Cut-out pieces: cards, nav, inputs (`--color-surface`) |
 | `--ink` | `#16120e` | Text, every outline, every shadow, inverse blocks |
 | `--ink-soft` | `#51483c` | Secondary text (`--color-text-muted`) |
-| `--red` | `#dd2016` | Sale price, big-cut sticker, urgency, counts (`--color-price`, `--color-urgent`) |
-| `--yellow` | `#ffd60a` | The one primary action, current nav item, mid sticker (`--color-cta`) |
+| `--red` | `#dd2016` | Price, sale and big-points sticker, urgency, counts (`--color-price`, `--color-urgent`) |
+| `--yellow` | `#ffd60a` | The one primary action, current nav item, points sticker (`--color-cta`) |
 | `--pink` / `--pink-ink` | `#ff9ec6` / `#8c1049` | Band, tile, panel, saved state |
 | `--green` / `--green-ink` | `#74d68a` / `#0c4a22` | Band, tile, panel |
 | `--blue` / `--blue-ink` | `#8ec9ff` / `#0a3a78` | Band, tile, in-store tag and location, focus ring (`--color-focus` uses blue-ink) |
 
 Rules:
 
-- Red and yellow are the two loud colours. Red means price or discount. Yellow means "press this".
+- Red and yellow are the two loud colours. Red means price or sale. Yellow means "press this".
 - Pink, green and blue are block colours. On a band, the text is the `-ink` shade of the same hue.
   Everywhere else text on a colour block is `--ink`.
 - Blue also marks anything in-store (tag, location box), so it reads as a channel.
@@ -124,7 +124,7 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 
 1. **Ticker** (`.ticker`): ink strip at the very top with live facts and round sticker dots between them.
 2. **Category bands** (`.band`): three tilted, overlapping full-bleed marquees on Home; every word links into Browse.
-3. **Starburst sticker** (`Sticker`): 16-point burst with a hard shadow, tilted `--tilt-sticker`. Red from 40% off, yellow below. Sizes sm (rows), md (cards), lg (detail).
+3. **Starburst sticker** (`Sticker`): 16-point burst with a hard shadow, tilted `--tilt-sticker`. It says why the item is a deal, because Rakuten gives no original price to take a % off: the point rate ("10× POINTS") when the deal has boosted points, else "SALE". Red for a sale or 10× points and up, yellow below. Sizes sm (rows), md (cards), lg (detail).
 4. **Cut-out paper**: ink outline plus hard offset shadow on cards, buttons, nav, panels.
 5. **Dog mark** (`Dog`): white dog, one yellow eye patch, oversized nose. Moods: `happy` (logo), `sniff` (hero, login, sign-in gate, footer), `sleepy` (empty states).
 6. **Wordmark footer** (`.footer`): one serif line, then BARGAINU fitted edge to edge in yellow on ink,
@@ -135,14 +135,17 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 
 **Card** (`DealCard`): surface, 2px outline, `--r-md`, `--shadow-md`. Square photo on a `--color-well`,
 sticker hanging off the top right corner, favourite button top left. Body order is fixed: store and
-channel tag, title (2 lines), brand, sale price in Anton red with the struck original beside it,
-dashed rule, time left and (in-store only) place. The title link covers the whole card. Time left turns
-red and bold under 24 hours.
+one tag per promotion ("Sale", "5× points"), title (2 lines), shop, price in Anton red, dashed rule,
+time left ("No end date" for points without one) and the time the price was fetched in JST. That time
+links to Rakuten's price notice in the footer (decision 6). The title link covers the whole card. Time
+left turns red and bold under 24 hours. There is no struck original price and no brand: Rakuten gives
+neither.
 
-**Row** (`DealRow`): the compact card for lists inside a coloured panel. Thumb, note, one-line title, price, small sticker.
+**Row** (`DealRow`): the compact card for lists inside a coloured panel. Thumb, note, one-line title, price and its fetch time, small sticker.
 
-**Badge**: `.tag` is an outlined pill in small caps; `--online` is plain, `--in-store` is blue,
-`--store` is inverse. `.count` is a red pill with a number. The sticker is the only tilted badge.
+**Badge**: `.tag` is an outlined pill in small caps; a plain tag names a promotion ("Sale",
+"5× points"), `--store` is inverse. `--online` and `--in-store` (blue) stay in the base styles for
+when a store with shops returns; v1 shows no channel (decision 10). `.count` is a red pill with a number. The sticker is the only tilted badge.
 
 **Button** (`.btn`): pill, 2px outline, hard shadow, bold body font, minimum 44px tall.
 `--cta` (yellow) is the single primary action per view. `--ink` is the secondary strong action
@@ -151,7 +154,7 @@ Text links use fancy's centre underline and stay 44px tall.
 
 **Filter**: left rail on desktop (sticky, calm, no shadow), bottom sheet on phones with a scrim, a close
 button, Escape to close and a "Show N deals" action. Controls: search input, checkbox chips for
-category and store (checked = ink fill), and a scrolling checklist for brand. v1 has no discount,
+category and store (checked = ink fill), and a scrolling checklist of shops with counts. v1 has no discount,
 channel or location filter (decision 10); the segmented control and range slider stay in the base
 styles for later. Results sort by "Ending soonest" unless the URL says otherwise. Active filters repeat above
 the grid as ink chips with a remove cross, followed by "Clear all". Filter state lives in the URL query string.
@@ -178,7 +181,7 @@ ink rule. Use one to change section on Home. Do not use them on Browse or Deal d
 Short, plain, a little dry. The dog does the work and is talked about in the third person ("The dog
 has already been through it."). The stock of deals is "the pile". Headlines are two or three words in
 capitals. One warm serif sentence per section at most. Say what a control does ("Show 12 deals",
-"Clear all filters"), state facts with numbers ("Ends in 2d 4h", "You save ¥3,950 (50%)"), and never
+"Clear all filters"), state facts with numbers ("Ends in 2d 4h", "10× points"), and never
 hype ("amazing", "unbeatable"). No exclamation marks except in the dog's speech bubble.
 
 ## Do
@@ -186,7 +189,8 @@ hype ("amazing", "unbeatable"). No exclamation marks except in the dog's speech 
 - Put every new value in `tokens.css` first, then use it.
 - Give every interactive piece an ink outline, and a hard shadow if it sits directly on paper.
 - Keep one yellow button per view.
-- Show the discount only as a sticker, and the sale price only in Anton red.
+- Show why it is a deal as the sticker and the promotion tags, and the price only in Anton red.
+- Put the fetch time next to every Rakuten price, and Rakuten's price notice beside it or one link away.
 - Use `--blue` for anything about physical stores.
 - Keep Browse and Deal detail to paper, surface and ink plus the sticker and the yellow button.
 - Leave room for longer Japanese strings: wrap, clamp to two lines, never fix a text width.

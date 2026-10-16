@@ -13,18 +13,20 @@ const burst = Array.from({ length: POINTS * 2 }, (_, i) => {
   return `${(Math.sin(angle) * radius).toFixed(2)},${(-Math.cos(angle) * radius).toFixed(2)}`
 }).join(' ')
 
-const BIG_CUT = 40
+const BIG_BOOST = 10
 
 interface StickerProps {
-  pct: number
+  /** The point rate the sticker shouts, or null for a sale with no boosted points. */
+  rate: number | null
   size?: 'sm' | 'md' | 'lg'
-  /** Overrides the number, e.g. with an animated ticker. Decorative only: the label still reads pct. */
+  /** Overrides the rate, e.g. with an animated ticker. Decorative only: the label still reads the rate. */
   number?: ReactNode
   className?: string
 }
 
-export function Sticker({ pct, size = 'md', number, className }: StickerProps) {
-  const tone = pct >= BIG_CUT ? 'red' : 'yellow'
+// Rakuten gives no original price, so the sticker says why the item is a deal instead of a % off.
+export function Sticker({ rate, size = 'md', number, className }: StickerProps) {
+  const tone = rate === null || rate >= BIG_BOOST ? 'red' : 'yellow'
   return (
     <span
       className={['sticker', `sticker--${size}`, `sticker--${tone}`, className]
@@ -39,14 +41,20 @@ export function Sticker({ pct, size = 'md', number, className }: StickerProps) {
         />
         <polygon className="sticker__burst" points={burst} />
       </svg>
-      <span className="sr-only">{pct}% off</span>
-      <span className="sticker__text" aria-hidden="true">
-        <span className="sticker__num">
-          {number ?? pct}
-          <span className="sticker__pct">%</span>
+      <span className="sr-only">{rate === null ? 'On sale' : `${rate}× points`}</span>
+      {rate === null ? (
+        <span className="sticker__text" aria-hidden="true">
+          <span className="sticker__word">Sale</span>
         </span>
-        <span className="sticker__off">OFF</span>
-      </span>
+      ) : (
+        <span className="sticker__text" aria-hidden="true">
+          <span className="sticker__num">
+            {number ?? rate}
+            <span className="sticker__pct">×</span>
+          </span>
+          <span className="sticker__off">Points</span>
+        </span>
+      )}
     </span>
   )
 }

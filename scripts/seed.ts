@@ -54,11 +54,19 @@ const deals = sampleDeals.map((deal) => ({
   rating: deal.rating,
   reviews: deal.reviews,
 }))
-const promotions = sampleDeals.map((deal) => ({
-  deal_id: deal.id,
-  kind: 'sale',
-  ends_at: now + deal.endsInHours * MS_PER_HOUR,
-}))
+// A mix of the reasons a real deal has (decision 7): mostly sales, some with boosted points on
+// top, and some with points alone that have no end date.
+const POINT_RATES = [2, 3, 5, 10, 20]
+const promotions = sampleDeals.flatMap((deal, i): Record<string, Value>[] => {
+  const endsAt = now + deal.endsInHours * MS_PER_HOUR
+  const pointRate = POINT_RATES[i % POINT_RATES.length]
+  const sale = { deal_id: deal.id, kind: 'sale', ends_at: endsAt, point_rate: null }
+  if (i % 5 === 4)
+    return [{ deal_id: deal.id, kind: 'points', ends_at: null, point_rate: pointRate }]
+  if (i % 3 === 0)
+    return [sale, { deal_id: deal.id, kind: 'points', ends_at: endsAt, point_rate: pointRate }]
+  return [sale]
+})
 
 mkdirSync(dirname(OUT), { recursive: true })
 writeFileSync(
