@@ -39,7 +39,7 @@ export const deals = sqliteTable(
     // The deal's page at the store.
     url: text('url').notNull(),
     // JPY, tax included.
-    price: integer('price').notNull(),
+    price: integer('price'),
     fetchedAt: integer('fetched_at', { mode: 'timestamp_ms' }).notNull(),
     foundAt: integer('found_at', { mode: 'timestamp_ms' }).notNull(),
     rating: real('rating').notNull(),
