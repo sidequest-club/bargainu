@@ -88,7 +88,7 @@ Secrets:
 
 - `RAKUTEN_APP_ID`, `RAKUTEN_ACCESS_KEY`, `RAKUTEN_AFFILIATE_ID` (optional; leave it unset
   until we decide on Rakuten Affiliate)
-- `R2_ACCOUNT_ID`: the Cloudflare account ID
+- `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID
 - `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`: an R2 API token with object read and write on
   the bucket only
 - `CLOUDFLARE_D1_TOKEN`: a Cloudflare API token with D1 edit only, separate from the deploy

@@ -47,7 +47,7 @@ jobs:
           # R2 does not support the checksums newer AWS CLI versions add by default.
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
           AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_BUCKET: ${{ vars.R2_BUCKET }}
         run: |
           file=$(find collector/out/raw -name '*.ndjson' 2>/dev/null | head -n 1)
@@ -57,7 +57,7 @@ jobs:
           fi
           key=${file#collector/out/}
           aws s3 cp "$file" "s3://$R2_BUCKET/$key" \
-            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+            --endpoint-url "https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com"
           echo "key=$key" >> "$GITHUB_OUTPUT"
 
   # Transform and load: the raw file from R2, into D1. Runs when collecting failed too, so the
@@ -89,10 +89,10 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           aws s3 cp "s3://$R2_BUCKET/$KEY" "collector/out/$KEY" \
-            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+            --endpoint-url "https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com"
       - name: Normalize into SQL
         run: python collector/normalize.py --cutoff "$STARTED_AT" ${KEY:+"collector/out/$KEY"} > load.sql
       # D1 runs the file as one: if any statement fails, nothing changes.
@@ -106,7 +106,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           aws s3 rm "s3://$R2_BUCKET/raw/rakuten/" --recursive --exclude "${KEY#raw/rakuten/}" \
-            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+            --endpoint-url "https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com"
