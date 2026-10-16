@@ -6,6 +6,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
 | 12  | [Collecting deals](#12-collecting-rakuten-deals-once-a-day-by-genre-loaded-from-github-2026-10-14): daily, by genre | 2026-10-14 |
+| 11  | [Search log](#11-search-log-kept-in-d1-and-the-search-moves-into-the-api-2026-10-10): in D1, search in the API | 2026-10-10 |
 | 10  | [v1 features](#10-v1-features-what-each-one-means-2026-10-13): three cut, brand becomes shop | 2026-10-13 |
 | 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
 | 8   | [How we work](#8-how-we-work-2026-10-10): two weekly meetings, two labels    | 2026-10-10 |
@@ -47,6 +48,39 @@ in a Worker.
 
 **Not decided yet:** how many pages each search fetches (2 for now), and whether the genres in
 `categories.json` are the right ones.
+
+## 11. Search log: kept in D1, and the search moves into the API (2026-10-10)
+
+**Decision (temporary):** the app records searches in its own database, not in Google Analytics.
+For each search it stores what was searched, what was returned and how many items were returned.
+How many times a term was searched is the number of records for it.
+
+| Question | Decision |
+|---|---|
+| Where the search runs | In the API. Browse sends the search text and every filter it has set, and shows the results the endpoint returns. Browse's own filter (`apply()` in `src/pages/Browse.tsx`) is removed, so the log holds what users saw. |
+| When a search counts | Browse sends a search on Enter, or when typing pauses, not on every keystroke. Each one sent is recorded. |
+| Who searched | Not stored, so a search is not linked to an account. |
+| How much is kept | The number of results, the IDs of the first 100 in the order shown, and no prices. Records older than 3 months are deleted. |
+
+**Why:**
+
+- The Worker has the search and its results when it answers, so it can record them in the same
+  request, and ad blockers cannot stop it.
+- Google Analytics caps each value at 100 characters and an event at 25 values, so the list of
+  returned deals does not fit. It would also be a new third-party script that sets cookies.
+- The 3 months and leaving out prices follow decision 6: Rakuten lets us keep prices for 24
+  hours and other item data for 3 months.
+
+**Options considered:** Google Analytics, and keeping the search in the browser and having it
+report what it showed to a log endpoint. The second is a smaller change, but anyone could post
+made-up searches.
+
+**What follows:**
+
+- `/api/deals` keeps its current behaviour, because the whole app loads its catalog from it. The
+  search gets its own endpoint.
+
+Decided by Mizuki; Yuta and Norty have not reviewed it yet.
 
 ## 10. v1 features: what each one means (2026-10-13)
 

@@ -153,6 +153,12 @@
 .sticker__off {
   font-size: var(--sticker-off);
   letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.sticker__word {
+  font-size: calc(var(--sticker-num) * var(--sticker-word));
+  text-transform: uppercase;
 }
 
 .doodle {
@@ -638,9 +644,19 @@
   border-radius: inherit;
 }
 
-.card__brand {
+.card__shop {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+}
+
+/* The price time links to Rakuten's price notice in the footer, above the card's own link. */
+.card__asof,
+.row__asof {
+  position: relative;
+  z-index: var(--z-sticker);
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: var(--s-px);
 }
 
 .card__prices {
@@ -749,7 +765,7 @@
   font-size: var(--text-xl);
 }
 
-.row__store {
+.row__asof {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
 }
@@ -942,6 +958,12 @@
   gap: var(--s-3) var(--s-6);
 }
 
+.hero__media {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+}
+
 .collage {
   position: relative;
   width: 100%;
@@ -1002,6 +1024,11 @@
   display: grid;
   gap: var(--s-1);
   padding: var(--s-2) var(--s-1) var(--s-3);
+}
+
+.collage__asof {
+  font-size: var(--text-2xs);
+  color: var(--color-text-muted);
 }
 
 .collage__name {
@@ -1581,7 +1608,7 @@
   text-wrap: balance;
 }
 
-.detail__brand {
+.detail__shop {
   color: var(--color-text-muted);
 }
 
@@ -1604,24 +1631,15 @@
   color: var(--color-text-muted);
 }
 
-.pricebox__was {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2);
-}
-
-.pricebox__was .was {
-  font-size: var(--text-lg);
-}
-
-.pricebox__save {
-  padding: var(--s-0) var(--s-3);
-  background: var(--yellow);
-  border: var(--border);
-  border-radius: var(--r-pill);
+.pricebox__asof {
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
+}
+
+.pricebox__notice {
+  max-width: var(--measure);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
 
 .facts {
@@ -1635,11 +1653,6 @@
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--r-md);
-}
-
-.facts__item--wide {
-  grid-column: 1 / -1;
-  background: var(--blue);
 }
 
 .facts dt {

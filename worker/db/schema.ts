@@ -9,7 +9,8 @@ export * from './auth-schema.ts'
 
 export const PROMOTION_KINDS = ['sale', 'points'] as const
 
-// The collector writes straight to D1, so the database itself refuses values outside our lists.
+// The collector's load runs SQL on D1 without passing through the API, so the database itself
+// refuses values outside our lists.
 // DDL cannot take bound parameters, hence the inlined literals.
 const oneOf = (column: AnySQLiteColumn, values: readonly string[]) =>
   sql`${column} in (${sql.raw(values.map((value) => `'${value}'`).join(', '))})`
