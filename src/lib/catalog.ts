@@ -11,7 +11,9 @@ type ApiDeal = DealsResponse['deals'][number]
 export type Promotion = ApiDeal['promotions'][number]
 
 /** A deal as the screens use it: the API row plus the numbers worked out from it. */
-export interface Deal extends Omit<ApiDeal, 'endsAt' | 'foundAt'> {
+export interface Deal extends Omit<ApiDeal, 'endsAt' | 'foundAt' | 'price'> {
+  /** Yen, tax included. A deal whose price was cleared is not a live deal and is left out. */
+  price: number
   /** Hours from page load until its soonest promotion ends, or null when none has an end. */
   endsInHours: number | null
   /** Hours before page load that the deal was found. */
@@ -25,11 +27,14 @@ const MS_PER_HOUR = 60 * 60 * 1000
 export function toDeals({ now, deals }: DealsResponse): Deal[] {
   // The API's endsAt is the latest end, and null if any promotion has none. A sale ending in two
   // hours next to open-ended points still raises the price in two hours, so count to the soonest.
-  return deals.map(({ endsAt: _latest, foundAt, ...deal }) => {
+  return deals.flatMap(({ endsAt: _latest, foundAt, price, ...deal }) => {
+    // A run that misses a deal clears its price and promotions, so /api/deals should not send it.
+    if (price === null) return []
     const rates = deal.promotions.flatMap((p) => (p.pointRate === null ? [] : [p.pointRate]))
     const ends = deal.promotions.flatMap((p) => (p.endsAt === null ? [] : [p.endsAt]))
     return {
       ...deal,
+      price,
       endsInHours:
         ends.length > 0 ? Math.max(1, Math.ceil((Math.min(...ends) - now) / MS_PER_HOUR)) : null,
       postedHoursAgo: Math.max(0, Math.floor((now - foundAt) / MS_PER_HOUR)),

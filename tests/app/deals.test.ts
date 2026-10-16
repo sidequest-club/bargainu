@@ -8,7 +8,7 @@ const NOW = Date.UTC(2026, 9, 15, 1, 17)
 type Promotion = { kind: 'sale' | 'points'; endsAt: number | null; pointRate: number | null }
 
 // The shape GET /api/deals sends: endsAt is the latest end, or null if any promotion has none.
-const apiDeal = (id: string, promotions: Promotion[]) => {
+const apiDeal = (id: string, promotions: Promotion[], price: number | null = 1000) => {
   const ends = promotions.map((p) => p.endsAt ?? Infinity)
   const latest = Math.max(...ends)
   return {
@@ -19,7 +19,7 @@ const apiDeal = (id: string, promotions: Promotion[]) => {
     blurb: '',
     image: '',
     url: 'https://item.rakuten.co.jp/shop/item/',
-    price: 1000,
+    price,
     rating: 4,
     reviews: 10,
     shopName: 'Shop',
@@ -40,6 +40,7 @@ const deals = toDeals({
       { kind: 'sale', endsAt: NOW + 2 * HOUR, pointRate: null },
       { kind: 'points', endsAt: null, pointRate: 10 },
     ]),
+    apiDeal('price-cleared', [{ kind: 'sale', endsAt: NOW + 5 * HOUR, pointRate: null }], null),
   ],
 })
 const byId = Object.fromEntries(deals.map((deal) => [deal.id, deal]))
@@ -63,4 +64,9 @@ test('ending soonest puts deals with no end last', () => {
     'sale-only',
     'points-only',
   ])
+})
+
+test('a deal whose price was cleared is left out', () => {
+  expect(byId['price-cleared']).toBeUndefined()
+  expect(deals).toHaveLength(3)
 })
