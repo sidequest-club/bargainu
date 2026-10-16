@@ -42,8 +42,9 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
   24 hours. Keeping the rest of the deal for 3 months, as decision 6 allows, means a saved deal
   that one run misses is not lost.
 
-**Accepted risk:** a run that fails or starts late leaves the old prices until the next run, so
-some can be kept a little over 24 hours. Not chosen: running twice a day with an hourly clean-up
+**Accepted risk:** a failed load, a failed upload to R2 or a run that starts late leaves the old
+prices until the next run, so some can be kept a little over 24 hours. A Rakuten search that fails
+drops its deals until the next run. Not chosen: running twice a day with an hourly clean-up
 in a Worker.
 
 **Not decided yet:** how many pages each search fetches (2 for now), and whether the genres in

@@ -125,8 +125,10 @@ def write_items(out: TextIO, items: list[dict], query: dict, page: int, at: str)
 
 
 def collect(out: TextIO, queries: list[dict], pages: int) -> tuple[int, str | None]:
-    """Fetch every query and page. Returns (items written, error or None)."""
+    """Fetch every query and page. A failed request ends only its own query, so the others are
+    still loaded. Returns (items written, errors or None)."""
     written = 0
+    errors = []
     first_request = True
     for query in queries:
         for page in range(1, min(pages, MAX_PAGE) + 1):
@@ -137,14 +139,15 @@ def collect(out: TextIO, queries: list[dict], pages: int) -> tuple[int, str | No
             try:
                 data = fetch_page(query, page)
             except RakutenError as error:
-                return written, f"{describe(query)} page {page}: {error}"
+                errors.append(f"{describe(query)} page {page}: {error}")
+                break
             items = data.get("Items", [])
             write_items(out, items, query, page, at)
             written += len(items)
             print(f"{describe(query)} page {page}: {len(items)} items", file=sys.stderr)
             if page >= data.get("pageCount", 0):
                 break
-    return written, None
+    return written, "; ".join(errors) or None
 
 
 def main() -> None:
@@ -182,7 +185,7 @@ def main() -> None:
 
     print(f"Wrote {written} items to {path}")
     if error:
-        raise SystemExit(f"Stopped early, kept what was fetched. {error}")
+        raise SystemExit(f"Some searches failed, kept the rest. {error}")
 
 
 if __name__ == "__main__":

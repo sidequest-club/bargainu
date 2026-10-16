@@ -143,7 +143,9 @@ def to_sql(deals: list[dict], cutoff: int) -> str:
         for kind, ends_at, rate in d["promotions"]
     ]
     # Prices may be kept 24 hours (decision 6). Favorites cascade from the delete.
-    statements.append(f"UPDATE deals SET price = NULL WHERE fetched_at < {cutoff};")
+    statements.append(
+        f"UPDATE deals SET price = NULL WHERE fetched_at < {cutoff} AND price IS NOT NULL;"
+    )
     statements.append(f"DELETE FROM deals WHERE fetched_at < {cutoff - KEEP_DEALS_MS};")
     statements.append("DELETE FROM shops WHERE code NOT IN (SELECT shop_code FROM deals);")
     return "\n".join(statements) + "\n"

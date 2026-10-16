@@ -12,7 +12,8 @@ The Collect workflow runs once a day at 10:17 Japan time, and can be started by 
    [data-model.md](../docs/architecture/data-model.md), and `wrangler d1 execute` runs it on D1.
    D1 runs the file as one, so a failed load changes nothing.
 4. The load clears the price and promotions of every deal the run did not refresh, and R2 keeps
-   only this run's file. Prices may be kept for 24 hours (decision 6). If a run fails or starts
+   only this run's file. Prices may be kept for 24 hours (decision 6). A Rakuten search that
+   fails drops its deals until the next run. If the upload or the load fails, or the run starts
    late, the old prices stay until the next run.
 5. A deal no run has refreshed for 3 months is deleted, with its favorites. Until then its
    favorites stay, shown as no longer on sale.
@@ -76,8 +77,8 @@ To try it without keys or network:
 python3 collector/rakuten.py --from-file collector/samples/rakuten-item-search.json
 ```
 
-If a later page fails, the run stops with an error but keeps the items already fetched, and
-the workflow still loads them.
+If a request fails, the rest of that search is skipped and the other searches carry on. The run
+ends with an error, and the workflow still loads what was fetched.
 
 ## GitHub Actions setup
 

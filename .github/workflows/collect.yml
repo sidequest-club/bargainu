@@ -21,6 +21,7 @@ jobs:
     outputs:
       started_at: ${{ steps.start.outputs.ms }}
       key: ${{ steps.upload.outputs.key }}
+      uploaded: ${{ steps.upload.outcome }}
     steps:
       # Every deal this run refreshes is fetched after this moment; the load clears the rest.
       - id: start
@@ -60,10 +61,11 @@ jobs:
           echo "key=$key" >> "$GITHUB_OUTPUT"
 
   # Transform and load: the raw file from R2, into D1. Runs when collecting failed too, so the
-  # prices it did not refresh are still cleared (decision 6).
+  # prices it did not refresh are still cleared (decision 6). Skipped when the upload failed, so a
+  # good file that never reached R2 does not clear every deal.
   load:
     needs: collect
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.collect.outputs.uploaded == 'success' }}
     runs-on: ubuntu-latest
     env:
       KEY: ${{ needs.collect.outputs.key }}
