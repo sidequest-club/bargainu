@@ -25,9 +25,9 @@ How many times a term was searched is the number of records for it.
 
 | Question | Decision |
 |---|---|
-| Where the search runs | In the API. The browser sends the search text and every filter it has set, and the Worker applies the same filters the browser applies today. |
-| When a search counts | When the user submits it, not on every keystroke. |
-| Who searched | The signed-in user's ID is stored with the search. A signed-out search has none. |
+| Where the search runs | In the API. Browse sends the search text and every filter it has set, and shows the results the endpoint returns. Browse's own filter (`apply()` in `src/pages/Browse.tsx`) is removed, so the log holds what users saw. |
+| When a search counts | Browse sends a search on Enter, or when typing pauses, not on every keystroke. Each one sent is recorded. |
+| Who searched | Not stored, so a search is not linked to an account. |
 | How much is kept | The number of results, the IDs of the first 100 in the order shown, and no prices. Records older than 3 months are deleted. |
 
 **Why:**
@@ -47,8 +47,6 @@ made-up searches.
 
 - `/api/deals` keeps its current behaviour, because the whole app loads its catalog from it. The
   search gets its own endpoint.
-- Better Auth stores the name and email address of the Google account in `user`, so a search
-  stored with a user ID is linked to an email address.
 
 Decided by Mizuki; Yuta and Norty have not reviewed it yet.
 
