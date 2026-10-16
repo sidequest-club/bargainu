@@ -27,8 +27,9 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 - A second job turns the raw file into SQL with `collector/normalize.py` and runs it on D1 with
   `wrangler d1 execute`. There is no ingest endpoint (SID-23) and no Worker that reads R2. This
   replaces decision 5's assumption that the collector cannot reach D1 directly.
-- Each load deletes every deal its run did not refresh, with the deal's promotions and
-  favorites, and every older raw file in R2.
+- Each load clears the price and promotions of every deal its run did not refresh, and deletes
+  every older raw file in R2. The deal and its favorites stay until no run has refreshed it for
+  3 months.
 
 **Why:**
 
@@ -36,12 +37,13 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
   none of our categories is not collected) holds without a table of every Rakuten genre.
 - D1 runs the file as one, so a failed load changes nothing. The load uses no Worker, so the
   free plan's 10 ms CPU limit does not apply. `db:seed:remote` already works this way.
-- When runs are on time, deleting what a run did not refresh keeps prices within decision 6's
-  24 hours.
+- When runs are on time, clearing what a run did not refresh keeps prices within decision 6's
+  24 hours. Keeping the rest of the deal for 3 months, as decision 6 allows, means a saved deal
+  that one run misses is not lost.
 
 **Accepted risk:** a run that fails or starts late leaves the old prices until the next run, so
 some can be kept a little over 24 hours. Not chosen: running twice a day with an hourly clean-up
-in a Worker. A deal one run misses is deleted, and so are the favorites saved on it.
+in a Worker.
 
 **Not decided yet:** how many pages each search fetches (2 for now), and whether the genres in
 `categories.json` are the right ones.

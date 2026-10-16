@@ -4,9 +4,10 @@ Usage:
 
     python collector/normalize.py --cutoff 1791940000000 collector/out/raw/rakuten/<date>/<time>Z.ndjson
 
-Upserts every listing that is a deal, then deletes the deals fetched before --cutoff (ms, the
-start of the run), so the database holds only what this run found. With no files, only the
-delete runs. The tables are in docs/architecture/data-model.md.
+Upserts every listing that is a deal, then clears the price and promotions of the deals fetched
+before --cutoff (ms, the start of the run), so only what this run found is on sale. Deals no run
+has fetched for 3 months are deleted. With no files, only the clean-up runs. The tables are in
+docs/architecture/data-model.md.
 """
 
 from __future__ import annotations
@@ -33,6 +34,9 @@ STORE = "Rakuten"
 
 # /api/deals sends every deal at once, so the description stays short.
 BLURB_LENGTH = 300
+
+# Within decision 6's 3 months even across February, with a day for the run that deletes it.
+KEEP_DEALS_MS = 88 * 24 * 60 * 60 * 1000
 
 
 def strip_tracking(url: str) -> str:
@@ -130,16 +134,17 @@ def to_sql(deals: list[dict], cutoff: int) -> str:
     shops = {d["shop"]["code"]: d["shop"] for d in deals}
     statements = [upsert("shops", shop, "code") for shop in shops.values()]
     statements += [upsert("deals", d["deal"], "id", keep=("found_at",)) for d in deals]
-    refreshed = f"SELECT id FROM deals WHERE fetched_at >= {cutoff}"
-    statements.append(f"DELETE FROM promotions WHERE deal_id IN ({refreshed});")
+    # A deal this run did not refresh keeps no promotion, so every row is replaced.
+    statements.append("DELETE FROM promotions;")
     statements += [
         "INSERT INTO promotions (deal_id, kind, ends_at, point_rate) VALUES "
         f"({literal(d['deal']['id'])}, {literal(kind)}, {literal(ends_at)}, {literal(rate)});"
         for d in deals
         for kind, ends_at, rate in d["promotions"]
     ]
-    # Prices may be kept 24 hours (decision 6). Promotions and favorites cascade.
-    statements.append(f"DELETE FROM deals WHERE fetched_at < {cutoff};")
+    # Prices may be kept 24 hours (decision 6). Favorites cascade from the delete.
+    statements.append(f"UPDATE deals SET price = NULL WHERE fetched_at < {cutoff};")
+    statements.append(f"DELETE FROM deals WHERE fetched_at < {cutoff - KEEP_DEALS_MS};")
     statements.append("DELETE FROM shops WHERE code NOT IN (SELECT shop_code FROM deals);")
     return "\n".join(statements) + "\n"
 
@@ -153,7 +158,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("files", nargs="*", type=Path, help="raw NDJSON files")
     parser.add_argument(
-        "--cutoff", type=int, required=True, help="delete deals fetched before this (ms)"
+        "--cutoff", type=int, required=True, help="clear the prices of deals fetched before this (ms)"
     )
     parser.add_argument("--categories", type=Path, default=HERE / "categories.json")
     args = parser.parse_args()

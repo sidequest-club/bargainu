@@ -101,15 +101,29 @@ class Load(unittest.TestCase):
         self.assertEqual(self.one("select price, title, found_at from deals"), (4500, "It's new", AT_MS))
         self.assertEqual(self.one("select count(*) from promotions"), (1,))
 
-    def test_deals_the_run_did_not_refresh_go_with_their_favorites_and_shop(self):
-        self.load([deal()], AT_MS)
+    def save_favorite(self):
         self.db.execute(
             "insert into user (id, name, email, created_at, updated_at)"
             " values ('u', 'U', 'u@example.invalid', 0, 0)"
         )
         self.db.execute("insert into favorites (user_id, deal_id) values ('u', 'kutsuya:1')")
 
+    def test_a_deal_the_run_did_not_refresh_loses_its_price_but_keeps_its_favorite(self):
+        self.load([deal()], AT_MS)
+        self.save_favorite()
+
         self.load([], AT_MS + 24 * HOUR)
+
+        self.assertEqual(self.one("select price from deals"), (None,))
+        self.assertEqual(self.one("select count(*) from promotions"), (0,))
+        self.assertEqual(self.one("select count(*) from favorites"), (1,))
+        self.assertEqual(self.one("select count(*) from shops"), (1,))
+
+    def test_a_deal_no_run_refreshed_for_3_months_goes_with_its_favorites_and_shop(self):
+        self.load([deal()], AT_MS)
+        self.save_favorite()
+
+        self.load([], AT_MS + normalize.KEEP_DEALS_MS + HOUR)
 
         for table in ("deals", "promotions", "favorites", "shops"):
             self.assertEqual(self.one(f"select count(*) from {table}"), (0,), table)

@@ -22,7 +22,7 @@ jobs:
       started_at: ${{ steps.start.outputs.ms }}
       key: ${{ steps.upload.outputs.key }}
     steps:
-      # Every deal this run refreshes is fetched after this moment; the load deletes the rest.
+      # Every deal this run refreshes is fetched after this moment; the load clears the rest.
       - id: start
         run: echo "ms=$(date +%s%3N)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v5
@@ -60,7 +60,7 @@ jobs:
           echo "key=$key" >> "$GITHUB_OUTPUT"
 
   # Transform and load: the raw file from R2, into D1. Runs when collecting failed too, so the
-  # deals it did not refresh are still deleted (decision 6).
+  # prices it did not refresh are still cleared (decision 6).
   load:
     needs: collect
     if: ${{ !cancelled() }}

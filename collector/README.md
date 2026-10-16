@@ -11,9 +11,11 @@ The Collect workflow runs once a day at 10:17 Japan time, and can be started by 
 3. A second job downloads it, `normalize.py` turns it into SQL for the tables in
    [data-model.md](../docs/architecture/data-model.md), and `wrangler d1 execute` runs it on D1.
    D1 runs the file as one, so a failed load changes nothing.
-4. The load deletes every deal the run did not refresh, and R2 keeps only this run's file.
-   Prices may be kept for 24 hours (decision 6). If a run fails or starts late, the old prices
-   stay until the next run.
+4. The load clears the price and promotions of every deal the run did not refresh, and R2 keeps
+   only this run's file. Prices may be kept for 24 hours (decision 6). If a run fails or starts
+   late, the old prices stay until the next run.
+5. A deal no run has refreshed for 3 months is deleted, with its favorites. Until then its
+   favorites stay, shown as no longer on sale.
 
 Status: Rakuten only.
 
@@ -59,7 +61,7 @@ One page of every search (2026-10-14) gave 288 deals out of 780 listings, in all
    ```
 
 3. Turn the raw file into SQL and load it into your local database. `--cutoff` is in
-   milliseconds; deals fetched before it are deleted, and 0 keeps everything:
+   milliseconds; deals fetched before it lose their price, and 0 keeps everything:
 
    ```
    python3 collector/normalize.py --cutoff 0 collector/out/raw/rakuten/<date>/<time>Z.ndjson > collector/out/load.sql
