@@ -17,7 +17,7 @@ CREATE TABLE `deals` (
 	`blurb` text NOT NULL,
 	`image` text NOT NULL,
 	`url` text NOT NULL,
-	`price` integer NOT NULL,
+	`price` integer,
 	`fetched_at` integer NOT NULL,
 	`found_at` integer NOT NULL,
 	`rating` real NOT NULL,
