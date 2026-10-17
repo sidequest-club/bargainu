@@ -663,6 +663,8 @@ button.text-link {
 
 .checklist {
   display: grid;
+  /* Rows keep their height when a long shop name wraps, instead of shrinking to fit the box. */
+  grid-auto-rows: max-content;
   max-height: var(--checklist-h);
   overflow-y: auto;
   background: var(--color-surface);
@@ -698,6 +700,12 @@ button.text-link {
   margin-left: auto;
   color: var(--color-text-muted);
   font-size: var(--text-xs);
+}
+
+.checklist__none {
+  padding: var(--s-1) var(--s-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .divider {

@@ -12,7 +12,10 @@ import { tokenNumber, useSettled } from '../lib/tokens'
 
 const sorts = {
   ending: { label: 'Ending soonest', compare: byEnding },
-  price: { label: 'Lowest price', compare: (a: Deal, b: Deal) => a.price - b.price },
+  price: {
+    label: 'Lowest price',
+    compare: (a: Deal, b: Deal) => a.price - b.price,
+  },
   newest: {
     label: 'Just found',
     compare: (a: Deal, b: Deal) => a.postedHoursAgo - b.postedHoursAgo,
@@ -73,6 +76,17 @@ function apply(f: Filters, deals: Deal[]): Deal[] {
 
 const toggle = (values: string[], value: string) =>
   values.includes(value) ? values.filter((v) => v !== value) : [...values, value]
+
+/** Picked shops first, then the shops with the most deals; a search narrows the rest by name. */
+function shopList(shops: Shop[], picked: string[], search: string): Shop[] {
+  const needle = search.trim().toLowerCase()
+  return shops
+    .filter((s) => picked.includes(s.code) || !needle || s.name.toLowerCase().includes(needle))
+    .toSorted(
+      (a, b) =>
+        Number(picked.includes(b.code)) - Number(picked.includes(a.code)) || b.count - a.count,
+    )
+}
 
 interface ActiveChip {
   key: string
@@ -141,13 +155,18 @@ export function Browse() {
   const results = useMemo(() => apply(filters, deals), [filters, deals])
   const chips = activeChips(filters, shops)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [shopSearch, setShopSearch] = useState('')
+  const shownShops = shopList(shops, filters.shop, shopSearch)
   const closeRef = useRef<HTMLButtonElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
   const reduced = useReducedMotion()
   const settled = useSettled(results.length)
 
   // The count ticks from the previous total to the new one.
-  const [count, setCount] = useState({ from: results.length, to: results.length })
+  const [count, setCount] = useState({
+    from: results.length,
+    to: results.length,
+  })
   if (count.to !== results.length) setCount({ from: count.to, to: results.length })
 
   const go = (next: Filters) => void navigate(toPath(next), { replace: true })
@@ -223,12 +242,15 @@ export function Browse() {
               onToggle={(v) => set({ category: toggle(filters.category, v) })}
             />
 
-            <CheckChips
-              legend="Store"
-              options={stores}
-              selected={filters.store}
-              onToggle={(v) => set({ store: toggle(filters.store, v) })}
-            />
+            {/* With one store the filter would change nothing. */}
+            {stores.length > 1 && (
+              <CheckChips
+                legend="Store"
+                options={stores}
+                selected={filters.store}
+                onToggle={(v) => set({ store: toggle(filters.store, v) })}
+              />
+            )}
 
             <fieldset className="field">
               <legend className="field__label">
@@ -237,8 +259,22 @@ export function Browse() {
                   <span className="field__value">{filters.shop.length} picked</span>
                 )}
               </legend>
+              <div className="input-icon">
+                <SearchIcon />
+                <input
+                  type="search"
+                  className="input"
+                  placeholder={`Find one of ${shops.length} shops`}
+                  aria-label="Find a shop"
+                  value={shopSearch}
+                  onChange={(e) => setShopSearch(e.target.value)}
+                />
+              </div>
               <div className="checklist">
-                {shops.map((shop) => (
+                {shownShops.length === 0 && (
+                  <p className="checklist__none">No shop by that name.</p>
+                )}
+                {shownShops.map((shop) => (
                   <label key={shop.code} className="check">
                     <input
                       type="checkbox"

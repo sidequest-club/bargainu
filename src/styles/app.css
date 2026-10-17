@@ -1520,7 +1520,14 @@
   color: var(--color-text-muted);
 }
 
+/* The deal's title as the last crumb: one line, cut with an ellipsis. The page title says it in full. */
 .crumbs [aria-current] {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--color-text-muted);
 }
 
@@ -1543,6 +1550,9 @@
 .detail__media {
   position: relative;
   align-self: start;
+  justify-self: center;
+  width: 100%;
+  max-width: var(--detail-photo-phone);
 }
 
 .detail__photo {
@@ -1598,14 +1608,18 @@
   color: var(--color-text-muted);
 }
 
+/* Rakuten titles are long keyword lists written by the shop, so the title is body text, not an
+   Anton headline, and stops after a few lines so the price stays in view. */
 .detail__title {
-  font-family: var(--font-display);
-  font-weight: var(--weight-regular);
-  font-size: var(--text-title);
-  line-height: var(--lh-display);
-  letter-spacing: var(--track-display);
-  text-transform: uppercase;
-  text-wrap: balance;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-snug);
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--clamp-detail-title);
+  line-clamp: var(--clamp-detail-title);
+  overflow: hidden;
 }
 
 .detail__shop {
@@ -1733,6 +1747,12 @@
   margin-bottom: var(--s-6);
 }
 
+@media (min-width: 640px) {
+  .detail__media {
+    max-width: none;
+  }
+}
+
 @media (min-width: 960px) {
   .detail {
     grid-template-columns: repeat(var(--duo-cols), minmax(0, 1fr));
@@ -1741,6 +1761,9 @@
   .detail__media {
     position: sticky;
     top: calc(var(--nav-h) + var(--s-8));
+  }
+  .detail__title {
+    font-size: var(--text-2xl);
   }
   .detail__actions .btn {
     flex: 0 1 auto;
