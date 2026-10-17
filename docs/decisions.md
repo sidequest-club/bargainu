@@ -265,7 +265,7 @@ uses only what the API returns at the time and is allowed.
   showing which store a deal is from, and a line saying who runs the site.
 - `collector/samples/rakuten-item-search.json` is a real API response with prices, committed to
   this public repository on 2026-10-06. It is past 24 hours and in a public place. Replace it with
-  invented values.
+  invented values. Done in SID-41 on 2026-10-17; the real response is still in the git history.
 
 **Not decided yet:**
 

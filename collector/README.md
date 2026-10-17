@@ -117,10 +117,8 @@ GitHub turns off a scheduled workflow in a public repository after 60 days witho
   start and end times. All are Japan time with no zone; `9999-12-31` means no end date.
 - There is no JAN code field. Some listings mention it in `itemCaption`.
 - Searches return non-product listings such as ふるさと納税; we exclude them with `NGKeyword`.
-- A full response is in `samples/rakuten-item-search.json` (application ID removed).
+- `samples/rakuten-item-search.json` has the shape of a full response, with invented values.
 
 ## Still open
 
-- `samples/rakuten-item-search.json` is a real response with prices. Replace it with invented
-  values (decision 6).
 - Whether a server sending `Referer` for a Web Application is within the terms.
