@@ -49,19 +49,19 @@ Updated 2026-10-17. The screens follow the agreed data model (SID-24). The deplo
 590 Rakuten deals from one run of the collector in #26, loaded on 2026-10-17. Nothing loads them
 again until #26 is merged.
 
-| #   | Today                                                                                                                                                                                       | Issue          |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| 1a  | On `main`, the collector fetches keywords typed in by hand and keeps every item. #26 searches our genres instead and keeps only items in a sale or with boosted points.                     | SID-39         |
-| 1b  | On `main`, runs are started by hand and nothing loads them. #26 adds a daily run that loads the deals into the database and clears a price that was not fetched again.                      | SID-28, SID-39 |
-| 2   | Built and deployed. Each deal shows its name, image, price, shop and why it is a deal, with Rakuten's credit, the update time and Rakuten's price notice.                                   | none           |
-| 3   | Removed.                                                                                                                                                                                    | none           |
-| 4a  | Removed.                                                                                                                                                                                    | none           |
-| 4b  | Built and deployed, filtering by shop.                                                                                                                                                      | none           |
-| 4c  | Built on our 12 categories. The genre-to-category mapping is `collector/categories.json` in #26.                                                                                            | SID-39         |
-| 4d  | Not shown.                                                                                                                                                                                  | none           |
-| 4e  | Not shown.                                                                                                                                                                                  | none           |
-| 5   | Built and deployed.                                                                                                                                                                         | none           |
-| 6   | Built and deployed. A saved deal that a run did not refresh stays in Favorites with no price, and goes after 3 months with the deal (data-model.md). The clean-up that does this is in #26. | SID-25         |
+| #   | Today                                                                                                                                                                     | Issue          |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| 1a  | On `main`, the collector fetches keywords typed in by hand and keeps every item. #26 searches our genres instead and keeps only items in a sale or with boosted points.   | SID-39         |
+| 1b  | On `main`, runs are started by hand and nothing loads them. #26 adds a daily run that loads the deals into the database and clears a price that was not fetched again.    | SID-28, SID-39 |
+| 2   | Built and deployed. Each deal shows its name, image, price, shop and why it is a deal, with Rakuten's credit, the update time and Rakuten's price notice.                 | none           |
+| 3   | Removed.                                                                                                                                                                  | none           |
+| 4a  | Removed.                                                                                                                                                                  | none           |
+| 4b  | Built and deployed, filtering by shop.                                                                                                                                    | none           |
+| 4c  | Built on our 12 categories. The genre-to-category mapping is `collector/categories.json` in #26.                                                                          | SID-39         |
+| 4d  | Not shown.                                                                                                                                                                | none           |
+| 4e  | Not shown.                                                                                                                                                                | none           |
+| 5   | Built and deployed.                                                                                                                                                       | none           |
+| 6   | Built and deployed. A saved deal that has ended, or that a run did not refresh, drops out of Favorites. Showing it as no longer on sale (data-model.md) is not built yet. | SID-25         |
 
 ## What Rakuten returns
 
