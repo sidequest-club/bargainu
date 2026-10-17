@@ -1,12 +1,11 @@
 // Sample deals for a development database: the invented dataset the prototypes used.
-// Brands and prices are made up. Store names are plain text labels only.
+// Brands and prices are made up. v1 shows Rakuten only (decision 7), so every sample is an online
+// Rakuten deal.
 import type { Category, Store } from '../worker/db/taxonomy.ts'
 
 type Row = [
   title: string,
   brand: string,
-  store: Store,
-  place: [prefecture: string, city: string] | null,
   originalPrice: number,
   salePrice: number,
   endsInHours: number,
@@ -16,23 +15,11 @@ type Row = [
   blurb: string,
 ]
 
-const AKIBA: [string, string] = ['Tokyo', 'Chiyoda']
-const SHINJUKU: [string, string] = ['Tokyo', 'Shinjuku']
-const UMEDA: [string, string] = ['Osaka', 'Osaka']
-const YOKOHAMA: [string, string] = ['Kanagawa', 'Yokohama']
-const HAKATA: [string, string] = ['Fukuoka', 'Fukuoka']
-const SAPPORO: [string, string] = ['Hokkaido', 'Sapporo']
-const KYOTO: [string, string] = ['Kyoto', 'Kyoto']
-const NAGOYA: [string, string] = ['Aichi', 'Nagoya']
-const SENDAI: [string, string] = ['Miyagi', 'Sendai']
-
 const rows: Record<Category, Row[]> = {
   Shoes: [
     [
       'Cloudstep Pastel Runner',
       'Hayate',
-      'Rakuten',
-      null,
       14800,
       8880,
       30,
@@ -44,8 +31,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Court Classic Low White',
       'Tsubame',
-      'Amazon',
-      null,
       11000,
       7150,
       96,
@@ -57,8 +42,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Trail Blaze 2 Orange',
       'Hayate',
-      'Yodobashi',
-      SHINJUKU,
       16500,
       9900,
       52,
@@ -70,8 +53,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Aero Knit Slip-on',
       'Kumo',
-      'Rakuten',
-      null,
       9800,
       3920,
       12,
@@ -83,8 +64,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Flight Mid Retro',
       'Tsubame',
-      'Amazon',
-      null,
       19800,
       15840,
       160,
@@ -98,8 +77,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Rider Leather Jacket',
       'Mori',
-      'Rakuten',
-      null,
       42000,
       25200,
       72,
@@ -111,8 +88,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Field Chore Coat',
       'Mori',
-      'Amazon',
-      null,
       18700,
       13090,
       120,
@@ -124,8 +99,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Everyday Oxford Shirt 3-pack',
       'Nami',
-      'Rakuten',
-      null,
       8970,
       4480,
       20,
@@ -137,8 +110,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Sunset Zip Hoodie',
       'Kumo',
-      'Yodobashi',
-      UMEDA,
       7900,
       3950,
       40,
@@ -150,8 +121,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Canvas Work Jacket',
       'Mori',
-      'Amazon',
-      null,
       15400,
       11550,
       200,
@@ -165,8 +134,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Studio One Wireless Headphones',
       'Akari',
-      'Yodobashi',
-      AKIBA,
       38500,
       23100,
       28,
@@ -178,8 +145,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Pulse ANC Over-ear',
       'Sora',
-      'Amazon',
-      null,
       29800,
       19370,
       84,
@@ -191,8 +156,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Desk Monitor Headphones',
       'Akari',
-      'Rakuten',
-      null,
       16800,
       11760,
       144,
@@ -204,8 +167,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Blossom Wireless On-ear',
       'Sora',
-      'Rakuten',
-      null,
       12800,
       6400,
       10,
@@ -217,8 +178,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Reference 50 Wired',
       'Akari',
-      'Yodobashi',
-      null,
       24200,
       16940,
       60,
@@ -232,8 +191,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Alpha Frame Mirrorless Body',
       'Hoshi',
-      'Yodobashi',
-      AKIBA,
       248000,
       198400,
       48,
@@ -245,8 +202,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Rebel Starter DSLR Kit',
       'Ishi',
-      'Amazon',
-      null,
       89800,
       62860,
       110,
@@ -258,8 +213,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Prime 50mm f/1.8 Lens',
       'Ishi',
-      'Rakuten',
-      null,
       32000,
       22400,
       36,
@@ -271,8 +224,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Travel Zoom Compact',
       'Hoshi',
-      'Yodobashi',
-      YOKOHAMA,
       64800,
       45360,
       22,
@@ -284,8 +235,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Creator Vlog Camera Set',
       'Hoshi',
-      'Amazon',
-      null,
       118000,
       94400,
       180,
@@ -299,8 +248,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Slimbook 14 Laptop 16GB/512GB',
       'Kaze',
-      'Amazon',
-      null,
       168000,
       126000,
       66,
@@ -312,8 +259,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Airlite 13 Laptop 8GB/256GB',
       'Kaze',
-      'Yodobashi',
-      SHINJUKU,
       124800,
       99840,
       34,
@@ -325,8 +270,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Pro Studio 16 Laptop 32GB/1TB',
       'Sora',
-      'Rakuten',
-      null,
       328000,
       262400,
       130,
@@ -338,8 +281,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Workmate 15 Business Laptop',
       'Ishi',
-      'Amazon',
-      null,
       98000,
       58800,
       16,
@@ -351,8 +292,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Silver Edge 14 OLED',
       'Kaze',
-      'Yodobashi',
-      UMEDA,
       189800,
       142350,
       90,
@@ -366,8 +305,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Meridian Automatic 40mm',
       'Toki',
-      'Rakuten',
-      null,
       54000,
       35100,
       75,
@@ -379,8 +316,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Minimal Mesh Quartz',
       'Toki',
-      'Amazon',
-      null,
       16500,
       8250,
       26,
@@ -392,8 +327,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Navigator Chronograph',
       'Hoshi',
-      'Yodobashi',
-      NAGOYA,
       68000,
       47600,
       44,
@@ -405,8 +338,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Stealth Chrono Black',
       'Toki',
-      'Amazon',
-      null,
       39800,
       27860,
       150,
@@ -418,8 +349,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Heritage Two-tone',
       'Hoshi',
-      'Rakuten',
-      null,
       82000,
       65600,
       210,
@@ -433,8 +362,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Barista Drip Coffee Maker',
       'Yuki',
-      'Yodobashi',
-      KYOTO,
       19800,
       11880,
       38,
@@ -446,8 +373,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Espresso Pro Machine',
       'Yuki',
-      'Amazon',
-      null,
       74800,
       52360,
       100,
@@ -459,8 +384,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Compact Espresso Maker',
       'Kaze',
-      'Rakuten',
-      null,
       29800,
       13410,
       14,
@@ -472,8 +395,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Capsule Coffee Machine',
       'Yuki',
-      'Amazon',
-      null,
       12800,
       8960,
       58,
@@ -485,8 +406,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Counter Bean-to-cup',
       'Yuki',
-      'Yodobashi',
-      HAKATA,
       98000,
       73500,
       170,
@@ -500,8 +419,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Rose Glow Skincare Set',
       'Hana',
-      'Rakuten',
-      null,
       9800,
       5880,
       24,
@@ -513,8 +430,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Colour Palette Makeup Kit',
       'Hana',
-      'Amazon',
-      null,
       6800,
       4080,
       80,
@@ -526,8 +441,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Vitamin C Serum 30ml',
       'Shizuku',
-      'Rakuten',
-      null,
       4800,
       2160,
       8,
@@ -539,8 +452,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Daily Defence Sunscreen Duo',
       'Shizuku',
-      'Yodobashi',
-      null,
       3960,
       2970,
       115,
@@ -552,8 +463,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Repair Night Cream',
       'Hana',
-      'Amazon',
-      null,
       7200,
       5040,
       140,
@@ -567,8 +476,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Metro Daypack 20L',
       'Kumo',
-      'Amazon',
-      null,
       13200,
       7920,
       46,
@@ -580,8 +487,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Crimson Leather Backpack',
       'Mori',
-      'Rakuten',
-      null,
       28600,
       17160,
       92,
@@ -593,8 +498,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Heritage Leather Rucksack',
       'Mori',
-      'Yodobashi',
-      YOKOHAMA,
       34100,
       23870,
       62,
@@ -606,8 +509,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Summit Hiking Pack 35L',
       'Hayate',
-      'Amazon',
-      null,
       22000,
       13200,
       18,
@@ -619,8 +520,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Studio Black Backpack',
       'Kumo',
-      'Rakuten',
-      null,
       18700,
       14960,
       190,
@@ -634,8 +533,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Tri-ply Saucepan Set 3pc',
       'Tetsu',
-      'Amazon',
-      null,
       19800,
       12870,
       54,
@@ -647,8 +544,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Indigo Dinnerware 16pc',
       'Nami',
-      'Rakuten',
-      null,
       12400,
       6200,
       32,
@@ -660,8 +555,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Enamel Casserole 24cm',
       'Tetsu',
-      'Yodobashi',
-      SAPPORO,
       24200,
       16940,
       78,
@@ -673,8 +566,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Stainless Stockpot Trio',
       'Tetsu',
-      'Amazon',
-      null,
       15800,
       11060,
       125,
@@ -686,8 +577,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Open Shelf Cookware Set 10pc',
       'Nami',
-      'Rakuten',
-      null,
       29800,
       20860,
       220,
@@ -701,8 +590,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Neon Wireless Controller',
       'Raijin',
-      'Yodobashi',
-      AKIBA,
       8980,
       5390,
       21,
@@ -714,8 +601,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Arctic White Gamepad',
       'Raijin',
-      'Amazon',
-      null,
       7480,
       5240,
       70,
@@ -727,8 +612,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Pro Paddle Controller',
       'Raijin',
-      'Rakuten',
-      null,
       22800,
       15960,
       105,
@@ -740,8 +623,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Midnight Gamepad v2',
       'Sora',
-      'Amazon',
-      null,
       6980,
       2980,
       9,
@@ -753,8 +634,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Charging Dock + Controller Bundle',
       'Raijin',
-      'Yodobashi',
-      SENDAI,
       12800,
       9600,
       135,
@@ -768,8 +647,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Shell Dining Chair',
       'Kigi',
-      'Rakuten',
-      null,
       16800,
       10080,
       86,
@@ -781,8 +658,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Lounge Armchair Blue',
       'Kigi',
-      'Amazon',
-      null,
       39800,
       23880,
       42,
@@ -794,8 +669,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Ergo Task Chair',
       'Kaze',
-      'Yodobashi',
-      SHINJUKU,
       48000,
       33600,
       56,
@@ -807,8 +680,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Oak Side Chair',
       'Kigi',
-      'Rakuten',
-      null,
       21000,
       14700,
       165,
@@ -820,8 +691,6 @@ const rows: Record<Category, Row[]> = {
     [
       'Ash Stacking Chair 2-pack',
       'Kigi',
-      'Amazon',
-      null,
       27600,
       22080,
       230,
@@ -839,38 +708,20 @@ export const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
-const STORE_URLS: Record<Store, string> = {
-  Yodobashi: 'https://www.yodobashi.com/',
-  Rakuten: 'https://www.rakuten.co.jp/',
-  Amazon: 'https://www.amazon.co.jp/',
-}
+const STORE: Store = 'Rakuten'
+const STORE_URL = 'https://www.rakuten.co.jp/'
 
 export const sampleDeals = (Object.keys(rows) as Category[]).flatMap((category) =>
   rows[category].map(
     (
-      [
-        title,
-        brand,
-        store,
-        place,
-        originalPrice,
-        salePrice,
-        endsInHours,
-        postedHoursAgo,
-        rating,
-        reviews,
-        blurb,
-      ],
+      [title, brand, originalPrice, salePrice, endsInHours, postedHoursAgo, rating, reviews, blurb],
       i,
     ) => ({
       id: slug(title),
       title,
       brand,
       category,
-      store,
-      channel: place ? 'in-store' : 'online',
-      prefecture: place?.[0] ?? null,
-      city: place?.[1] ?? null,
+      store: STORE,
       originalPrice,
       salePrice,
       endsInHours,
@@ -879,7 +730,7 @@ export const sampleDeals = (Object.keys(rows) as Category[]).flatMap((category) 
       reviews,
       image: `/images/${category.toLowerCase()}-${i + 1}.jpg`,
       // The sample products do not exist, so the link goes to the store's front page.
-      url: STORE_URLS[store],
+      url: STORE_URL,
       blurb,
     }),
   ),

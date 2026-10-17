@@ -7,9 +7,12 @@ from the app on 2026-10-14 (SID-24), after the features cut by decision 10 were 
 footer gained Rakuten's notices. Every app screen was retaken on 2026-10-15 (SID-24), when the
 screens moved to the agreed data model: the sticker says SALE or the point rate instead of a
 % off, cards name the shop instead of a brand and show when the price was fetched, and Browse filters
-by shop. Home, Browse, the filter sheet and both Deal detail screens were retaken on 2026-10-17 (SID-43), when
-the screens were fitted to real Rakuten titles: the Deal title became body text, the hero stopped promising
-cuts, and the shop checklist gained a search box. They show the local sample deals from `npm run db:seed:local`, which still mix three stores. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
+by shop. Home, Browse, the filter sheet, both Deal detail screens and signed-in Favorites were retaken on
+2026-10-17 (SID-43), when the screens were fitted to real Rakuten titles: the Deal title became body
+text, the hero stopped promising cuts, the points sticker got a capital X and the shop checklist gained
+a search box. They show the local sample deals from `npm run db:seed:local`, which are all Rakuten
+since the same change, so the Store filter is hidden as it is on the live site. Favorites signed in uses
+`npm run dev:session` with four saved deals. Use them with [DESIGN.md](../../../DESIGN.md): the file gives the rules,
 these show the result. A new or changed screen should look like it belongs next to these.
 
 To see the same screens running, run `npm install && npm run dev` in the repo root, after the
