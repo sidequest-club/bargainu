@@ -74,13 +74,13 @@ responses.
 
 Ask with at least one of `keyword`, `genreId`, `shopCode` or `itemCode`. Filters include
 `minPrice`, `maxPrice` and `NGKeyword`. `sort` orders by price, reviews, affiliate rate or last
-update. Examples are from `collector/samples/rakuten-item-search.json`.
+update. Examples are from `collector/samples/rakuten-item-search.json`, whose values are invented.
 
 **Top level**
 
 | Field | Type | Example | Meaning |
 |---|---|---|---|
-| `count` | int | `483171` | Matches in total |
+| `count` | int | `12345` | Matches in total |
 | `page`, `pageCount` | int | `1`, `100` | This page and the number of pages, at most 100 |
 | `first`, `last`, `hits` | int | `1`, `3`, `3` | Positions and number of items on this page |
 | `carrier` | int | `0` | 0 PC, 1 mobile, 2 smartphone |
@@ -93,15 +93,15 @@ update. Examples are from `collector/samples/rakuten-item-search.json`.
 | Field | Type | Example | Meaning |
 |---|---|---|---|
 | *What it is* | | | |
-| `itemName` | string | `Bose QuietComfort Ultra Earbuds 2nd Gen(第2世代) …` | Title written by the shop, often packed with keywords and sale claims |
+| `itemName` | string | `【見本】ワイヤレスイヤホン ノイズキャンセリング …` | Title written by the shop, often packed with keywords and sale claims |
 | `catchcopy` | string | `""` | The shop's sales line. Often empty |
-| `itemCaption` | string | `【商品紹介】 ■さらに進化した イヤホン …` | Long description, plain text |
-| `itemCode` | string | `superdeal:10006894` | Listing ID, `<shopCode>:<number>` |
+| `itemCaption` | string | `【見本の商品です】 ■ノイズキャンセリング対応の …` | Long description, plain text |
+| `itemCode` | string | `bargainu-sample:10000001` | Listing ID, `<shopCode>:<number>` |
 | `genreId` | int | `502835` | Rakuten genre. Its name comes from Genre Search |
 | `attributeIds` | int[] | `[1, 3, 36, 5]` | Attributes the listing has. Names come from Attribute Search; the values are not returned |
 | *Price* | | | |
-| `itemPrice` | int | `39600` | Current price in yen |
-| `itemPriceMin1`–`3`, `itemPriceMax1`–`3` | int | `39600` | Lowest and highest price: 1 of all, 2 searchable, 3 purchasable. The docs say no more |
+| `itemPrice` | int | `12800` | Current price in yen |
+| `itemPriceMin1`–`3`, `itemPriceMax1`–`3` | int | `12800` | Lowest and highest price: 1 of all, 2 searchable, 3 purchasable. The docs say no more |
 | `itemPriceBaseField` | string | `item_price_min3` | Which of those `itemPrice` is |
 | `taxFlag` | int | `0` | 0 tax included, 1 not |
 | `postageFlag` | int | `0` | 0 shipping included, 1 not |
@@ -114,16 +114,16 @@ update. Examples are from `collector/samples/rakuten-item-search.json`.
 | `smallImageUrls` | string[] | `https://thumbnail.image.rakuten.co.jp/…?_ex=64x64` | Up to 3, 64×64 |
 | `mediumImageUrls` | string[] | `…?_ex=128x128` | Up to 3, 128×128. The largest size the API gives |
 | *Links* | | | |
-| `itemUrl` | string | `https://item.rakuten.co.jp/superdeal/…/?rafcid=…` | Listing page. The `rafcid` holds our application ID |
-| `shopUrl` | string | `https://www.rakuten.co.jp/superdeal/?rafcid=…` | Shop page |
+| `itemUrl` | string | `https://item.rakuten.co.jp/bargainu-sample/…/?rafcid=…` | Listing page. The `rafcid` holds our application ID |
+| `shopUrl` | string | `https://www.rakuten.co.jp/bargainu-sample/?rafcid=…` | Shop page |
 | `affiliateUrl`, `shopAffiliateUrl` | string | `""` | Filled only when we send `affiliateId` |
 | *Shop* | | | |
-| `shopName` | string | `楽天スーパーDEALSHOP` | |
-| `shopCode` | string | `superdeal` | |
+| `shopName` | string | `バーゲヌ見本ストア` | |
+| `shopCode` | string | `bargainu-sample` | |
 | `shopOfTheYearFlag` | int | `0` | 1 won Shop of the Year |
 | *Reviews* | | | |
-| `reviewCount` | int | `17` | |
-| `reviewAverage` | float | `4.65` | Out of 5 |
+| `reviewCount` | int | `12` | |
+| `reviewAverage` | float | `4.25` | Out of 5 |
 | *Stock and delivery* | | | |
 | `availability` | int | `1` | 1 in stock, 0 out of stock. No quantity |
 | `creditCardFlag` | int | `1` | 1 takes credit cards |

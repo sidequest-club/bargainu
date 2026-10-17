@@ -63,8 +63,7 @@ The app runs on the prototype's invented deals. Nothing real is in the deployed 
 
 ## What Rakuten returns
 
-Read from `collector/samples/rakuten-item-search.json` and
-[collector/README.md](../collector/README.md).
+Read from [rakuten-api.md](rakuten-api.md) and [collector/README.md](../collector/README.md).
 
 | We want            | Rakuten has                                                         |
 | ------------------ | ------------------------------------------------------------------- |
