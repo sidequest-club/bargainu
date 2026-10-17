@@ -52,6 +52,18 @@ filter for time-limited sales. `normalize.py` keeps a listing only if:
 
 One page of every search (2026-10-14) gave 288 deals out of 780 listings, in all 12 categories.
 
+## Titles and descriptions
+
+Shops write their titles as keyword lists wrapped in sales claims, such as `【10/15限定！最大500円OFF】`,
+`＼P10倍／` or `★20日9:59まで★`. `normalize.py` drops a bracketed part when it holds a sales word (a
+point rate, a coupon, a date, 楽天1位, 送料無料 and so on), so the claims and their dates do not go
+stale next to the app's own countdown. Brackets that say what is sold stay: `【新品】`, `【中古】`,
+`【2足セット】`, `【約25cm】`. Rakuten's `【広告】` marking always stays. If nothing would be left, the
+title is kept as sent. Claims written without brackets, such as `POINT10倍！〜23日9:59`, stay too.
+
+The description is `itemCaption` on one line, cut to 300 characters at the last sentence end, or
+else at the last space with `…`.
+
 ## Run it locally
 
 1. Copy `collector/.env.example` to `collector/.env` and fill in the Rakuten keys.

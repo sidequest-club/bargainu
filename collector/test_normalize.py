@@ -79,6 +79,51 @@ class WhatIsKept(unittest.TestCase):
         self.assertEqual(row["fetched_at"], AT_MS)
 
 
+
+class Titles(unittest.TestCase):
+    def test_sales_claims_in_brackets_go(self):
+        title = "【10/15限定！最大500円OFFクーポン】＼P10倍／ 見本 スニーカー ★20日9:59まで★"
+        self.assertEqual(normalize.clean_title(title), "見本 スニーカー")
+
+    def test_brackets_that_say_what_is_sold_stay(self):
+        title = "【新品】【2足セット】見本 スニーカー【約25cm】"
+        self.assertEqual(normalize.clean_title(title), title)
+
+    def test_an_advert_marking_stays(self):
+        title = "見本 スニーカー【広告】"
+        self.assertEqual(normalize.clean_title(title), title)
+
+    def test_separators_left_at_the_edges_go(self):
+        self.assertEqual(normalize.clean_title("【楽天1位】｜見本 スニーカー｜"), "見本 スニーカー")
+
+    def test_a_title_that_is_only_a_claim_is_kept(self):
+        title = "【P10倍 20日まで】"
+        self.assertEqual(normalize.clean_title(title), title)
+
+    def test_the_deal_gets_the_clean_title(self):
+        self.assertEqual(deal(itemName="＼送料無料／Canvas shoe")["deal"]["title"], "Canvas shoe")
+
+
+class Blurbs(unittest.TestCase):
+    def test_a_short_caption_is_kept_whole(self):
+        self.assertEqual(normalize.cut_blurb("  A canvas\n shoe.  "), "A canvas shoe.")
+
+    def test_a_long_caption_ends_at_a_sentence(self):
+        caption = "見本の説明です。" * 60
+        blurb = normalize.cut_blurb(caption)
+        self.assertLessEqual(len(blurb), normalize.BLURB_LENGTH)
+        self.assertTrue(blurb.endswith("。"))
+
+    def test_a_long_caption_with_no_sentence_ends_at_a_word_with_an_ellipsis(self):
+        blurb = normalize.cut_blurb("canvas " * 100)
+        self.assertLessEqual(len(blurb), normalize.BLURB_LENGTH)
+        self.assertTrue(blurb.endswith("canvas…"))
+
+    def test_a_long_caption_with_no_break_is_cut_with_an_ellipsis(self):
+        blurb = normalize.cut_blurb("あ" * 400)
+        self.assertEqual(len(blurb), normalize.BLURB_LENGTH)
+        self.assertTrue(blurb.endswith("…"))
+
 class Load(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
