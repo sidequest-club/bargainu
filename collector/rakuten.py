@@ -4,11 +4,13 @@ Writes the API's items unchanged, one per line (NDJSON), in the layout we use in
 
     raw/rakuten/<YYYY-MM-DD>/<HHMMSS>Z.ndjson
 
-Each line is {"fetched_at", "keyword", "page", "item"}, where "item" is exactly what
-Rakuten returned. Cleaning is a separate step: see normalize.py.
+Each line is {"fetched_at", "keyword", "genre_id", "page", "item"}, where "item" is exactly
+what Rakuten returned and "genre_id" is the genre searched. Cleaning is a separate step: see
+normalize.py.
 
 Uses only the standard library. Usage:
 
+    python collector/rakuten.py --categories collector/categories.json --pages 2
     python collector/rakuten.py イヤホン 掃除機 --pages 2
     python collector/rakuten.py --from-file collector/samples/rakuten-item-search.json
 """
@@ -55,11 +57,11 @@ def load_env_file(path: Path) -> None:
         os.environ.setdefault(key.strip(), value.strip())
 
 
-def fetch_page(keyword: str, page: int) -> dict:
+def fetch_page(query: dict, page: int) -> dict:
     params = {
         "applicationId": os.environ["RAKUTEN_APP_ID"],
         "accessKey": os.environ["RAKUTEN_ACCESS_KEY"],
-        "keyword": keyword,
+        **query,
         "NGKeyword": " ".join(EXCLUDED_WORDS),
         "hits": HITS_PER_PAGE,
         "page": page,
@@ -90,48 +92,76 @@ def fetch_page(keyword: str, page: int) -> dict:
     return data
 
 
-def write_items(out: TextIO, items: list[dict], keyword: str | None, page: int, at: str) -> None:
+def genre_searches(categories: Path) -> list[dict]:
+    """Two searches per genre: boosted points, which the API can filter on, and everything, for
+    time-limited sales, which it cannot."""
+    mapping = json.loads(categories.read_text(encoding="utf-8"))
+    genres = [int(genre) for names in mapping.values() for genre in names]
+    return [
+        {"genreId": genre, "imageFlag": 1, **points}
+        for genre in genres
+        for points in ({"pointRateFlag": 1}, {})
+    ]
+
+
+def describe(query: dict) -> str:
+    if "keyword" in query:
+        return query["keyword"]
+    return f"genre {query['genreId']}" + (" points" if query.get("pointRateFlag") else "")
+
+
+def write_items(out: TextIO, items: list[dict], query: dict, page: int, at: str) -> None:
     for item in items:
-        line = {"fetched_at": at, "keyword": keyword, "page": page, "item": item}
+        line = {
+            "fetched_at": at,
+            "keyword": query.get("keyword"),
+            "genre_id": query.get("genreId"),
+            "page": page,
+            "item": item,
+        }
         out.write(json.dumps(line, ensure_ascii=False) + "\n")
     # Flush per page, so an error on a later page keeps what was already fetched.
     out.flush()
 
 
-def collect(out: TextIO, keywords: list[str], pages: int) -> tuple[int, str | None]:
-    """Fetch every keyword and page. Returns (items written, error or None)."""
+def collect(out: TextIO, queries: list[dict], pages: int) -> tuple[int, str | None]:
+    """Fetch every query and page. A failed request ends only its own query, so the others are
+    still loaded. Returns (items written, errors or None)."""
     written = 0
+    errors = []
     first_request = True
-    for keyword in keywords:
+    for query in queries:
         for page in range(1, min(pages, MAX_PAGE) + 1):
             if not first_request:
                 time.sleep(SECONDS_BETWEEN_REQUESTS)
             first_request = False
             at = datetime.now(timezone.utc).isoformat(timespec="seconds")
             try:
-                data = fetch_page(keyword, page)
+                data = fetch_page(query, page)
             except RakutenError as error:
-                return written, f"{keyword} page {page}: {error}"
+                errors.append(f"{describe(query)} page {page}: {error}")
+                break
             items = data.get("Items", [])
-            write_items(out, items, keyword, page, at)
+            write_items(out, items, query, page, at)
             written += len(items)
-            print(f"{keyword} page {page}: {len(items)} items", file=sys.stderr)
+            print(f"{describe(query)} page {page}: {len(items)} items", file=sys.stderr)
             if page >= data.get("pageCount", 0):
                 break
-    return written, None
+    return written, "; ".join(errors) or None
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("keywords", nargs="*", help="search keywords, one search per keyword")
+    parser.add_argument("--categories", type=Path, help="search the genres in this file instead")
     parser.add_argument("--pages", type=int, default=1, help="pages per keyword (30 items each)")
     parser.add_argument("--from-file", type=Path, help="use a saved API response; no network")
     parser.add_argument("--out", type=Path, default=HERE / "out", help="output directory")
     args = parser.parse_args()
 
     if not args.from_file:
-        if not args.keywords:
-            parser.error("give at least one keyword, or --from-file")
+        if not args.keywords and not args.categories:
+            parser.error("give at least one keyword, --categories or --from-file")
         load_env_file(HERE / ".env")
         missing = [k for k in ("RAKUTEN_APP_ID", "RAKUTEN_ACCESS_KEY") if not os.environ.get(k)]
         if missing:
@@ -145,14 +175,17 @@ def main() -> None:
         if args.from_file:
             data = json.loads(args.from_file.read_text(encoding="utf-8"))
             at = now.isoformat(timespec="seconds")
-            write_items(out, data["Items"], None, data.get("page", 1), at)
+            write_items(out, data["Items"], {}, data.get("page", 1), at)
             written, error = len(data["Items"]), None
         else:
-            written, error = collect(out, args.keywords, args.pages)
+            queries = [{"keyword": keyword} for keyword in args.keywords]
+            if args.categories:
+                queries += genre_searches(args.categories)
+            written, error = collect(out, queries, args.pages)
 
     print(f"Wrote {written} items to {path}")
     if error:
-        raise SystemExit(f"Stopped early, kept what was fetched. {error}")
+        raise SystemExit(f"Some searches failed, kept the rest. {error}")
 
 
 if __name__ == "__main__":

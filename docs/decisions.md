@@ -5,6 +5,7 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 
 | #   | Decision                                                                     | Date       |
 | --- | ---------------------------------------------------------------------------- | ---------- |
+| 12  | [Collecting deals](#12-collecting-rakuten-deals-once-a-day-by-genre-loaded-from-github-2026-10-14): daily, by genre | 2026-10-14 |
 | 11  | [Search log](#11-search-log-kept-in-d1-and-the-search-moves-into-the-api-2026-10-10): in D1, search in the API | 2026-10-10 |
 | 10  | [v1 features](#10-v1-features-what-each-one-means-2026-10-13): three cut, brand becomes shop | 2026-10-13 |
 | 9   | [Testing](#9-testing-vitest-in-the-workers-runtime-playwright-in-a-browser-2026-10-08): Vitest and Playwright | 2026-10-08 |
@@ -16,6 +17,38 @@ changes how we work or what we build. Recorded on the date shown; the team is Yu
 | 3   | [UI/UX](#3-uiux-prototype-3-chirashi-2026-10-05): prototype 3, "Chirashi"     | 2026-10-05 |
 | 2   | [Git branching](#2-git-branching-github-flow-2026-10-05): GitHub Flow         | 2026-10-05 |
 | 1   | [Project management](#1-project-management-linear-2026-10-05): Linear         | 2026-10-05 |
+
+## 12. Collecting Rakuten deals: once a day, by genre, loaded from GitHub (2026-10-14)
+
+**Decision:** proposed by Mizuki on 2026-10-14. Yuta and Norty agree or change it in review.
+
+- The Collect workflow runs once a day at 10:17 Japan time. It searches each Rakuten genre that
+  `collector/categories.json` lists for our 12 categories, once for boosted points and once for
+  everything. This answers SID-28's question of which keywords to search: genres, not keywords.
+- A second job turns the raw file into SQL with `collector/normalize.py` and runs it on D1 with
+  `wrangler d1 execute`. There is no ingest endpoint (SID-23) and no Worker that reads R2. This
+  replaces decision 5's assumption that the collector cannot reach D1 directly.
+- Each load clears the price and promotions of every deal its run did not refresh, and deletes
+  every older raw file in R2. The deal and its favorites stay until no run has refreshed it for
+  3 months.
+
+**Why:**
+
+- A genre search gives each item its category, so decision 10's rule (an item whose genre fits
+  none of our categories is not collected) holds without a table of every Rakuten genre.
+- D1 runs the file as one, so a failed load changes nothing. The load uses no Worker, so the
+  free plan's 10 ms CPU limit does not apply. `db:seed:remote` already works this way.
+- When runs are on time, clearing what a run did not refresh keeps prices within decision 6's
+  24 hours. Keeping the rest of the deal for 3 months, as decision 6 allows, means a saved deal
+  that one run misses is not lost.
+
+**Accepted risk:** a failed load, a failed upload to R2 or a run that starts late leaves the old
+prices until the next run, so some can be kept a little over 24 hours. A Rakuten search that fails
+drops its deals until the next run. Not chosen: running twice a day with an hourly clean-up
+in a Worker.
+
+**Not decided yet:** how many pages each search fetches (2 for now), and whether the genres in
+`categories.json` are the right ones.
 
 ## 11. Search log: kept in D1, and the search moves into the API (2026-10-10)
 

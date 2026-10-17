@@ -18,6 +18,7 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm test
+      - run: python3 -m unittest discover -s collector
       - run: npm run build
 
   # The signed-in flow in a browser, against the local app and a local database.
