@@ -147,7 +147,7 @@ give up to about 1,000 listings.
 |---|---|
 | Added | `rank` (int, 1 is the best seller), `carrier`, `hasPriceRange` (1 shows the price as a range) |
 | Missing | `giftFlag`, `attributeIds` |
-| Strings, not numbers | `itemPrice`, `itemPriceMin1`–`3`, `itemPriceMax1`–`3`, `reviewAverage`, `affiliateRate`, `genreId`. For example `"4980"` |
+| Strings, not numbers | `itemPrice`, `itemPriceMin1`–`3`, `itemPriceMax1`–`3`, `reviewAverage`, `affiliateRate`, `genreId`. For example `"3980"` |
 
 - `pointRate` is shown only for multipliers that last more than 24 hours.
 - Our call for genre 502835 returned the listings in reverse, rank 30 first. Sort by `rank`.
@@ -157,9 +157,9 @@ give up to about 1,000 listings.
 
 Ask with at least one of `keyword`, `genreId`, `productId` or `productCode` (JAN code). Filters
 are `minPrice` and `maxPrice`, both on `salesMinPrice`. `sort` is `standard` or `-satisfied`.
-`genreInformationFlag=1` adds product counts per genre. Examples are from our call for イヤホン.
+`genreInformationFlag=1` adds product counts per genre. Examples have the shape of our call for イヤホン, with invented values.
 
-**Top level:** `count` (`16371`), `page`, `first`, `last`, `hits`, `pageCount`, `Products` and
+**Top level:** `count` (`12345`), `page`, `first`, `last`, `hits`, `pageCount`, `Products` and
 `GenreInformation`. `GenreInformation` came back, empty, even though we did not ask for it.
 
 **Each product**
@@ -167,28 +167,28 @@ are `minPrice` and `maxPrice`, both on `salesMinPrice`. `sort` is `standard` or 
 | Field | Type | Example | Meaning |
 |---|---|---|---|
 | *What it is* | | | |
-| `productId` | string | `314b3d9a9dfb5db06a7048e304484c4d` | Rakuten's product ID |
-| `productCode` | string | `4515287022394` | JAN code |
-| `productName` | string | `エフ・アール・シー FPG22IM イヤホンマイク…` | |
-| `productNo` | string | `FPG-22IM` | Model number |
-| `brandName` | string | `イヤホンマイクシリーズ` | |
-| `productCaption` | string | `・プロが求める高い耐久性能と…` | Description |
+| `productId` | string | `0123456789abcdef0123456789abcdef` | Rakuten's product ID |
+| `productCode` | string | `4900000000001` | JAN code |
+| `productName` | string | `見本メーカー SMP-01 イヤホンマイク…` | |
+| `productNo` | string | `SMP-01` | Model number |
+| `brandName` | string | `見本シリーズ` | |
+| `productCaption` | string | `・見本の説明文です…` | Description |
 | `releaseDate` | string | `null` | |
 | `genreId`, `genreName` | string | `568239`, `ヘッドセット・イヤホンマイク` | |
 | `ProductDetails` | array | `null` | Name and value pairs, such as specifications |
 | *Maker* | | | |
-| `makerCode`, `makerName` | string | `104515287`, `エフ・アール・シー` | |
-| `makerNameKana`, `makerNameFormal` | string | `エフアールシー`, `株式会社エフ・アール・シー` | Name in katakana, and the company's formal name |
+| `makerCode`, `makerName` | string | `100000000`, `見本メーカー` | |
+| `makerNameKana`, `makerNameFormal` | string | `ミホンメーカー`, `株式会社見本メーカー` | Name in katakana, and the company's formal name |
 | `makerPageUrlPC`, `makerPageUrlMobile` | string | `""` | |
 | *Prices across listings* | | | |
 | `minPrice`, `maxPrice`, `averagePrice` | int | `null` | Over all listings |
-| `salesMinPrice`, `salesMaxPrice` | int | `2500`, `null` | Over listings that can be bought |
+| `salesMinPrice`, `salesMaxPrice` | int | `3200`, `null` | Over listings that can be bought |
 | `usedExclude…` | int | `null` | The same four prices and two counts, leaving out used items |
 | *Number of listings* | | | |
-| `itemCount`, `salesItemCount` | int | `null`, `30` | All listings, and those that can be bought |
+| `itemCount`, `salesItemCount` | int | `null`, `12` | All listings, and those that can be bought |
 | *Reviews and rank* | | | |
-| `reviewCount`, `reviewAverage` | int, float | `2`, `5.0` | |
-| `rank` | int | `945` | |
+| `reviewCount`, `reviewAverage` | int, float | `4`, `4.5` | |
+| `rank` | int | `1200` | |
 | `rankTargetGenreId`, `rankTargetProductCount` | | `null` | The genre the rank is in, and how many products it ranks |
 | *Links and images* | | | |
 | `productUrlPC`, `productUrlMobile` | string | `https://product.rakuten.co.jp/product/-/…` | Product page. The mobile one is `http` |
