@@ -112,6 +112,7 @@
   --tile-min-phone: 104px;
   --thumb: 72px;
   --thumb-lg: 88px;
+  --detail-photo-phone: 240px; /* Rakuten sends 128px photos; smaller also keeps the price in view */
   --tap: 44px; /* minimum hit target */
   --icon-sm: 16px;
   --icon: 20px;
@@ -149,7 +150,7 @@
   --sticker-off-lg: clamp(0.875rem, 1.4vw, 1.125rem);
   --sticker-inset: calc(var(--s-2) * -1);
   --sticker-nudge: -0.02; /* optical centring of the number, as a share of sticker size */
-  --sticker-pct: 0.6em; /* the × sign relative to the number */
+  --sticker-pct: 0.55em; /* the X after the rate, relative to the number */
   --sticker-word: 0.75; /* a word (SALE) relative to the number's size, so it fits the burst */
   --sticker-hang-collage: -0.3; /* how far a sticker hangs off its piece, as a share of its size */
   --sticker-hang-detail-y: -0.14;
@@ -254,6 +255,7 @@
   --opacity-quiet: 0.72;
   --opacity-tape: 0.88;
   --clamp-title: 2;
+  --clamp-detail-title: 3; /* shop titles are keyword lists; the price has to stay in view */
   --ratio-photo: 1 / 1;
   --cols-top: 4;
   --strike: var(--line);

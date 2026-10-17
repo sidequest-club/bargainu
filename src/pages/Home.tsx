@@ -11,12 +11,15 @@ import CenterUnderline from '../fancy/underline-center'
 import VerticalCutReveal from '../fancy/vertical-cut-reveal'
 import { formatYen, useCatalog } from '../lib/catalog'
 import type { Category, Deal } from '../lib/catalog'
-import { byEnding, foundAgo, priceAsOf, timeLeft } from '../lib/format'
+import { byEnding, fewPerShop, foundAgo, priceAsOf, timeLeft } from '../lib/format'
 import { spring, tokenNumber, useAfter, useSettled } from '../lib/tokens'
 
 const LIST_LENGTH = 4
+// Each Home list shows a shop once, so four rows are four different finds.
+const PER_SHOP = 1
 const BAND_COUNT = 3
-const HERO_LINE = 'Big cuts on'
+// Most Rakuten deals are boosted points, not a lower price, so the hero promises deals, not cuts.
+const HERO_LINE = 'Live deals on'
 const COLLAGE_SLOTS = ['a', 'b', 'c'] as const
 
 // "More deals" on Home skips anything already shown higher up the page, so each list adds new finds.
@@ -49,17 +52,19 @@ export function Home() {
   const { deals, categories } = useCatalog()
   const words = categories.map((c) => c.toUpperCase())
 
-  const ending = deals.toSorted(byEnding)
+  const ending = fewPerShop(deals.toSorted(byEnding), PER_SHOP)
   const collage = ending.slice(0, COLLAGE_SLOTS.length)
   // Deals with no end date have nothing to count down, so they never count as ending soon.
   const endingSoon = ending
     .filter((d) => d.endsInHours !== null)
     .filter(notIn(collage))
     .slice(0, LIST_LENGTH)
-  const justFound = deals
-    .filter(notIn([...collage, ...endingSoon]))
-    .sort((a, b) => a.postedHoursAgo - b.postedHoursAgo)
-    .slice(0, LIST_LENGTH)
+  const justFound = fewPerShop(
+    deals
+      .filter(notIn([...collage, ...endingSoon]))
+      .sort((a, b) => a.postedHoursAgo - b.postedHoursAgo),
+    PER_SHOP,
+  ).slice(0, LIST_LENGTH)
 
   const byCategory = categories.map((category) => {
     const list = deals.filter((d) => d.category === category)
@@ -111,8 +116,8 @@ export function Home() {
               </span>
             </h1>
             <p className="hero__lede">
-              Bargainu collects the live sales at Rakuten and lays them out in one pile. The dog has
-              already been through it.
+              Bargainu collects the live sales and boosted points at Rakuten and lays them out in
+              one pile. The dog has already been through it.
             </p>
             <div className="hero__actions">
               <Link to="/browse" className="btn btn--cta btn--lg">

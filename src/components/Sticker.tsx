@@ -50,7 +50,8 @@ export function Sticker({ rate, size = 'md', number, className }: StickerProps) 
         <span className="sticker__text" aria-hidden="true">
           <span className="sticker__num">
             {number ?? rate}
-            <span className="sticker__pct">×</span>
+            {/* Anton's × is too small to read on a burst, so the sticker uses a capital X. */}
+            <span className="sticker__pct">X</span>
           </span>
           <span className="sticker__off">Points</span>
         </span>

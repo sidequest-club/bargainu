@@ -84,6 +84,10 @@ Small caps labels use `--track-label` (0.08em), bold, uppercase, `--text-xs`.
 Japanese readiness: titles clamp to two lines (`--clamp-title`), cards grow in height rather
 than truncate prices, buttons wrap, and labels never rely on a fixed width.
 
+Shop titles: Rakuten titles are written by the shop and run to 200 characters of keywords. A deal's
+title is never set in Anton. On Deal detail it is body bold at `--text-xl` (`--text-2xl` from 960px),
+`--lh-snug`, clamped to `--clamp-detail-title` lines so the price stays in view on a phone.
+
 ## Spacing and layout
 
 4px base: `--s-1` 4, `--s-2` 8, `--s-3` 12, `--s-4` 16, `--s-5` 20, `--s-6` 24, `--s-8` 32,
@@ -124,7 +128,7 @@ than truncate prices, buttons wrap, and labels never rely on a fixed width.
 
 1. **Ticker** (`.ticker`): ink strip at the very top with live facts and round sticker dots between them.
 2. **Category bands** (`.band`): three tilted, overlapping full-bleed marquees on Home; every word links into Browse.
-3. **Starburst sticker** (`Sticker`): 16-point burst with a hard shadow, tilted `--tilt-sticker`. It says why the item is a deal, because Rakuten gives no original price to take a % off: the point rate ("10× POINTS") when the deal has boosted points, else "SALE". Red for a sale or 10× points and up, yellow below. Sizes sm (rows), md (cards), lg (detail).
+3. **Starburst sticker** (`Sticker`): 16-point burst with a hard shadow, tilted `--tilt-sticker`. It says why the item is a deal, because Rakuten gives no original price to take a % off: the point rate ("10X POINTS", with a capital X at `--sticker-pct` of the number, because Anton's × is too small to read) when the deal has boosted points, else "SALE". Red for a sale or 10× points and up, yellow below. Sizes sm (rows), md (cards), lg (detail).
 4. **Cut-out paper**: ink outline plus hard offset shadow on cards, buttons, nav, panels.
 5. **Dog mark** (`Dog`): white dog, one yellow eye patch, oversized nose. Moods: `happy` (logo), `sniff` (hero, login, sign-in gate, footer), `sleepy` (empty states).
 6. **Wordmark footer** (`.footer`): one serif line, then BARGAINU fitted edge to edge in yellow on ink,
@@ -142,6 +146,15 @@ left turns red and bold under 24 hours. There is no struck original price and no
 neither.
 
 **Row** (`DealRow`): the compact card for lists inside a coloured panel. Thumb, note, one-line title, price and its fetch time, small sticker.
+Home's lists (the collage, Ending soon, Just sniffed out) show each shop once (`fewPerShop`), because
+a shop often lists one item several times in different colours.
+
+**Breadcrumb** (`.crumbs`): All deals / category / the deal's title. The title is the last crumb, on
+one line, cut with an ellipsis.
+
+**Detail photo**: square, thick outline, `--shadow-lg`. Under 640px it is at most
+`--detail-photo-phone` wide and centred: Rakuten sends 128px photos, and a smaller photo keeps the
+price on the first screen.
 
 **Badge**: `.tag` is an outlined pill in small caps; a plain tag names a promotion ("Sale",
 "5× points"), `--store` is inverse. `--online` and `--in-store` (blue) stay in the base styles for
@@ -154,7 +167,9 @@ Text links use fancy's centre underline and stay 44px tall.
 
 **Filter**: left rail on desktop (sticky, calm, no shadow), bottom sheet on phones with a scrim, a close
 button, Escape to close and a "Show N deals" action. Controls: search input, checkbox chips for
-category and store (checked = ink fill), and a scrolling checklist of shops with counts. v1 has no discount,
+category and store (checked = ink fill), and a scrolling checklist of shops with counts. The store chips
+show only when the pile has more than one store. The shop checklist has its own search box above it,
+lists picked shops first and then the shops with the most deals, and its rows grow when a name wraps. v1 has no discount,
 channel or location filter (decision 10); the segmented control and range slider stay in the base
 styles for later. Results sort by "Ending soonest" unless the URL says otherwise. Active filters repeat above
 the grid as ink chips with a remove cross, followed by "Clear all". Filter state lives in the URL query string.
@@ -178,7 +193,8 @@ ink rule. Use one to change section on Home. Do not use them on Browse or Deal d
 
 ## Copy voice
 
-Short, plain, a little dry. The dog does the work and is talked about in the third person ("The dog
+Short, plain, a little dry. Never promise a price cut: most Rakuten deals are boosted points and
+Rakuten gives no original price, so the hero says "Live deals on", not "Big cuts on". The dog does the work and is talked about in the third person ("The dog
 has already been through it."). The stock of deals is "the pile". Headlines are two or three words in
 capitals. One warm serif sentence per section at most. Say what a control does ("Show 12 deals",
 "Clear all filters"), state facts with numbers ("Ends in 2d 4h", "10× points"), and never

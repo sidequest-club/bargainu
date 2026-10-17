@@ -43,3 +43,16 @@ export const priceAsOf = (deal: Deal) => `Price as of ${jstTime(deal.fetchedAt)}
 /** "Sale" or "5× points". */
 export const promotionLabel = (promotion: Promotion) =>
   promotion.kind === 'sale' ? 'Sale' : `${promotion.pointRate}× points`
+
+/**
+ * Keeps the order of `deals` but lets each shop in at most `perShop` times, so a short list is not
+ * one shop's near-identical listings. A shop often lists the same item in several colours.
+ */
+export function fewPerShop(deals: Deal[], perShop: number): Deal[] {
+  const seen = new Map<string, number>()
+  return deals.filter((deal) => {
+    const count = seen.get(deal.shopCode) ?? 0
+    seen.set(deal.shopCode, count + 1)
+    return count < perShop
+  })
+}
