@@ -81,13 +81,11 @@ S3-compatible endpoint. Local runs do not upload.
   start and end times. All are Japan time with no zone; `9999-12-31` means no end date.
 - There is no JAN code field. Some listings mention it in `itemCaption`.
 - Searches return non-product listings such as ふるさと納税; we exclude them with `NGKeyword`.
-- A full response is in `samples/rakuten-item-search.json` (application ID removed).
+- `samples/rakuten-item-search.json` has the shape of a full response, with invented values.
 
 ## Still open
 
 - Prices may be kept for 24 hours and other item data for 3 months, so raw files with prices
   cannot stay in R2 as they do now. See decision 6 in `docs/decisions.md`.
-- `samples/rakuten-item-search.json` is a real response with prices. Replace it with invented
-  values (decision 6).
 - Whether a server sending `Referer` for a Web Application is within the terms.
 - How R2 files reach D1: a Worker that loads them, or the ingest endpoint (SID-23, SID-28).
