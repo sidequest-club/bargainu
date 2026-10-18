@@ -98,8 +98,13 @@ class Titles(unittest.TestCase):
         self.assertEqual(normalize.clean_title(title), title)
 
     def test_sizes_materials_and_years_in_brackets_stay(self):
-        for title in ("【綿100%】見本 Tシャツ", "【1/12スケール】見本 模型", "【24時間保温】見本 水筒", "【2027年4月始まり】見本 手帳"):
+        for title in ("【綿100%】見本 Tシャツ", "【1/12スケール】見本 模型", "【24時間保温】見本 水筒", "【2027年4月始まり】見本 手帳",
+                      "【2倍濃縮】見本 洗剤", "【10倍ズーム】見本 双眼鏡", "【3歳から】見本 積み木", "【最大12時間点灯】見本 ライト"):
             self.assertEqual(normalize.clean_title(title), title)
+
+    def test_start_times_discounts_and_point_rates_still_go(self):
+        for title in ("【10/15 20:00から】見本 スニーカー", "【最大50%引き】見本 スニーカー", "【全品P10倍】見本 スニーカー", "＼ポイント5倍／見本 スニーカー"):
+            self.assertEqual(normalize.clean_title(title), "見本 スニーカー")
 
     def test_letters_p_r_inside_a_sales_claim_do_not_keep_it(self):
         self.assertEqual(normalize.clean_title("【SPRING SALE 20%OFF】見本 スニーカー"), "見本 スニーカー")
