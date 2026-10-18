@@ -44,16 +44,19 @@ ELLIPSIS = "…"
 # Shops wrap sales claims in decorative brackets: 【1,000円OFF】, ＼P10倍／, ★19日9:59まで★.
 # A bracketed part goes only when it holds one of these words, so 【2本セット】, 【約8畳用】 or
 # 【新品】/【中古】, which say what is being sold, stay.
-# Dates in a title go stale and can contradict the app's own countdown.
-BRACKETS = r"【[^【】]*】|\[[^\[\]]*\]|［[^［］]*］|＼[^＼／]*／|★[^★]*★|☆[^☆]*☆|◆[^◆]*◆|■[^■]*■|＜[^＜＞]*＞|《[^《》]*》|『[^『』]*』"
+# Dates in a title go stale and can contradict the app's own countdown. A sales date comes with まで,
+# から or 限定 and a sales percent with OFF or 最大, so a bare date, fraction or % (綿100%, 1/12,
+# 24時間) is left as part of what is sold. ★, ☆, ◆ and ■ are also used one at a time as bullets, so
+# a pair of them never spans a space.
+BRACKETS = r"【[^【】]*】|\[[^\[\]]*\]|［[^［］]*］|＼[^＼／]*／|★[^★\s]*★|☆[^☆\s]*☆|◆[^◆\s]*◆|■[^■\s]*■|＜[^＜＞]*＞|《[^《》]*》|『[^『』]*』"
 SALES_WORDS = re.compile(
     r"OFF|ＯＦＦ|off|倍|ポイント|[PＰ][0-9０-９]|クーポン|セール|SALE|ＳＡＬＥ|まで|から|限定|"
-    r"[0-9０-９]+[日時月]|[0-9０-９]+/[0-9０-９]+|送料無料|[1１]位|ランキング|最大|半額|[%％]|円引|割引|"
+    r"送料無料|[1１]位|ランキング|最大|半額|円引|割引|"
     r"特典|期間|マラソン|買い回り|エントリー|レビュー|予約|入荷|公式|MVP|受賞|あす楽|即納|翌日|お得|"
     r"在庫|残り|激安|大特価|値下げ|タイムセール|発送|出荷|発売|再販|新色|ノベルティ|ラッピング|掲載|紹介|"
     r"保証|ゆうパケット|メール便|宅配便|即日|当日|累計|突破|イチオシ|リニューアル|正規品|認定|EVENT|FAIR"
 )
-# Rakuten's own marking for an advertised listing is kept, whatever it sits in.
+# Rakuten's own marking for an advertised listing is kept: a bracket holding exactly one of these.
 KEEP_WORDS = ("広告", "PR")
 TITLE_EDGES = " 　|｜/／・,、:：!！"
 
@@ -139,7 +142,7 @@ def clean_title(title: str) -> str:
 
     def drop(match: re.Match[str]) -> str:
         part = match.group(0)
-        if any(word in part for word in KEEP_WORDS) or not SALES_WORDS.search(part):
+        if part[1:-1].strip() in KEEP_WORDS or not SALES_WORDS.search(part):
             return part
         return " "
 

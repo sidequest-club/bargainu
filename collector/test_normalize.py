@@ -93,6 +93,17 @@ class Titles(unittest.TestCase):
         title = "見本 スニーカー【広告】"
         self.assertEqual(normalize.clean_title(title), title)
 
+    def test_a_single_star_used_as_a_bullet_does_not_take_the_name(self):
+        title = "★楽天1位 見本 スニーカー メンズ ★5点満点"
+        self.assertEqual(normalize.clean_title(title), title)
+
+    def test_sizes_materials_and_years_in_brackets_stay(self):
+        for title in ("【綿100%】見本 Tシャツ", "【1/12スケール】見本 模型", "【24時間保温】見本 水筒", "【2027年4月始まり】見本 手帳"):
+            self.assertEqual(normalize.clean_title(title), title)
+
+    def test_letters_p_r_inside_a_sales_claim_do_not_keep_it(self):
+        self.assertEqual(normalize.clean_title("【SPRING SALE 20%OFF】見本 スニーカー"), "見本 スニーカー")
+
     def test_separators_left_at_the_edges_go(self):
         self.assertEqual(normalize.clean_title("【楽天1位】｜見本 スニーカー｜"), "見本 スニーカー")
 

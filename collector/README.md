@@ -56,9 +56,10 @@ One page of every search (2026-10-14) gave 288 deals out of 780 listings, in all
 
 Shops write their titles as keyword lists wrapped in sales claims, such as `【10/15限定！最大500円OFF】`,
 `＼P10倍／` or `★20日9:59まで★`. `normalize.py` drops a bracketed part when it holds a sales word (a
-point rate, a coupon, a date, 楽天1位, 送料無料 and so on), so the claims and their dates do not go
+point rate, a coupon, まで or 限定, 楽天1位, 送料無料 and so on), so the claims and their dates do not go
 stale next to the app's own countdown. Brackets that say what is sold stay: `【新品】`, `【中古】`,
-`【2足セット】`, `【約25cm】`. Rakuten's `【広告】` marking always stays. If nothing would be left, the
+`【2足セット】`, `【約25cm】`, `【綿100%】`, `【1/12スケール】`. ★, ☆, ◆ and ■ are also used alone as bullets,
+so a pair of them is only dropped when there is no space between them. Rakuten's `【広告】` marking always stays. If nothing would be left, the
 title is kept as sent. Claims written without brackets, such as `POINT10倍！〜23日9:59`, stay too.
 
 The description is `itemCaption` on one line, cut to 300 characters at the last sentence end, or
