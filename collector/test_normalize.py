@@ -88,6 +88,8 @@ class Titles(unittest.TestCase):
     def test_brackets_that_say_what_is_sold_stay(self):
         title = "【新品】【2足セット】見本 スニーカー【約25cm】"
         self.assertEqual(normalize.clean_title(title), title)
+        for title in ("【お得な2個セット】見本 洗剤", "【2個セット 送料無料】見本 洗剤"):
+            self.assertEqual(normalize.clean_title(title), title)
 
     def test_an_advert_marking_stays(self):
         title = "見本 スニーカー【広告】"
@@ -99,15 +101,18 @@ class Titles(unittest.TestCase):
 
     def test_sizes_materials_and_years_in_brackets_stay(self):
         for title in ("【綿100%】見本 Tシャツ", "【1/12スケール】見本 模型", "【24時間保温】見本 水筒", "【2027年4月始まり】見本 手帳",
-                      "【2倍濃縮】見本 洗剤", "【10倍ズーム】見本 双眼鏡", "【3歳から】見本 積み木", "【最大12時間点灯】見本 ライト"):
+                      "【2倍濃縮】見本 洗剤", "【10倍ズーム】見本 双眼鏡", "【3歳から】見本 積み木", "【最大12時間点灯】見本 ライト",
+                      "【Coffee Beans】見本", "【HUAWEI P30】見本"):
             self.assertEqual(normalize.clean_title(title), title)
 
     def test_start_times_discounts_and_point_rates_still_go(self):
-        for title in ("【10/15 20:00から】見本 スニーカー", "【最大50%引き】見本 スニーカー", "【全品P10倍】見本 スニーカー", "＼ポイント5倍／見本 スニーカー"):
+        for title in ("【10/15 20:00から】見本 スニーカー", "【最大50%引き】見本 スニーカー", "【全品P10倍】見本 スニーカー", "＼ポイント5倍／見本 スニーカー",
+                      "【P最大10倍】見本 スニーカー", "＼P最大44倍／見本 スニーカー", "【10/20(月)から】見本 スニーカー"):
             self.assertEqual(normalize.clean_title(title), "見本 スニーカー")
 
     def test_letters_p_r_inside_a_sales_claim_do_not_keep_it(self):
         self.assertEqual(normalize.clean_title("【SPRING SALE 20%OFF】見本 スニーカー"), "見本 スニーカー")
+        self.assertEqual(normalize.clean_title("【20%off】見本 スニーカー"), "見本 スニーカー")
 
     def test_separators_left_at_the_edges_go(self):
         self.assertEqual(normalize.clean_title("【楽天1位】｜見本 スニーカー｜"), "見本 スニーカー")

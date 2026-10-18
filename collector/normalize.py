@@ -47,11 +47,14 @@ ELLIPSIS = "…"
 # Dates in a title go stale and can contradict the app's own countdown. A sales date comes with まで,
 # 限定 or a start time's から and a sales percent with OFF or 最大, so a bare date, fraction or %
 # (綿100%, 1/12, 24時間) is left as part of what is sold. 倍, から and 最大 also describe the item
-# (2倍濃縮, 3歳から, 最大12時間点灯), so only a point rate, a start time and a discount count. ★, ☆, ◆ and ■ are also used one at a time as bullets, so
-# a pair of them never spans a space.
+# (2倍濃縮, 3歳から, 最大12時間点灯), so only a point rate (P10倍, P最大10倍), a start time
+# (20日から, 10/20(月)から) and a discount count. off counts only when no letter comes before it,
+# so Coffee stays. ★, ☆, ◆ and ■ are also used one at a time as bullets, so a pair of them never
+# spans a space. A bracket that gives the set size (【お得な2個セット】) stays even with a sales word
+# in it, because the price is for the whole set.
 BRACKETS = r"【[^【】]*】|\[[^\[\]]*\]|［[^［］]*］|＼[^＼／]*／|★[^★\s]*★|☆[^☆\s]*☆|◆[^◆\s]*◆|■[^■\s]*■|＜[^＜＞]*＞|《[^《》]*》|『[^『』]*』"
 SALES_WORDS = re.compile(
-    r"OFF|ＯＦＦ|off|ポイント|[PＰ][0-9０-９]|クーポン|セール|SALE|ＳＡＬＥ|まで|[日時0-9０-９]から|限定|"
+    r"OFF|ＯＦＦ|(?<![A-Za-z])off|ポイント|[PＰ](最大)?[0-9０-９]+倍|クーポン|セール|SALE|ＳＡＬＥ|まで|[日時0-9０-９)）]から|限定|"
     r"送料無料|[1１]位|ランキング|最大[0-9０-９,，]+[%％円]|半額|円引|割引|"
     r"特典|期間|マラソン|買い回り|エントリー|レビュー|予約|入荷|公式|MVP|受賞|あす楽|即納|翌日|お得|"
     r"在庫|残り|激安|大特価|値下げ|タイムセール|発送|出荷|発売|再販|新色|ノベルティ|ラッピング|掲載|紹介|"
@@ -143,7 +146,7 @@ def clean_title(title: str) -> str:
 
     def drop(match: re.Match[str]) -> str:
         part = match.group(0)
-        if part[1:-1].strip() in KEEP_WORDS or not SALES_WORDS.search(part):
+        if part[1:-1].strip() in KEEP_WORDS or "セット" in part or not SALES_WORDS.search(part):
             return part
         return " "
 
