@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import urllib.parse
 from datetime import datetime, timedelta, timezone
@@ -34,6 +35,34 @@ STORE = "Rakuten"
 
 # /api/deals sends every deal at once, so the description stays short.
 BLURB_LENGTH = 300
+
+# A cut description ends at the last sentence or word end, if one is in the last part of the cut.
+BLURB_MIN_KEEP = BLURB_LENGTH // 2
+SENTENCE_ENDS = "。！？!?"
+ELLIPSIS = "…"
+
+# Shops wrap sales claims in decorative brackets: 【1,000円OFF】, ＼P10倍／, ★19日9:59まで★.
+# A bracketed part goes only when it holds one of these words, so 【2本セット】, 【約8畳用】 or
+# 【新品】/【中古】, which say what is being sold, stay.
+# Dates in a title go stale and can contradict the app's own countdown. A sales date comes with まで,
+# 限定 or a start time's から and a sales percent with OFF or 最大, so a bare date, fraction or %
+# (綿100%, 1/12, 24時間) is left as part of what is sold. 倍, から and 最大 also describe the item
+# (2倍濃縮, 3歳から, 最大12時間点灯), so only a point rate (P10倍, P最大10倍), a start time
+# (20日から, 10/20(月)から) and a discount count. off counts only when no letter comes before it,
+# so Coffee stays. ★, ☆, ◆ and ■ are also used one at a time as bullets, so a pair of them never
+# spans a space. A bracket that gives the set size (【お得な2個セット】) stays even with a sales word
+# in it, because the price is for the whole set.
+BRACKETS = r"【[^【】]*】|\[[^\[\]]*\]|［[^［］]*］|＼[^＼／]*／|★[^★\s]*★|☆[^☆\s]*☆|◆[^◆\s]*◆|■[^■\s]*■|＜[^＜＞]*＞|《[^《》]*》|『[^『』]*』"
+SALES_WORDS = re.compile(
+    r"OFF|ＯＦＦ|(?<![A-Za-z])off|ポイント|[PＰ](最大)?[0-9０-９]+倍|クーポン|セール|SALE|ＳＡＬＥ|まで|[日時0-9０-９)）]から|限定|"
+    r"送料無料|[1１]位|ランキング|最大[0-9０-９,，]+[%％円]|半額|円引|割引|"
+    r"特典|期間|マラソン|買い回り|エントリー|レビュー|予約|入荷|公式|MVP|受賞|あす楽|即納|翌日|お得|"
+    r"在庫|残り|激安|大特価|値下げ|タイムセール|発送|出荷|発売|再販|新色|ノベルティ|ラッピング|掲載|紹介|"
+    r"保証|ゆうパケット|メール便|宅配便|即日|当日|累計|突破|イチオシ|リニューアル|正規品|認定|EVENT|FAIR"
+)
+# Rakuten's own marking for an advertised listing is kept: a bracket holding exactly one of these.
+KEEP_WORDS = ("広告", "PR")
+TITLE_EDGES = " 　|｜/／・,、:：!！"
 
 # Within decision 6's 3 months even across February, with a day for the run that deletes it.
 KEEP_DEALS_MS = 88 * 24 * 60 * 60 * 1000
@@ -97,8 +126,8 @@ def to_deal(line: dict, categories: dict[int, str]) -> dict | None:
             "id": item["itemCode"],
             "shop_code": item["shopCode"],
             "category": category,
-            "title": item["itemName"],
-            "blurb": " ".join((item.get("itemCaption") or "").split())[:BLURB_LENGTH],
+            "title": clean_title(item["itemName"]),
+            "blurb": cut_blurb(item.get("itemCaption") or ""),
             "image": images[0],
             "url": plain_item_url(item["itemUrl"]),
             "price": item["itemPrice"],
@@ -109,6 +138,36 @@ def to_deal(line: dict, categories: dict[int, str]) -> dict | None:
         },
         "promotions": reasons,
     }
+
+
+def clean_title(title: str) -> str:
+    """The shop's title without the bracketed sales claims around it. The raw title when cleaning
+    would leave nothing."""
+
+    def drop(match: re.Match[str]) -> str:
+        part = match.group(0)
+        if part[1:-1].strip() in KEEP_WORDS or "セット" in part or not SALES_WORDS.search(part):
+            return part
+        return " "
+
+    cleaned = re.sub(BRACKETS, drop, title)
+    cleaned = " ".join(cleaned.split()).strip(TITLE_EDGES)
+    return cleaned or title
+
+
+def cut_blurb(caption: str) -> str:
+    """The description on one line, cut to BLURB_LENGTH at a sentence or word end, with an ellipsis."""
+    text = " ".join(caption.split())
+    if len(text) <= BLURB_LENGTH:
+        return text
+    cut = text[: BLURB_LENGTH - len(ELLIPSIS)]
+    end = max(cut.rfind(mark) for mark in SENTENCE_ENDS)
+    if end >= BLURB_MIN_KEEP:
+        return cut[: end + 1]
+    space = cut.rfind(" ")
+    if space >= BLURB_MIN_KEEP:
+        cut = cut[:space]
+    return cut.rstrip(TITLE_EDGES) + ELLIPSIS
 
 
 def literal(value: str | int | float | None) -> str:
