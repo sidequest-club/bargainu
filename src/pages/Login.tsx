@@ -12,7 +12,7 @@ const inApp = (path: string | null) =>
   path && path.startsWith('/') && !path.startsWith('//') ? path : null
 
 export function Login() {
-  const { user, pending, favorites, signIn, signOut, addFavorite, showToast } = useStore()
+  const { user, pending, savedDeals, signIn, signOut, addFavorite, showToast } = useStore()
   const { status, getDeal } = useCatalog()
   const [query] = useSearchParams()
   const navigate = useNavigate()
@@ -69,7 +69,7 @@ export function Login() {
             </p>
             <Link to="/favorites" className="btn btn--cta btn--block">
               <HeartIcon />
-              Your favorites ({favorites.length})
+              Your favorites{status === 'ready' && ` (${savedDeals.length})`}
             </Link>
             <button
               type="button"

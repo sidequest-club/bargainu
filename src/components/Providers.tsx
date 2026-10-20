@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { api } from '../lib/api'
 import { authClient } from '../lib/auth-client'
-import { buildCatalog, CatalogContext, toDeals } from '../lib/catalog'
+import { buildCatalog, CatalogContext, toDeals, useCatalog } from '../lib/catalog'
 import type { CatalogState, Deal } from '../lib/catalog'
 import { StoreContext } from '../lib/store'
 import type { Store } from '../lib/store'
@@ -53,6 +53,7 @@ const NO_FAVORITES: string[] = []
 /** The Better Auth session, the signed-in user's favorites and the toast. */
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { data: session, isPending: sessionPending } = authClient.useSession()
+  const { getDeal } = useCatalog()
   const userId = session?.user.id
   // Favorites are kept per user id, so a list fetched for one account is never shown to another.
   const [saved, setSaved] = useState<{ userId: string; ids: string[] } | null>(null)
@@ -93,6 +94,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const loaded = saved !== null && saved.userId === userId
   const favorites = loaded ? saved.ids : NO_FAVORITES
+  const savedDeals = useMemo(
+    () => favorites.flatMap((id) => getDeal(id) ?? []),
+    [favorites, getDeal],
+  )
 
   const value = useMemo<Store>(() => {
     const setIds = (change: (ids: string[]) => string[]) => {
@@ -132,6 +137,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       user: session ? { name: session.user.name, email: session.user.email } : null,
       pending: sessionPending || (userId !== undefined && !loaded),
       favorites,
+      savedDeals,
       signIn: (returnTo) => {
         authClient.signIn
           .social({ provider: 'google', callbackURL: returnTo })
@@ -156,7 +162,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toast,
       showToast,
     }
-  }, [session, sessionPending, userId, loaded, favorites, toast, showToast])
+  }, [session, sessionPending, userId, loaded, favorites, savedDeals, toast, showToast])
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

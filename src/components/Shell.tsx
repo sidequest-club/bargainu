@@ -83,7 +83,7 @@ const isActive = (path: string, target: string) =>
 
 export function Nav() {
   const { pathname: path } = useLocation()
-  const { user, pending, favorites } = useStore()
+  const { user, pending, savedDeals } = useStore()
   const links = [
     { to: '/', label: 'Home' },
     { to: '/browse', label: 'Browse' },
@@ -102,8 +102,8 @@ export function Nav() {
                 aria-current={isActive(path, link.to) ? 'page' : undefined}
               >
                 {link.label}
-                {link.to === '/favorites' && user && favorites.length > 0 && (
-                  <span className="count">{favorites.length}</span>
+                {link.to === '/favorites' && user && savedDeals.length > 0 && (
+                  <span className="count">{savedDeals.length}</span>
                 )}
               </Link>
             </li>
@@ -131,7 +131,7 @@ export function Nav() {
 
 export function TabBar() {
   const { pathname: path } = useLocation()
-  const { user, favorites } = useStore()
+  const { user, savedDeals } = useStore()
   const tabs = [
     { to: '/', label: 'Home', icon: <HomeIcon /> },
     { to: '/browse', label: 'Browse', icon: <GridIcon /> },
@@ -139,7 +139,7 @@ export function TabBar() {
       to: '/favorites',
       label: 'Favorites',
       icon: <HeartIcon />,
-      count: user ? favorites.length : 0,
+      count: user ? savedDeals.length : 0,
     },
     { to: '/login', label: user ? 'Account' : 'Sign in', icon: <UserIcon /> },
   ]

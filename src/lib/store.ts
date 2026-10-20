@@ -11,8 +11,10 @@ export interface Store {
   user: User | null
   /** True until the first answer about who is signed in, and about what they saved. */
   pending: boolean
-  /** Ids of saved deals, newest first. */
+  /** Ids of saved deals, newest first, including deals that have ended. */
   favorites: string[]
+  /** Saved deals still in the catalog, newest first. Empty until the catalog has loaded. */
+  savedDeals: Deal[]
   /** Leaves for Google and comes back to `returnTo`, an in-app path. */
   signIn: (returnTo: string) => void
   signOut: () => Promise<void>
