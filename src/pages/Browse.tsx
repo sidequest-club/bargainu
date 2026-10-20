@@ -77,15 +77,16 @@ function apply(f: Filters, deals: Deal[]): Deal[] {
 const toggle = (values: string[], value: string) =>
   values.includes(value) ? values.filter((v) => v !== value) : [...values, value]
 
-/** Picked shops first, then the shops with the most deals; a search narrows the rest by name. */
-function shopList(shops: Shop[], picked: string[], search: string): Shop[] {
+/**
+ * Shops picked when the page loaded first, then the shops with the most deals. The order ignores
+ * later picks so a row never moves under the cursor. A search narrows the unpicked shops by name.
+ */
+function shopList(shops: Shop[], picked: string[], pickedOnLoad: string[], search: string): Shop[] {
   const needle = search.trim().toLowerCase()
+  const first = (s: Shop) => Number(pickedOnLoad.includes(s.code))
   return shops
     .filter((s) => picked.includes(s.code) || !needle || s.name.toLowerCase().includes(needle))
-    .toSorted(
-      (a, b) =>
-        Number(picked.includes(b.code)) - Number(picked.includes(a.code)) || b.count - a.count,
-    )
+    .toSorted((a, b) => first(b) - first(a) || b.count - a.count)
 }
 
 interface ActiveChip {
@@ -156,7 +157,8 @@ export function Browse() {
   const chips = activeChips(filters, shops)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [shopSearch, setShopSearch] = useState('')
-  const shownShops = shopList(shops, filters.shop, shopSearch)
+  const [shopsOnLoad] = useState(filters.shop)
+  const shownShops = shopList(shops, filters.shop, shopsOnLoad, shopSearch)
   const closeRef = useRef<HTMLButtonElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
   const reduced = useReducedMotion()
