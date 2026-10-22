@@ -2,12 +2,10 @@ import { Link } from 'react-router'
 import { DealCard } from '../components/DealCard'
 import { ArrowIcon } from '../components/Icons'
 import { EmptyState } from '../components/Shell'
-import { useCatalog } from '../lib/catalog'
 import { useStore } from '../lib/store'
 
 export function Favorites() {
-  const { user, pending, favorites } = useStore()
-  const { getDeal } = useCatalog()
+  const { user, pending, savedDeals: saved } = useStore()
 
   if (pending) {
     return (
@@ -32,9 +30,6 @@ export function Favorites() {
       </div>
     )
   }
-
-  // Keep the order in which deals were saved, newest first. A saved deal that has ended is not listed.
-  const saved = favorites.flatMap((id) => getDeal(id) ?? [])
 
   return (
     <div className="wrap page">
