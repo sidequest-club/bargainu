@@ -132,20 +132,35 @@ Chosen by Yuta while doing SID-26; Norty and Mizuki have not reviewed it yet.
 
 ## 8. How we work (2026-10-10)
 
-**Decision:** we follow one written routine. It is kept in two documents on the team's Home page
+**Decision:** we follow one written routine. It is kept in three documents on the team's Home page
 in Linear, and not repeated here:
 [Start here](https://linear.app/sidequest-club/document/start-here-where-things-go-and-how-a-week-runs-61244d237fb9)
-for where things go and how a week runs, and
+for where things go and how a week runs,
+[Our workflow](https://linear.app/sidequest-club/document/our-workflow-7aa056e78613) for how a
+project goes from the idea to the look back and how a piece of work goes during a week, and
 [Team rules](https://linear.app/sidequest-club/document/team-rules-7841ba32ee1b) for the rules.
 Decided by Yuta on 2026-10-10 after the sync on 2026-10-09, to be presented to the team on
-2026-10-13.
+2026-10-13. "Our workflow" was added on 2026-10-19 (SID-47) from the meeting on 2026-10-13.
 
-A week has two 30-minute meetings. On Monday we plan: pick the week's work and give each task an
-owner, a reviewer, a "done when" sentence and a review label. On Friday we review: demo what got
-finished, look at what did not, and discuss anything open. Anyone can propose a rule change, and
-proposals are gone through on Friday.
+A week has two 30-minute meetings. On Monday the lead plans: picks the week's work and assigns
+each task an owner, a reviewer, a "done when" sentence and a review label. On Friday we review:
+demo what got finished, look at what did not, and discuss anything open. Anyone can propose a rule
+change, and proposals are gone through on Friday.
 
-![How a project, a week and a pull request go](process/how-we-work.drawio.png)
+![A project, end to end, from the idea to the look back](process/project-workflow.drawio.png)
+
+![How a piece of work goes from the Monday meeting to live](process/how-we-work.drawio.png)
+
+In this repo, the steps of the workflow mean:
+
+- **Design:** the screens are in the Figma file "Bargainu – Chirashi screens", and the build
+  follows [DESIGN.md](../DESIGN.md).
+- **Build:** a branch named `feat/sid-nn-<slug>` or `fix/sid-nn-<slug>`, and `npm run check`
+  passes before the pull request.
+- **Merge:** CI applies the D1 migrations and deploys the Worker to Cloudflare.
+- **Slack:** the project channel is #project-1-bargainu and the updates channel is #p1-updates.
+- **Data:** every task follows decisions 6 and 7: Rakuten only, Rakuten prices kept for 24 hours
+  at most, and nothing real in the public repo.
 
 The one rule copied here, because coding agents read this file and not Linear, is the pull request
 label. `ai-review` is the default: the pull request merges when CI passes and the AI review is
